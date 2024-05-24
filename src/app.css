@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	font-family: 'Nunito Sans', sans-serif;
+	font-optical-sizing: auto;
+}
+
+@layer base {
+	h1 {
+		@apply text-5xl lg:text-5xl;
+		font-weight: 900;
+	}
+
+	h2 {
+		@apply text-2xl lg:text-2xl;
+		font-weight: 700;
+		padding-bottom: 0.3rem;
+	}
+
+	h3 {
+		@apply text-xl lg:text-xl;
+		font-weight: 600;
+	}
+}
