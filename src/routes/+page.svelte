@@ -3,6 +3,7 @@
 	import ChevronRight from '$lib/svg/ChevronRight.svelte';
 	import { goto } from '$app/navigation';
 	let navInput = $state();
+	let disabledButton = $state(false);
 </script>
 
 <div class="max-w-dvw flex min-h-dvh items-center justify-center">
@@ -21,12 +22,20 @@
 				placeholder="Type something to start or continue"
 				class="input input-bordered input-primary w-full"
 				bind:value={navInput}
-				required
+				oninput={() => {
+					disabledButton = false;
+				}}
 			/>
 			<button
 				class="btn btn-primary text-xl font-bold"
+				id="goButton"
+				disabled={disabledButton}
 				onclick={() => {
-					goto(`/v/${navInput}`);
+					if (!navInput) {
+						disabledButton = true;
+					} else {
+						goto(`/v/${navInput}`);
+					}
 				}}
 				>Go <svg
 					xmlns="http://www.w3.org/2000/svg"
