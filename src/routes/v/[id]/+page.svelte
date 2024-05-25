@@ -111,10 +111,10 @@
 	</form>
 	<ol>
 		<div id="table" class="relative grid space-y-4">
-			{#await data.result}
+			{#await data.streamed.result}
 				<Spinner />
 			{:then result}
-				{#each data.result as person}
+				{#each result as person}
 					<div
 						class="flex rounded-lg border border-slate-400 p-2 hover:border-primary hover:shadow active:shadow-primary"
 					>

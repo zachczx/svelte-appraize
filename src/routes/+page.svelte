@@ -11,7 +11,7 @@
 	>
 		<div>
 			<h1 class="view-header text-primary"><a href="/">Appraize</a></h1>
-			<p>Do your yearly ranking session easily.</p>
+			<p>Do your ranking session easily.</p>
 		</div>
 
 		<div class="flex w-full gap-1">

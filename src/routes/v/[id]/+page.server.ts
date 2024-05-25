@@ -3,14 +3,27 @@ import { records } from '$lib/drizzle/schema';
 import { desc, asc, eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
+let delay = (time) => {
+	return new Promise((res) => {
+		setTimeout(res, time);
+	});
+};
+
 export const load = (async ({ params }) => {
 	const sessionId = String(params.id);
-	const result = await db
+	const result = db
 		.select()
 		.from(records)
 		.where(eq(records.session, sessionId))
 		.orderBy(asc(records.id));
-	return { result, id: sessionId };
+	return {
+		id: sessionId,
+
+		streamed: {
+			result: result,
+			delay: delay(0),
+		},
+	};
 }) satisfies PageServerLoad;
 
 export const actions = {
