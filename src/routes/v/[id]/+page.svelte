@@ -5,6 +5,7 @@
 	import ChevronRight from '$lib/svg/ChevronRight.svelte';
 	import Trash from '$lib/svg/Trash.svelte';
 	import { fade } from 'svelte/transition';
+	import Spinner from '$lib/Spinner.svelte';
 	let { data } = $props();
 	let nameData = $state();
 	let deptData = $state();
@@ -110,22 +111,25 @@
 	</form>
 	<ol>
 		<div id="table" class="relative grid space-y-4">
-			{#each data.result as person}
-				<div
-					class="flex rounded-lg border border-slate-400 p-2 hover:border-primary hover:shadow active:shadow-primary"
-					transition:fade={{ duration: 1000 }}
-				>
-					<div class="basis-1/3">
-						<li class="ms-8 list-decimal ps-10">{person.name}</li>
+			{#await data.result}
+				<Spinner />
+			{:then result}
+				{#each data.result as person}
+					<div
+						class="flex rounded-lg border border-slate-400 p-2 hover:border-primary hover:shadow active:shadow-primary"
+					>
+						<div class="basis-1/3">
+							<li class="ms-8 list-decimal ps-10">{person.name}</li>
+						</div>
+						<div class="basis-1/3">{person.dept}</div>
+						<div class="basis-1/3">{person.grade}</div>
+						<form method="POST" action="?/delete">
+							<input type="hidden" name="delete-target" value={person.id} />
+							<button><Trash class="inline stroke-red-400" /></button>
+						</form>
 					</div>
-					<div class="basis-1/3">{person.dept}</div>
-					<div class="basis-1/3">{person.grade}</div>
-					<form method="POST" action="?/delete">
-						<input type="hidden" name="delete-target" value={person.id} />
-						<button><Trash class="inline stroke-red-400" /></button>
-					</form>
-				</div>
-			{/each}
+				{/each}
+			{/await}
 		</div>
 	</ol>
 </div>
