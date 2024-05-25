@@ -11,17 +11,16 @@ let delay = (time) => {
 
 export const load = (async ({ params }) => {
 	const sessionId = String(params.id);
-	const result = db
+	const result = await db
 		.select()
 		.from(records)
 		.where(eq(records.session, sessionId))
 		.orderBy(asc(records.id));
+	//await delay(3000);
 	return {
 		id: sessionId,
-
 		streamed: {
 			result: result,
-			delay: delay(0),
 		},
 	};
 }) satisfies PageServerLoad;

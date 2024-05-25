@@ -21,7 +21,7 @@
 	.loader::after {
 		inset: 8px;
 		transform: rotate3d(90, 90, 0, 180deg);
-		border-color: #ff3d00;
+		border-color: oklch(49.12% 0.3096 275.75);
 	}
 
 	@keyframes rotate {
