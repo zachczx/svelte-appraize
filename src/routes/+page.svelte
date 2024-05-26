@@ -8,7 +8,7 @@
 	let submittedSpinner = $state(false);
 </script>
 
-<div class="max-w-dvw flex min-h-dvh items-center justify-center">
+<div class="max-w-dvw flex min-h-dvh flex-wrap items-center justify-center">
 	<UndrawDecide />
 	<div
 		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary p-10 shadow-lg"

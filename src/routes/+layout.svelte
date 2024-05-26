@@ -14,7 +14,9 @@
 	});
 </script>
 
-<slot />
+<div class="p-2">
+	<slot />
+</div>
 
 <style>
 	@keyframes fade-in {
