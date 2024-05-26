@@ -1,9 +1,7 @@
-import dotenv from 'dotenv';
+import 'dotenv/config.js';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 import * as schema from './schema';
-
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 const client = new pg.Client({
 	host: process.env.DB_HOST,
