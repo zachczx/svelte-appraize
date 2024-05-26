@@ -1,13 +1,11 @@
 import { relations, sql } from 'drizzle-orm';
-import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import { pgTable, integer, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const records = sqliteTable('records', {
-	id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+export const records = pgTable('records', {
+	id: serial('serial').primaryKey(),
 	name: text('name').notNull(),
 	dept: text('dept').notNull(),
 	grade: text('grade').notNull(),
-	session: integer('session', { mode: 'number' }).notNull(),
-	createdAt: integer('created_at')
-		.notNull()
-		.default(sql`(cast (unixepoch() as int))`),
+	session: integer('session').notNull(),
+	timestamp: timestamp('timestamp3').defaultNow(),
 });
