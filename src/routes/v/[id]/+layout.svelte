@@ -4,7 +4,7 @@
 
 <div class="flex justify-center p-10">
 	<div
-		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border border-primary p-10 shadow-md"
+		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary p-10 shadow-md"
 	>
 		<div>
 			<h1 class="view-header text-primary"><a href="/">Appraize</a></h1>

@@ -8,7 +8,7 @@
 
 <div class="max-w-dvw flex min-h-dvh items-center justify-center">
 	<div
-		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border border-primary p-10 shadow-md"
+		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary p-10 shadow-md"
 	>
 		<div>
 			<h1 class="view-header text-primary"><a href="/">Appraize</a></h1>
@@ -37,10 +37,10 @@
 						goto(`/v/${navInput}`);
 					}
 				}}
-				>Go <svg
+				><svg
 					xmlns="http://www.w3.org/2000/svg"
-					width="1em"
-					height="1em"
+					width="1.5em"
+					height="1.5em"
 					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"

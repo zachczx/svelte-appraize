@@ -41,7 +41,7 @@
 
 <div class="space-y-10">
 	<form method="POST" action="?/insert" class="flex gap-1">
-		<label class="input input-bordered input-primary flex grow items-center">
+		<label class="input input-bordered input-primary flex grow items-center text-lg">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="1em"
@@ -62,12 +62,12 @@
 				name="name"
 				id="name"
 				bind:value={nameData}
-				class="grow"
+				class="grow text-lg"
 				placeholder="Name"
 				required
 			/>
 		</label>
-		<label class="input input-bordered input-primary flex grow items-center">
+		<label class="input input-bordered input-primary flex grow items-center text-lg">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="1em"
@@ -90,13 +90,13 @@
 				name="dept"
 				id="dept"
 				bind:value={deptData}
-				class="grow"
+				class="grow text-lg"
 				placeholder="Dept"
 				required
 			/>
 		</label>
 		<select
-			class="select select-primary flex items-center gap-2"
+			class="select select-primary flex items-center gap-2 text-lg"
 			name="grade"
 			bind:value={gradeData}
 			id="grade"
@@ -107,7 +107,7 @@
 			<option selected="selected">C</option>
 			<option>D</option>
 		</select>
-		<button class="btn btn-primary">Submit</button>
+		<button class="btn btn-primary text-lg">Submit</button>
 	</form>
 	<ol>
 		<div id="table" class="relative grid space-y-4">
