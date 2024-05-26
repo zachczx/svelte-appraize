@@ -6,6 +6,6 @@ export const records = pgTable('records', {
 	name: text('name').notNull(),
 	dept: text('dept').notNull(),
 	grade: text('grade').notNull(),
-	session: integer('session').notNull(),
+	session: text('session').notNull(),
 	timestamp: timestamp('timestamp3').defaultNow(),
 });
