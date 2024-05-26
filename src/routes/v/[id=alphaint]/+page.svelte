@@ -10,31 +10,30 @@
 	let nameData = $state();
 	let deptData = $state();
 	let gradeData = $state();
-
-	/* 	let people = $state([
-		{ person: 'Pon', dept: 'PDDM', lastGrade: 'C' },
-		{ person: 'Sue', dept: 'SSDD', lastGrade: 'C' },
-		{ person: 'Mary', dept: 'NMMD', lastGrade: 'B' },
-	]);
-	function addData() {
-		console.log(nameData, deptData, gradeData);
-		people.push({ person: nameData, dept: deptData, lastGrade: gradeData });
-		people = [...people];
-		nameData = deptData = gradeData = '';
-	} */
-
+	let order = $state();
+	function saveOrder() {
+		if (!order) {
+			console.log('No movement yet');
+		} else {
+			console.log(order);
+		}
+	}
 	onMount(() => {
 		//= document.getElementById('formNameData');
 		// let deptData = document.getElementById('formDeptData');
 		// let gradeData = document.getElementById('formGradeData');
 		let el = document.getElementById('table');
 		var sortable = new Sortable(el, {
-			animation: 250, // ms, animation speed moving items when sorting, `0` — without animation
+			animation: 250,
 			easing: 'cubic-bezier(1, 0, 0, 1)',
 			ghostClass: 'sortable-ghost', // Class name for the drop placeholder
 			chosenClass: 'sortable-chosen', // Class name for the chosen item
 			dragClass: 'sortable-drag', // Class name for the dragging item
 			dataIdAttr: 'data-id',
+
+			onEnd: function (evt) {
+				order = sortable.toArray();
+			},
 		});
 	});
 </script>
@@ -107,7 +106,23 @@
 			<option selected="selected">C</option>
 			<option>D</option>
 		</select>
-		<button class="btn btn-primary text-lg">Submit</button>
+		<button class="btn btn-primary text-lg font-bold"
+			><svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="icon icon-tabler icons-tabler-outline icon-tabler-plus"
+				><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 5l0 14" /><path
+					d="M5 12l14 0"
+				/></svg
+			></button
+		>
 	</form>
 	<ol>
 		<div id="table" class="relative grid space-y-4">
@@ -117,6 +132,7 @@
 				{#each result as person}
 					<div
 						class="flex rounded-lg border border-slate-400 p-2 hover:border-primary hover:shadow active:shadow-primary"
+						data-id={person.id}
 					>
 						<div class="basis-1/3">
 							<li class="ms-8 list-decimal ps-10">{person.name}</li>
@@ -132,6 +148,23 @@
 			{/await}
 		</div>
 	</ol>
+	<button class="btn btn-neutral" onclick={saveOrder}
+		><svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="2em"
+			height="2em"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy"
+			><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+				d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"
+			/><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4l-6 0l0 -4" /></svg
+		></button
+	>
 </div>
 <span class="sortable-drag sortable-chosen sortable-ghost hidden"></span>
 
