@@ -16,7 +16,7 @@ export const load = (async ({ params }) => {
 		.from(records)
 		.where(eq(records.session, sessionId))
 		.orderBy(asc(records.id));
-	//await delay(3000);
+	//await delay(5000);
 	return {
 		id: sessionId,
 		streamed: {
