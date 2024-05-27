@@ -146,12 +146,12 @@
 								<div class="flex h-full items-center rounded-l-lg bg-primary p-2">
 									<GripVertical class="stroke-base-100" />
 								</div>
-								<li class="ms-8 list-decimal ps-10 font-bold" id="name__{person.uuid}"></li>
+								<li class="ms-8 list-decimal ps-10" id="name__{person.uuid}"></li>
 							</div>
 							<div class="p-2 lg:col-span-4">
 								<EditFields
 									name="name__{person.uuid}"
-									class="input input-sm input-primary w-full border-0 text-base font-bold"
+									class="input input-sm input-primary w-full border-0 text-base"
 									value={person.name}
 									placeholder="Name"
 								/>
