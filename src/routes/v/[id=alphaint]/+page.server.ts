@@ -1,6 +1,6 @@
 import { db } from '$lib/drizzle/db';
 import { records } from '$lib/drizzle/schema';
-import { desc, asc, eq } from 'drizzle-orm';
+import { desc, asc, eq, and } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 let delay = (time) => {
@@ -15,7 +15,7 @@ export const load = (async ({ params }) => {
 		.select()
 		.from(records)
 		.where(eq(records.session, sessionId))
-		.orderBy(asc(records.id));
+		.orderBy(asc(records.sequence));
 	//await delay(5000);
 	return {
 		id: sessionId,
@@ -40,5 +40,30 @@ export const actions = {
 		const deleteData = await request.formData();
 		const target = deleteData.get('delete-target');
 		await db.delete(records).where(eq(records.id, target));
+	},
+
+	save: async function ({ request, params }) {
+		try {
+			const sessionId = String(params.id);
+			const saveData = await request.formData();
+			const orderInput = saveData.get('order');
+			const orderArray = orderInput.split(',');
+			/*
+		for (let [index, element] of orderArray.entries()) {
+			console.log(index, element);
+		} */
+			for (let i = 0; i < orderArray.length; i++) {
+				let individualOrder = i + 1;
+				console.log(individualOrder, orderArray[i]);
+				await db
+					.update(records)
+					.set({ sequence: individualOrder })
+					.where(and(eq(records.session, sessionId), eq(records.uuid, orderArray[i])));
+			}
+			return { success: true };
+		} catch (error) {
+			console.log("There's an error:");
+			console.log(error);
+		}
 	},
 };

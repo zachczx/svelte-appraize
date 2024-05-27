@@ -1,16 +1,19 @@
 <script>
 	//import InsertNew from '$lib/InsertNew.svelte';
 	import Sortable from 'sortablejs';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
+	import { enhance } from '$app/forms';
 	import ChevronRight from '$lib/svg/ChevronRight.svelte';
 	import Trash from '$lib/svg/Trash.svelte';
 	import { fade } from 'svelte/transition';
 	import Spinner from '$lib/Spinner.svelte';
-	let { data } = $props();
+	import UndrawEmpty from '$lib/svg/UndrawEmpty.svelte';
+	let { data, form } = $props();
 	let nameData = $state();
 	let deptData = $state();
 	let gradeData = $state();
 	let order = $state();
+	let buttonColor = $state('btn btn-neutral');
 	function saveOrder() {
 		if (!order) {
 			console.log('No movement yet');
@@ -18,6 +21,7 @@
 			console.log(order);
 		}
 	}
+
 	onMount(() => {
 		//= document.getElementById('formNameData');
 		// let deptData = document.getElementById('formDeptData');
@@ -30,6 +34,10 @@
 			chosenClass: 'sortable-chosen', // Class name for the chosen item
 			dragClass: 'sortable-drag', // Class name for the dragging item
 			dataIdAttr: 'data-id',
+
+			onStart: function (evt) {
+				order = sortable.toArray();
+			},
 
 			onEnd: function (evt) {
 				order = sortable.toArray();
@@ -113,42 +121,73 @@
 			{#await data.streamed.result}
 				<Spinner />
 			{:then result}
-				{#each result as person}
-					<div
-						class="flex rounded-lg border border-slate-400 p-2 hover:border-primary hover:shadow active:shadow-primary"
-						data-id={person.id}
-					>
-						<div class="basis-1/3">
-							<li class="ms-8 list-decimal ps-10">{person.name}</li>
-						</div>
-						<div class="basis-1/3">{person.dept}</div>
-						<div class="basis-1/3">{person.grade}</div>
-						<form method="POST" action="?/delete">
-							<input type="hidden" name="delete-target" value={person.id} />
-							<button><Trash class="inline stroke-red-400" /></button>
-						</form>
+				{#if !result || result.length === 0}
+					<div class="p-2 lg:p-5">
+						<div class="flex justify-center"><UndrawEmpty /></div>
+						<h2 class="text-center">There's nothing here!</h2>
 					</div>
-				{/each}
+				{:else}
+					{#each result as person}
+						<div
+							class="flex rounded-lg border border-slate-400 p-2 hover:border-primary hover:shadow active:shadow-primary"
+							data-id={person.uuid}
+						>
+							<div class="basis-1/3">
+								<li class="ms-8 list-decimal ps-10">{person.name}</li>
+							</div>
+							<div class="basis-1/3">{person.dept}</div>
+							<div class="basis-1/3">{person.grade}</div>
+							<form method="POST" action="?/delete">
+								<input type="hidden" name="delete-target" value={person.id} />
+								<button><Trash class="inline stroke-red-400" /></button>
+							</form>
+						</div>
+					{/each}
+				{/if}
 			{/await}
 		</div>
 	</ol>
-	<button class="btn btn-neutral" onclick={saveOrder}
-		><svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="2em"
-			height="2em"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy"
-			><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-				d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"
-			/><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4l-6 0l0 -4" /></svg
-		></button
-	>
+	<form method="POST" action="?/save" use:enhance>
+		<input type="hidden" name="order" value={order} />
+		<button
+			class={buttonColor}
+			onclick={() => {
+				buttonColor = 'btn bg-lime-400';
+				setInterval(() => {
+					buttonColor = 'btn bg-neutral';
+				}, 2500);
+			}}
+		>
+			{#key buttonColor}
+				{#if buttonColor === 'btn bg-lime-400'}<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="2em"
+						height="2em"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="icon icon-tabler icons-tabler-outline icon-tabler-check stroke-base-100"
+						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg
+					>{:else}<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="2em"
+						height="2em"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy stroke-base-100"
+						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+							d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"
+						/><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path
+							d="M14 4l0 4l-6 0l0 -4"
+						/></svg
+					>{/if}{/key}</button
+		>
+	</form>
 </div>
 <span class="sortable-drag sortable-chosen sortable-ghost hidden"></span>
 
