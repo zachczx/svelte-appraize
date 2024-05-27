@@ -9,6 +9,8 @@
 	import Spinner from '$lib/Spinner.svelte';
 	import UndrawEmpty from '$lib/svg/UndrawEmpty.svelte';
 	import TablerEdit from '$lib/svg/TablerEdit.svelte';
+	import EditFields from '$lib/EditFields.svelte';
+	import GripVertical from '$lib/svg/GripVertical.svelte';
 	let { data, form } = $props();
 	let nameData = $state();
 	let deptData = $state();
@@ -16,6 +18,7 @@
 	let order = $state();
 	let buttonColor = $state('btn btn-neutral');
 	let disableSaveButton = $state(true);
+
 	/* $effect(() => {
 		console.log(disableSaveButton);
 		console.log(order);
@@ -136,19 +139,46 @@
 				{:else}
 					{#each result as person}
 						<div
-							class="flex rounded-lg border border-slate-400 hover:border-primary hover:shadow active:shadow-primary"
+							class="grid rounded-lg border border-slate-400 hover:border-primary hover:shadow active:shadow-primary lg:grid-cols-12"
 							data-id={person.uuid}
 						>
-							<div class="sortable-handle basis-1/3 p-2">
-								<li class="ms-8 list-decimal ps-10">{person.name}</li>
+							<div class="sortable-handle flex items-center lg:col-span-1">
+								<div class="flex h-full items-center rounded-l-lg bg-primary p-2">
+									<GripVertical class="stroke-base-100" />
+								</div>
+								<li class="ms-8 list-decimal ps-10 font-bold" id="name__{person.uuid}"></li>
 							</div>
-							<div class="sortable-handle basis-1/3 p-2">{person.dept}</div>
-							<div class="sortable-handle basis-1/3 p-2">{person.grade}</div>
-							<div class="flex p-2">
-								<button class="mx-5 self-center"><TablerEdit class="stroke-green-400" /></button>
-								<form method="POST" class="self-center" action="?/delete">
+							<div class="p-2 lg:col-span-4">
+								<EditFields
+									name="name__{person.uuid}"
+									class="input input-sm input-primary w-full border-0 text-base font-bold"
+									value={person.name}
+									placeholder="Name"
+								/>
+							</div>
+							<div class="p-2 lg:col-span-3" id="dept__{person.uuid}">
+								<EditFields
+									name="dept__{person.uuid}"
+									class="input input-sm input-primary w-full border-0 text-base"
+									value={person.dept}
+									placeholder="Dept"
+								/>
+							</div>
+							<div class="p-2 lg:col-span-2" id="grade__{person.uuid}">
+								<EditFields
+									name="grade__{person.uuid}"
+									class="input input-sm input-primary w-full border-0 text-base"
+									value={person.grade}
+									placeholder="Grade"
+								/>
+							</div>
+							<div class="flex justify-end p-2 lg:col-span-2">
+								<button class="mx-3 self-center" onclick={() => {}}
+									><TablerEdit class="stroke-green-400" /></button
+								>
+								<form method="POST" class="mx-3 self-center" action="?/delete">
 									<input type="hidden" name="delete-target" value={person.id} />
-									<button><Trash class="inline stroke-red-400" /></button>
+									<button class="group"><Trash class="inline stroke-red-400" /></button>
 								</form>
 							</div>
 						</div>
@@ -218,6 +248,7 @@
 
 <style>
 	.sortable-handle {
-		cursor: url('/hand-grab.svg'), auto;
+		/* cursor: url('/hand-grab.svg'), auto; */
+		cursor: move;
 	}
 </style>
