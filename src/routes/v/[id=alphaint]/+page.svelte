@@ -16,9 +16,10 @@
 	let order = $state();
 	let buttonColor = $state('btn btn-neutral');
 	let disableSaveButton = $state(true);
-	/* 	$effect(() => {
+	/* $effect(() => {
 		console.log(disableSaveButton);
 		console.log(order);
+		console.log(buttonColor);
 	}); */
 
 	onMount(() => {
@@ -161,19 +162,21 @@
 		<button
 			class={buttonColor}
 			onclick={() => {
-				buttonColor = 'btn bg-neutral spin';
+				buttonColor = 'btn btn-neutral spin';
+				disableSaveButton = true;
 				setTimeout(() => {
 					buttonColor = 'btn bg-lime-500';
-				}, 2000);
+					disableSaveButton = false;
+				}, 1000);
 				setTimeout(() => {
-					buttonColor = 'btn bg-neutral';
+					buttonColor = 'btn btn-neutral';
+					disableSaveButton = true;
 				}, 4000);
-				disableSaveButton = true;
 			}}
 			disabled={disableSaveButton}
 		>
 			{#key buttonColor}
-				{#if buttonColor === 'btn bg-neutral spin'}
+				{#if buttonColor === 'btn btn-neutral spin'}
 					<span class="loading loading-spinner loading-md h-[2em] w-[2em] text-base-100"></span>
 				{:else if buttonColor === 'btn bg-lime-500'}
 					<svg
