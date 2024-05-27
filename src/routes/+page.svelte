@@ -11,10 +11,10 @@
 	const regex = /[!@#$%^&*()\-+={}[\]:;"'<>,.?\/|\\]/;
 </script>
 
-<div class="max-w-dvw flex min-h-dvh flex-wrap items-center justify-center">
+<div class="max-w-dvw flex flex-wrap items-center justify-center xl:min-h-dvh">
 	<UndrawDecide />
 	<div
-		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary p-10 shadow-lg"
+		class="view-outline z-20 grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary bg-base-100 p-3 pt-4 shadow-lg lg:p-10"
 	>
 		<div>
 			<h1 class="view-header text-primary"><a href="/">Appraize</a></h1>
@@ -25,7 +25,7 @@
 				<input
 					type="text"
 					name="name"
-					placeholder="Type some letters or numbers here"
+					placeholder="Type a few letters or numbers here to begin"
 					class="input input-bordered input-primary w-full"
 					bind:value={navInput}
 					oninput={() => {
@@ -67,7 +67,7 @@
 						>{/if}
 				</button>
 			</div>
-			{#if noticeSpecialChar === true}<span class="text-info">
+			{#if noticeSpecialChar === true}<span class="font-bold text-red-400">
 					Please remove special characters and symbols!
 				</span>{:else}&nbsp;{/if}
 		</div>

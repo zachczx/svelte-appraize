@@ -3,24 +3,23 @@
 	import Sortable from 'sortablejs';
 	import { onMount, tick } from 'svelte';
 	import { enhance } from '$app/forms';
-	import ChevronRight from '$lib/svg/ChevronRight.svelte';
 	import Trash from '$lib/svg/Trash.svelte';
-	import { fade } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
+	import { circOut } from 'svelte/easing';
 	import Spinner from '$lib/Spinner.svelte';
 	import UndrawEmpty from '$lib/svg/UndrawEmpty.svelte';
+	import TablerEdit from '$lib/svg/TablerEdit.svelte';
 	let { data, form } = $props();
 	let nameData = $state();
 	let deptData = $state();
 	let gradeData = $state();
 	let order = $state();
 	let buttonColor = $state('btn btn-neutral');
-	function saveOrder() {
-		if (!order) {
-			console.log('No movement yet');
-		} else {
-			console.log(order);
-		}
-	}
+	let disableSaveButton = $state(true);
+	/* 	$effect(() => {
+		console.log(disableSaveButton);
+		console.log(order);
+	}); */
 
 	onMount(() => {
 		//= document.getElementById('formNameData');
@@ -34,20 +33,22 @@
 			chosenClass: 'sortable-chosen', // Class name for the chosen item
 			dragClass: 'sortable-drag', // Class name for the dragging item
 			dataIdAttr: 'data-id',
+			handle: '.sortable-handle',
 
-			onStart: function (evt) {
+			onUnchoose: function (evt) {
 				order = sortable.toArray();
 			},
-
 			onEnd: function (evt) {
 				order = sortable.toArray();
+				disableSaveButton = false;
 			},
 		});
+		order = sortable.toArray();
 	});
 </script>
 
-<div class="space-y-10">
-	<form method="POST" action="?/insert" class="flex gap-1">
+<div class="space-y-12">
+	<form method="POST" action="?/insert" class="flex gap-1" use:enhance>
 		<label class="input input-bordered input-primary flex grow items-center text-lg">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -114,7 +115,12 @@
 			<option selected="selected">C</option>
 			<option>D</option>
 		</select>
-		<button class="btn btn-primary text-lg font-bold">Add</button>
+		<button
+			class="btn btn-primary text-lg font-bold"
+			onclick={() => {
+				disableSaveButton = false;
+			}}>Add</button
+		>
 	</form>
 	<ol>
 		<div id="table" class="relative grid space-y-4">
@@ -129,37 +135,48 @@
 				{:else}
 					{#each result as person}
 						<div
-							class="flex rounded-lg border border-slate-400 p-2 hover:border-primary hover:shadow active:shadow-primary"
+							class="flex rounded-lg border border-slate-400 hover:border-primary hover:shadow active:shadow-primary"
 							data-id={person.uuid}
 						>
-							<div class="basis-1/3">
+							<div class="sortable-handle basis-1/3 p-2">
 								<li class="ms-8 list-decimal ps-10">{person.name}</li>
 							</div>
-							<div class="basis-1/3">{person.dept}</div>
-							<div class="basis-1/3">{person.grade}</div>
-							<form method="POST" action="?/delete">
-								<input type="hidden" name="delete-target" value={person.id} />
-								<button><Trash class="inline stroke-red-400" /></button>
-							</form>
+							<div class="sortable-handle basis-1/3 p-2">{person.dept}</div>
+							<div class="sortable-handle basis-1/3 p-2">{person.grade}</div>
+							<div class="flex p-2">
+								<button class="mx-5 self-center"><TablerEdit class="stroke-green-400" /></button>
+								<form method="POST" class="self-center" action="?/delete">
+									<input type="hidden" name="delete-target" value={person.id} />
+									<button><Trash class="inline stroke-red-400" /></button>
+								</form>
+							</div>
 						</div>
 					{/each}
 				{/if}
 			{/await}
 		</div>
 	</ol>
-	<form method="POST" action="?/save" use:enhance>
+	<form method="POST" action="?/save" class="flex" use:enhance>
 		<input type="hidden" name="order" value={order} />
 		<button
 			class={buttonColor}
 			onclick={() => {
-				buttonColor = 'btn bg-lime-400';
-				setInterval(() => {
+				buttonColor = 'btn bg-neutral spin';
+				setTimeout(() => {
+					buttonColor = 'btn bg-lime-500';
+				}, 2000);
+				setTimeout(() => {
 					buttonColor = 'btn bg-neutral';
-				}, 2500);
+				}, 4000);
+				disableSaveButton = true;
 			}}
+			disabled={disableSaveButton}
 		>
 			{#key buttonColor}
-				{#if buttonColor === 'btn bg-lime-400'}<svg
+				{#if buttonColor === 'btn bg-neutral spin'}
+					<span class="loading loading-spinner loading-md h-[2em] w-[2em] text-base-100"></span>
+				{:else if buttonColor === 'btn bg-lime-500'}
+					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="2em"
 						height="2em"
@@ -170,7 +187,9 @@
 						stroke-linejoin="round"
 						class="icon icon-tabler icons-tabler-outline icon-tabler-check stroke-base-100"
 						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg
-					>{:else}<svg
+					>
+				{:else}
+					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="2em"
 						height="2em"
@@ -186,24 +205,16 @@
 							d="M14 4l0 4l-6 0l0 -4"
 						/></svg
 					>{/if}{/key}</button
-		>
+		>{#if buttonColor === 'btn bg-lime-500'}<span
+				class="ms-4 inline-block self-center font-bold"
+				in:slide={{ duration: 150, axis: 'x', easing: circOut }}
+				out:slide={{ duration: 300, axis: 'x', easing: circOut }}>Saved!</span
+			>{/if}
 	</form>
 </div>
-<span class="sortable-drag sortable-chosen sortable-ghost hidden"></span>
 
 <style>
-	.sortable-chosen {
-		border: 10px solid red !important ;
-		color: red;
-	}
-	.sortable-drag {
-		background-color: black !important ;
-		border: 10px solid red !important ;
-	}
-
-	.sortable-ghost {
-		background-color: black !important ;
-		border: 10px solid red !important ;
-		opacity: 1 !important ;
+	.sortable-handle {
+		cursor: url('/hand-grab.svg'), auto;
 	}
 </style>

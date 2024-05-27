@@ -1,3 +1,7 @@
+<script>
+	let primaryColor = '#491eff';
+</script>
+
 <svg
 	xmlns="http://www.w3.org/2000/svg"
 	data-name="Layer 1"
@@ -10,13 +14,13 @@
 		data-name="Path 680"
 		d="M363.08335,336.9351a3.78766,3.78766,0,0,0,0,7.57532H439.9178a3.78766,3.78766,0,1,0,0-7.57532Z"
 		transform="translate(-275.16231 -336.9351)"
-		fill="#3f3d56"
+		fill={primaryColor}
 	/><path
 		id="fa56b25f-6ad1-4bb0-b587-f288aecf2229-594"
 		data-name="Path 681"
 		d="M363.08335,359.25074a3.78767,3.78767,0,0,0,0,7.57533H439.9178a3.78767,3.78767,0,0,0,0-7.57533Z"
 		transform="translate(-275.16231 -336.9351)"
-		fill="#3f3d56"
+		fill={primaryColor}
 	/><path
 		id="b413f49f-a7ee-4528-83fd-849b3d17d98f-595"
 		data-name="Path 682"
@@ -28,13 +32,13 @@
 		data-name="Path 680"
 		d="M760.08335,336.9351a3.78766,3.78766,0,1,0,0,7.57532H836.9178a3.78766,3.78766,0,0,0,0-7.57532Z"
 		transform="translate(-275.16231 -336.9351)"
-		fill="#3f3d56"
+		fill={primaryColor}
 	/><path
 		id="f7616677-88a5-4e4e-be2c-5696cf4c3e42-597"
 		data-name="Path 681"
 		d="M760.08335,359.25074a3.78767,3.78767,0,0,0,0,7.57533H836.9178a3.78767,3.78767,0,0,0,0-7.57533Z"
 		transform="translate(-275.16231 -336.9351)"
-		fill="#3f3d56"
+		fill={primaryColor}
 	/><path
 		id="b0ec98cc-856e-42d0-b3d1-ea9b3df6bb16-598"
 		data-name="Path 682"
@@ -122,6 +126,6 @@
 	/><path
 		d="M923.647,563.0649H276.353a1.19069,1.19069,0,0,1,0-2.38137H923.647a1.19068,1.19068,0,0,1,0,2.38137Z"
 		transform="translate(-275.16231 -336.9351)"
-		fill="#3f3d56"
+		fill={primaryColor}
 	/></svg
 >
