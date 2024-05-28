@@ -1,7 +1,7 @@
 <script>
 	//import InsertNew from '$lib/InsertNew.svelte';
 	import Sortable from 'sortablejs';
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import Trash from '$lib/svg/Trash.svelte';
 	import { slide } from 'svelte/transition';
@@ -12,12 +12,12 @@
 	import EditFields from '$lib/EditFields.svelte';
 	import GripVertical from '$lib/svg/GripVertical.svelte';
 	let { data, form } = $props();
+	let currentSaveIcon = $state('iconSave');
+	let currentSaveButtonColor = $state('btn btn-neutral');
 	let nameData = $state();
 	let deptData = $state();
 	let gradeData = $state();
 	let order = $state();
-	let buttonColor = $state('btn btn-neutral');
-	let disableSaveButton = $state(true);
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-secondary'];
 	const dragShadowClassesMoving = [
 		'ring',
@@ -27,9 +27,8 @@
 		'shadow-neutral',
 	];
 	/* $effect(() => {
-		console.log(disableSaveButton);
 		console.log(order);
-		console.log(buttonColor);
+
 	}); */
 
 	onMount(() => {
@@ -65,11 +64,15 @@
 			},
 			onEnd: function (evt) {
 				order = sortable.toArray();
-				disableSaveButton = false;
+				evt.item.classList.remove(...dragShadowClassesMoving);
 			},
 		});
 		order = sortable.toArray();
 	});
+
+	/* 	$effect(() => {
+		console.log(form?.success);
+	}); */
 </script>
 
 <div class="space-y-12">
@@ -140,12 +143,7 @@
 			<option selected="selected">C</option>
 			<option>D</option>
 		</select>
-		<button
-			class="btn btn-primary text-lg font-bold"
-			onclick={() => {
-				disableSaveButton = false;
-			}}>Add</button
-		>
+		<button class="btn btn-primary text-lg font-bold">Add</button>
 	</form>
 	<ol>
 		<div id="table" class="relative grid space-y-4">
@@ -211,38 +209,27 @@
 	<form method="POST" action="?/save" class="flex" use:enhance>
 		<input type="hidden" name="order" value={order} />
 		<button
-			class={buttonColor}
+			class={currentSaveButtonColor}
 			onclick={() => {
-				buttonColor = 'btn btn-neutral spin';
-				disableSaveButton = true;
+				currentSaveIcon = 'iconSpinner';
 				setTimeout(() => {
-					buttonColor = 'btn bg-lime-500';
-					disableSaveButton = false;
-				}, 1000);
-				setTimeout(() => {
-					buttonColor = 'btn btn-neutral';
-					disableSaveButton = true;
-				}, 4000);
+					if (form?.success) {
+						currentSaveIcon = 'iconSave';
+						currentSaveButtonColor = 'btn btn-neutral';
+						form.success = undefined;
+					} else if (!form?.success || form?.success == null) {
+						currentSaveIcon = 'iconError';
+						currentSaveButtonColor = 'btn bg-red-600';
+						setTimeout(() => {
+							currentSaveIcon = 'iconSave';
+							currentSaveButtonColor = 'btn btn-neutral';
+						}, 1000);
+					}
+				}, 5000);
 			}}
-			disabled={disableSaveButton}
 		>
-			{#key buttonColor}
-				{#if buttonColor === 'btn btn-neutral spin'}
-					<span class="loading loading-spinner loading-md h-[2em] w-[2em] text-base-100"></span>
-				{:else if buttonColor === 'btn bg-lime-500'}
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="2em"
-						height="2em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-check stroke-base-100"
-						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg
-					>
-				{:else}
+			{#key currentSaveIcon}
+				{#if currentSaveIcon === 'iconSave' && (!form?.success || form?.success == null)}
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="2em"
@@ -258,12 +245,53 @@
 						/><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path
 							d="M14 4l0 4l-6 0l0 -4"
 						/></svg
-					>{/if}{/key}</button
-		>{#if buttonColor === 'btn bg-lime-500'}<span
-				class="ms-4 inline-block self-center font-bold"
-				in:slide={{ duration: 150, axis: 'x', easing: circOut }}
-				out:slide={{ duration: 300, axis: 'x', easing: circOut }}>Saved!</span
-			>{/if}
+					>
+				{:else if currentSaveIcon === 'iconSpinner' && (!form?.success || form?.success == null)}
+					<span class="loading loading-spinner loading-md h-[2em] w-[2em] text-base-100"></span>
+				{:else if currentSaveIcon === 'iconSpinner' && form?.success}<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="2em"
+						height="2em"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="icon icon-tabler icons-tabler-outline icon-tabler-check stroke-base-100"
+						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg
+					>
+				{:else if currentSaveIcon === 'iconError'}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="2em"
+						height="2em"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="icon icon-tabler icons-tabler-outline icon-tabler-exclamation-circle stroke-base-100"
+						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+							d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"
+						/><path d="M12 9v4" /><path d="M12 16v.01" /></svg
+					>
+				{/if}
+			{/key}
+		</button>
+		{#key currentSaveIcon}
+			{#if currentSaveIcon === 'iconSpinner' && form?.success}<span
+					class="ms-4 inline-block self-center font-bold"
+					in:slide={{ duration: 150, axis: 'x', easing: circOut }}
+					out:slide={{ duration: 300, axis: 'x', easing: circOut }}>Saved!</span
+				>
+			{:else if currentSaveIcon === 'iconError'}<span
+					class="ms-4 inline-block self-center font-bold"
+					in:slide={{ duration: 150, axis: 'x', easing: circOut }}
+					out:slide={{ duration: 300, axis: 'x', easing: circOut }}>Error!</span
+				>
+			{/if}
+		{/key}
 	</form>
 </div>
 

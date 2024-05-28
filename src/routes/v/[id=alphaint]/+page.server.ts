@@ -60,6 +60,7 @@ export const actions = {
 					.set({ sequence: individualOrder })
 					.where(and(eq(records.session, sessionId), eq(records.uuid, orderArray[i])));
 			}
+			await delay(500);
 			return { success: true };
 		} catch (error) {
 			console.log("There's an error:");
