@@ -18,7 +18,14 @@
 	let order = $state();
 	let buttonColor = $state('btn btn-neutral');
 	let disableSaveButton = $state(true);
-
+	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-secondary'];
+	const dragShadowClassesMoving = [
+		'ring',
+		'ring-1',
+		'ring-secondary',
+		'shadow-lg',
+		'shadow-neutral',
+	];
 	/* $effect(() => {
 		console.log(disableSaveButton);
 		console.log(order);
@@ -29,18 +36,32 @@
 		//= document.getElementById('formNameData');
 		// let deptData = document.getElementById('formDeptData');
 		// let gradeData = document.getElementById('formGradeData');
+
 		let el = document.getElementById('table');
 		var sortable = new Sortable(el, {
-			animation: 250,
-			easing: 'cubic-bezier(1, 0, 0, 1)',
-			ghostClass: 'sortable-ghost', // Class name for the drop placeholder
-			chosenClass: 'sortable-chosen', // Class name for the chosen item
-			dragClass: 'sortable-drag', // Class name for the dragging item
+			animation: 200,
+			ghostClass: '.sortable-ghost', // Class name for the drop placeholder
+			chosenClass: '.sortable-chosen', // Class name for the chosen item
+			dragClass: '.sortable-drag', // Class name for the dragging item
 			dataIdAttr: 'data-id',
 			handle: '.sortable-handle',
+			// auto scroll plugin
+			scroll: true,
+			forceAutoScrollFallback: false,
+			scrollSensitivity: 70,
+			scrollSpeed: 1,
+			bubbleScroll: true,
+
+			onChoose: function (evt) {
+				evt.item.classList.add(...dragShadowClassesStart);
+			},
+			onStart: function (evt) {
+				evt.item.classList.add(...dragShadowClassesMoving);
+			},
 
 			onUnchoose: function (evt) {
 				order = sortable.toArray();
+				evt.item.classList.remove(...dragShadowClassesMoving);
 			},
 			onEnd: function (evt) {
 				order = sortable.toArray();
@@ -139,7 +160,7 @@
 				{:else}
 					{#each result as person}
 						<div
-							class="grid rounded-lg border border-slate-400 hover:border-primary hover:shadow active:shadow-primary lg:grid-cols-12"
+							class="grid rounded-lg border border-slate-400 hover:border-secondary lg:grid-cols-12"
 							data-id={person.uuid}
 						>
 							<div class="sortable-handle flex items-center lg:col-span-1">
