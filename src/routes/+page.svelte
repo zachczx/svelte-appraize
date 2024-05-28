@@ -6,7 +6,7 @@
 
 	//superforms imports
 	import { superForm } from 'sveltekit-superforms';
-	// import SuperDebug from 'sveltekit-superforms';
+	//import SuperDebug from 'sveltekit-superforms';
 	let { data } = $props();
 
 	// superforms Client API:
@@ -36,6 +36,7 @@
 						placeholder="Type a few letters or numbers here to begin"
 						class="input input-bordered input-primary w-full"
 						bind:value={$form.session}
+						required
 					/>
 					<button
 						class="btn btn-primary text-xl font-bold"
