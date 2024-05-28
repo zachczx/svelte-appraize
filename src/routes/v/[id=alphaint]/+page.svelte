@@ -23,7 +23,7 @@
 		'ring',
 		'ring-1',
 		'ring-secondary',
-		'shadow-lg',
+		'shadow-md',
 		'shadow-neutral',
 	];
 	/* $effect(() => {
@@ -197,7 +197,7 @@
 								>
 								<form method="POST" class="mx-3 self-center" action="?/delete">
 									<input type="hidden" name="delete-target" value={person.id} />
-									<button class="group"><Trash class="inline stroke-red-400" /></button>
+									<button><Trash class="inline stroke-red-400" /></button>
 								</form>
 							</div>
 						</div>
