@@ -153,7 +153,7 @@
 				{:else}
 					{#each result as person}
 						<div
-							class="grid grid-cols-12 rounded-lg border border-slate-400 hover:border-secondary"
+							class="grid grid-cols-12 rounded-lg border border-slate-400 hover:border-primary"
 							data-id={person.uuid}
 						>
 							<div
