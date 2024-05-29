@@ -17,7 +17,7 @@
 </script>
 
 <!-- <SuperDebug data={$form} /> -->
-<div class="max-w-dvw flex flex-wrap items-center justify-center xl:min-h-dvh">
+<div class="max-w-dvw flex min-h-dvh flex-wrap content-center justify-center">
 	<UndrawDecide />
 	<div
 		class="view-outline z-20 grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary bg-base-100 p-3 pt-4 shadow-lg lg:p-10"
