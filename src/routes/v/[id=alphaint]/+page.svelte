@@ -18,11 +18,11 @@
 	let deptData = $state();
 	let gradeData = $state();
 	let order = $state();
-	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-secondary'];
+	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = [
 		'ring',
 		'ring-1',
-		'ring-secondary',
+		'ring-primary',
 		'shadow-md',
 		'shadow-neutral',
 	];
