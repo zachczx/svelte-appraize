@@ -162,7 +162,7 @@
 								<div class="flex h-full items-center rounded-l-lg bg-primary p-2">
 									<GripVertical class="stroke-base-100" />
 								</div>
-								<li class="ms-8 list-decimal ps-10" id="name__{person.uuid}"></li>
+								<li class="ms-8 md:ms-12 list-decimal ps-10" id="name__{person.uuid}"></li>
 							</div>
 							<div class="col-span-5 p-2 md:col-span-4">
 								<EditFields
