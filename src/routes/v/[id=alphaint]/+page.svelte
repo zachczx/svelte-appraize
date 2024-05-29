@@ -71,7 +71,7 @@
 </script>
 
 <div class="space-y-12">
-	<form method="POST" action="?/insert" class="flex gap-1" use:enhance>
+	<form method="POST" action="?/insert" class="flex flex-wrap gap-1" use:enhance>
 		<label class="input input-bordered input-primary flex grow items-center text-lg">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -153,16 +153,18 @@
 				{:else}
 					{#each result as person}
 						<div
-							class="grid rounded-lg border border-slate-400 hover:border-secondary lg:grid-cols-12"
+							class="grid grid-cols-12 rounded-lg border border-slate-400 hover:border-secondary"
 							data-id={person.uuid}
 						>
-							<div class="sortable-handle flex items-center lg:col-span-1">
+							<div
+								class="sortable-handle col-span-2 row-span-2 flex items-center md:col-span-1 md:row-span-1"
+							>
 								<div class="flex h-full items-center rounded-l-lg bg-primary p-2">
 									<GripVertical class="stroke-base-100" />
 								</div>
 								<li class="ms-8 list-decimal ps-10" id="name__{person.uuid}"></li>
 							</div>
-							<div class="p-2 lg:col-span-4">
+							<div class="col-span-5 p-2 md:col-span-4">
 								<EditFields
 									name="name__{person.uuid}"
 									class="input input-sm input-primary w-full border-0 text-base"
@@ -170,7 +172,7 @@
 									placeholder="Name"
 								/>
 							</div>
-							<div class="p-2 lg:col-span-3" id="dept__{person.uuid}">
+							<div class="col-span-5 p-2 md:col-span-3" id="dept__{person.uuid}">
 								<EditFields
 									name="dept__{person.uuid}"
 									class="input input-sm input-primary w-full border-0 text-base"
@@ -178,7 +180,7 @@
 									placeholder="Dept"
 								/>
 							</div>
-							<div class="p-2 lg:col-span-2" id="grade__{person.uuid}">
+							<div class="col-span-5 p-2 md:col-span-2" id="grade__{person.uuid}">
 								<EditFields
 									name="grade__{person.uuid}"
 									class="input input-sm input-primary w-full border-0 text-base"
@@ -186,8 +188,8 @@
 									placeholder="Grade"
 								/>
 							</div>
-							<div class="flex justify-end p-2 lg:col-span-2">
-								<button class="mx-3 self-center" onclick={() => {}}
+							<div class="col-span-5 flex justify-end p-2 md:col-span-2">
+								<button class="self-center md:mx-3" onclick={() => {}}
 									><TablerEdit class="stroke-green-400" /></button
 								>
 								<form method="POST" class="mx-3 self-center" action="?/delete">
