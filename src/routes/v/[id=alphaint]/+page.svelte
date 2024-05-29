@@ -26,9 +26,8 @@
 		'shadow-md',
 		'shadow-neutral',
 	];
-	/* $effect(() => {
-		console.log(order);
-
+	/* 	$effect(() => {
+		console.log(form);
 	}); */
 
 	onMount(() => {
@@ -69,10 +68,6 @@
 		});
 		order = sortable.toArray();
 	});
-
-	/* 	$effect(() => {
-		console.log(form?.success);
-	}); */
 </script>
 
 <div class="space-y-12">
@@ -213,11 +208,11 @@
 			onclick={() => {
 				currentSaveIcon = 'iconSpinner';
 				setTimeout(() => {
-					if (form?.success) {
+					if (form?.formSaveSuccess) {
 						currentSaveIcon = 'iconSave';
 						currentSaveButtonColor = 'btn btn-neutral';
-						form.success = undefined;
-					} else if (!form?.success || form?.success == null) {
+						form.formSaveSuccess = undefined;
+					} else if (!form?.formSaveSuccess || form?.formSaveSuccess == null) {
 						currentSaveIcon = 'iconError';
 						currentSaveButtonColor = 'btn bg-red-600';
 						setTimeout(() => {
@@ -229,7 +224,7 @@
 			}}
 		>
 			{#key currentSaveIcon}
-				{#if currentSaveIcon === 'iconSave' && (!form?.success || form?.success == null)}
+				{#if currentSaveIcon === 'iconSave' && (!form?.formSaveSuccess || form?.formSaveSuccess == null)}
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="2em"
@@ -246,9 +241,9 @@
 							d="M14 4l0 4l-6 0l0 -4"
 						/></svg
 					>
-				{:else if currentSaveIcon === 'iconSpinner' && (!form?.success || form?.success == null)}
+				{:else if currentSaveIcon === 'iconSpinner' && (!form?.formSaveSuccess || form?.formSaveSuccess == null)}
 					<span class="loading loading-spinner loading-md h-[2em] w-[2em] text-base-100"></span>
-				{:else if currentSaveIcon === 'iconSpinner' && form?.success}<svg
+				{:else if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="2em"
 						height="2em"
@@ -280,7 +275,7 @@
 			{/key}
 		</button>
 		{#key currentSaveIcon}
-			{#if currentSaveIcon === 'iconSpinner' && form?.success}<span
+			{#if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}<span
 					class="ms-4 inline-block self-center font-bold"
 					in:slide={{ duration: 150, axis: 'x', easing: circOut }}
 					out:slide={{ duration: 300, axis: 'x', easing: circOut }}>Saved!</span

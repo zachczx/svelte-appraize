@@ -33,7 +33,7 @@ export const actions = {
 		const dept = String(submittedData.get('dept'));
 		const grade = String(submittedData.get('grade'));
 		await db.insert(records).values({ name: name, dept: dept, grade: grade, session: sessionId });
-		return { success: true };
+		return { formInsertSuccess: true };
 	},
 
 	delete: async function ({ request }) {
@@ -61,7 +61,7 @@ export const actions = {
 					.where(and(eq(records.session, sessionId), eq(records.uuid, orderArray[i])));
 			}
 			await delay(500);
-			return { success: true };
+			return { formSaveSuccess: true };
 		} catch (error) {
 			console.log("There's an error:");
 			console.log(error);
