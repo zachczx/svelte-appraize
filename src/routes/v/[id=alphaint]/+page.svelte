@@ -19,15 +19,9 @@
 	let gradeData = $state();
 	let order = $state();
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
-	const dragShadowClassesMoving = [
-		'ring',
-		'ring-1',
-		'ring-primary',
-		'shadow-md',
-		'shadow-neutral',
-	];
-	/* 	$effect(() => {
-		console.log(form);
+	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
+	/* $effect(() => {
+		console.log(order);
 	}); */
 
 	onMount(() => {
@@ -50,10 +44,15 @@
 			scrollSpeed: 1,
 			bubbleScroll: true,
 
+			setData: function () {
+				order = sortable.toArray();
+			},
+
 			onChoose: function (evt) {
 				evt.item.classList.add(...dragShadowClassesStart);
 			},
 			onStart: function (evt) {
+				order = sortable.toArray();
 				evt.item.classList.add(...dragShadowClassesMoving);
 			},
 
@@ -162,7 +161,7 @@
 								<div class="flex h-full items-center rounded-l-lg bg-primary p-2">
 									<GripVertical class="stroke-base-100" />
 								</div>
-								<li class="ms-8 md:ms-12 list-decimal ps-10" id="name__{person.uuid}"></li>
+								<li class="ms-8 list-decimal ps-10 md:ms-12" id="name__{person.uuid}"></li>
 							</div>
 							<div class="col-span-5 p-2 md:col-span-4">
 								<EditFields
@@ -192,7 +191,7 @@
 								<button class="self-center md:mx-3" onclick={() => {}}
 									><TablerEdit class="stroke-green-400" /></button
 								>
-								<form method="POST" class="mx-3 self-center" action="?/delete">
+								<form method="POST" class="mx-3 self-center" action="?/delete" use:enhance>
 									<input type="hidden" name="delete-target" value={person.id} />
 									<button><Trash class="inline stroke-red-400" /></button>
 								</form>
@@ -220,7 +219,7 @@
 						setTimeout(() => {
 							currentSaveIcon = 'iconSave';
 							currentSaveButtonColor = 'btn btn-neutral';
-						}, 1000);
+						}, 3000);
 					}
 				}, 5000);
 			}}
@@ -287,6 +286,14 @@
 					in:slide={{ duration: 150, axis: 'x', easing: circOut }}
 					out:slide={{ duration: 300, axis: 'x', easing: circOut }}>Error!</span
 				>
+			{/if}
+		{/key}
+		{#key form}{#if form?.fail}
+				<div class="toast toast-center">
+					<div class="alert flex justify-center bg-red-600 text-base-100">
+						Failed to save, please try again later.
+					</div>
+				</div>
 			{/if}
 		{/key}
 	</form>

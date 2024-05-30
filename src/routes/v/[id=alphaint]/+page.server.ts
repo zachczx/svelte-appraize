@@ -3,6 +3,12 @@ import { records } from '$lib/drizzle/schema';
 import { desc, asc, eq, and } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
+//superforms
+import { z } from 'zod';
+import { fail } from '@sveltejs/kit';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+
 let delay = (time) => {
 	return new Promise((res) => {
 		setTimeout(res, time);
@@ -28,11 +34,33 @@ export const load = (async ({ params }) => {
 export const actions = {
 	insert: async function ({ request, params }) {
 		const sessionId = String(params.id);
+		let currentLargestSequence = await db
+			.select()
+			.from(records)
+			.where(eq(records.session, sessionId))
+			.orderBy(desc(records.sequence))
+			.limit(1);
+		let sequenceToInsert;
+		console.log(typeof currentLargestSequence);
+		if (currentLargestSequence == 0) {
+			sequenceToInsert = 1;
+			console.log('if', sequenceToInsert);
+		} else {
+			sequenceToInsert = currentLargestSequence[0].sequence + 1;
+			console.log('else', sequenceToInsert);
+		}
+
 		const submittedData = await request.formData();
 		const name = String(submittedData.get('name'));
 		const dept = String(submittedData.get('dept'));
 		const grade = String(submittedData.get('grade'));
-		await db.insert(records).values({ name: name, dept: dept, grade: grade, session: sessionId });
+		await db.insert(records).values({
+			name: name,
+			dept: dept,
+			grade: grade,
+			session: sessionId,
+			sequence: sequenceToInsert,
+		});
 		return { formInsertSuccess: true };
 	},
 

@@ -38,21 +38,8 @@
 						bind:value={$form.session}
 						required
 					/>
-					<button
-						class="btn btn-primary text-xl font-bold"
-						id="goButton"
-						onclick={() => {
-							/* 							if (!navInput) {
-								disabledButton = true;
-							} else if (regex.test(navInput)) {
-								disabledButton = true;
-								noticeSpecialChar = true;
-							} else {
-								submittedSpinner = true;
-								goto(`/v/${navInput}`);
-							} */
-						}}
-						>{#if submittedSpinner}
+					<button class="btn btn-primary text-xl font-bold" id="goButton">
+						{#if submittedSpinner}
 							<span class="loading loading loading-spinner"></span>
 						{:else}
 							<svg
@@ -66,15 +53,18 @@
 								stroke-linecap="round"
 								stroke-linejoin="round"
 								class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right inline"
-								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l14 0" /><path
-									d="M13 18l6 -6"
-								/><path d="M13 6l6 6" /></svg
-							>{/if}
+							>
+								<path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l14 0" />
+								<path d="M13 18l6 -6" /><path d="M13 6l6 6" />
+							</svg>{/if}
 					</button>
 				</div>
 				<div class="invalid px-2 pt-1 text-base font-medium text-red-400">
-					{#if $errors.session}{$errors.session}
-					{:else}&nbsp;{/if}
+					{#if $errors.session}
+						{$errors.session}
+					{:else}
+						&nbsp;
+					{/if}
 				</div>
 			</form>
 		</div>
