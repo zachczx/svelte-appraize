@@ -3,11 +3,9 @@
 </script>
 
 <div class="flex justify-center p-2 md:p-10">
-	<div
-		class="view-outline grid max-w-5xl space-y-10 rounded-2xl border-2 border-primary p-2 shadow-lg md:p-10"
-	>
+	<div class="view-outline grid max-w-5xl space-y-5 rounded-2xl border-2 border-primary shadow-lg">
 		<div>
-			<h1 class="view-header text-primary"><a href="/">Appraize</a></h1>
+			<h1 class="view-header p-2 text-primary md:px-10 md:pt-10"><a href="/">Appraize</a></h1>
 		</div>
 
 		<div>

@@ -71,8 +71,13 @@
 </script>
 
 <div class="space-y-12">
-	<form method="POST" action="?/insert" class="flex flex-wrap gap-1" use:enhance>
-		<label class="input input-bordered input-primary flex grow items-center text-lg">
+	<form
+		method="POST"
+		action="?/insert"
+		class="flex flex-wrap gap-1 bg-purple-100 p-10 px-2 md:px-10"
+		use:enhance
+	>
+		<label class="input input-bordered input-primary flex basis-1/2 items-center text-lg">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="1em"
@@ -125,14 +130,14 @@
 			/>
 		</label>
 
-		<div class="flex items-center space-x-2 text-lg">
+		<div class="flex items-center space-x-2 px-2 text-lg">
 			<label class="label cursor-pointer space-x-1">
 				<span class="label-text">A</span>
 				<input
 					type="radio"
 					name="grade"
 					value="A"
-					class="radio checked:bg-primary"
+					class="radio-primary radio bg-base-100 checked:bg-primary"
 					bind:group={gradeData}
 				/>
 			</label>
@@ -141,7 +146,7 @@
 				<input
 					type="radio"
 					name="grade"
-					class="radio radio checked:bg-primary"
+					class="radio-primary radio bg-base-100 checked:bg-primary"
 					value="B"
 					bind:group={gradeData}
 				/>
@@ -152,7 +157,7 @@
 					type="radio"
 					name="grade"
 					value="C"
-					class="radio checked:bg-primary"
+					class="radio-primary radio bg-base-100 checked:bg-primary"
 					bind:group={gradeData}
 				/>
 			</label>
@@ -162,7 +167,7 @@
 					type="radio"
 					value="D"
 					name="grade"
-					class="radio checked:bg-primary"
+					class="radio-primary radio bg-base-100 checked:bg-primary"
 					bind:group={gradeData}
 				/>
 			</label>
@@ -190,13 +195,27 @@
 				name="remarks"
 				bind:value={remarksData}
 				class="grow text-lg"
-				placeholder="Remarks"
+				placeholder="Remarks (Optional)"
 			/>
 		</label>
-		<button class="btn btn-primary text-lg font-bold">Add</button>
+		<button class="btn btn-primary text-lg font-bold"
+			>Add <svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="1em"
+				height="1em"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down inline"
+				><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 9l6 6l6 -6" /></svg
+			></button
+		>
 	</form>
 	<ol>
-		<div id="table" class="relative grid space-y-4">
+		<div id="table" class="relative grid space-y-4 px-2 md:px-10">
 			{#await data.streamed.result}
 				<Spinner />
 			{:then result}
@@ -258,7 +277,7 @@
 			{/await}
 		</div>
 	</ol>
-	<form method="POST" action="?/save" class="flex" use:enhance>
+	<form method="POST" action="?/save" class="flex px-2 pb-2 md:px-10 md:pb-10" use:enhance>
 		<input type="hidden" name="order" value={order} />
 		<button
 			class={currentSaveButtonColor}
