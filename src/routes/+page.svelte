@@ -24,7 +24,7 @@
 	>
 		<div>
 			<h1 class="view-header text-primary"><a href="/">Appraize</a></h1>
-			<p>Do your ranking session easily.</p>
+			<p class="text-lg">Do your ranking session easily.</p>
 		</div>
 		<div>
 			<form method="POST" use:enhance>
@@ -33,8 +33,8 @@
 					<input
 						type="text"
 						name="session"
-						placeholder="Type a few letters or numbers here to begin"
-						class="input input-bordered input-primary w-full"
+						placeholder="Create or continue a ranking session (e.g. cssranking2024)"
+						class="input input-bordered input-primary w-full text-lg"
 						bind:value={$form.session}
 						required
 					/>
@@ -59,11 +59,13 @@
 							</svg>{/if}
 					</button>
 				</div>
-				<div class="invalid px-2 pt-1 text-base font-medium text-red-400">
+				<div class=" px-2 pt-1 font-bold">
 					{#if $errors.session}
-						{$errors.session}
+						<span class="text-base text-red-400">{$errors.session}</span>
 					{:else}
-						&nbsp;
+						<span class="text-sm"
+							>Use only letters and numbers. No spaces and special characters.</span
+						>
 					{/if}
 				</div>
 			</form>
