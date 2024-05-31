@@ -54,12 +54,14 @@ export const actions = {
 		const name = String(submittedData.get('name'));
 		const dept = String(submittedData.get('dept'));
 		const grade = String(submittedData.get('grade'));
+		const remarks = String(submittedData.get('remarks'));
 		await db.insert(records).values({
 			name: name,
 			dept: dept,
 			grade: grade,
 			session: sessionId,
 			sequence: sequenceToInsert,
+			remarks: remarks,
 		});
 		return { formInsertSuccess: true };
 	},

@@ -17,6 +17,7 @@
 	let nameData = $state();
 	let deptData = $state();
 	let gradeData = $state();
+	let remarksData = $state();
 	let order = $state();
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
@@ -90,7 +91,6 @@
 			<input
 				type="text"
 				name="name"
-				id="name"
 				bind:value={nameData}
 				class="grow text-lg"
 				placeholder="Name"
@@ -118,25 +118,81 @@
 			<input
 				type="text"
 				name="dept"
-				id="dept"
 				bind:value={deptData}
 				class="grow text-lg"
 				placeholder="Dept"
 				required
 			/>
 		</label>
-		<select
-			class="select select-primary flex items-center gap-2 text-lg"
-			name="grade"
-			bind:value={gradeData}
-			id="grade"
-			required
-		>
-			<option>A</option>
-			<option>B</option>
-			<option selected="selected">C</option>
-			<option>D</option>
-		</select>
+
+		<div class="flex items-center space-x-2 text-lg">
+			<label class="label cursor-pointer space-x-1">
+				<span class="label-text">A</span>
+				<input
+					type="radio"
+					name="grade"
+					value="A"
+					class="radio checked:bg-primary"
+					bind:group={gradeData}
+				/>
+			</label>
+			<label class="label cursor-pointer space-x-1">
+				<span class="label-text">B</span>
+				<input
+					type="radio"
+					name="grade"
+					class="radio radio checked:bg-primary"
+					value="B"
+					bind:group={gradeData}
+				/>
+			</label>
+			<label class="label cursor-pointer space-x-1">
+				<span class="label-text">C</span>
+				<input
+					type="radio"
+					name="grade"
+					value="C"
+					class="radio checked:bg-primary"
+					bind:group={gradeData}
+				/>
+			</label>
+			<label class="label cursor-pointer space-x-1">
+				<span class="label-text">D</span>
+				<input
+					type="radio"
+					value="D"
+					name="grade"
+					class="radio checked:bg-primary"
+					bind:group={gradeData}
+				/>
+			</label>
+		</div>
+		<label class="input input-bordered input-primary flex grow items-center text-lg">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="1em"
+				height="1em"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2"
+				><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M8 9h8" /><path
+					d="M8 13h6"
+				/><path
+					d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
+				/></svg
+			>
+			<input
+				type="text"
+				name="remarks"
+				bind:value={remarksData}
+				class="grow text-lg"
+				placeholder="Remarks"
+			/>
+		</label>
 		<button class="btn btn-primary text-lg font-bold">Add</button>
 	</form>
 	<ol>
