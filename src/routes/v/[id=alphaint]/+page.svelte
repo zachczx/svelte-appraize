@@ -239,44 +239,70 @@
 								<div class="flex h-full items-center rounded-l-lg bg-primary p-2">
 									<GripVertical class="stroke-base-100" />
 								</div>
-								<li class="ms-8 list-decimal ps-10 md:ms-12" id="name__{person.uuid}"></li>
+								<li class="ms-8 list-decimal ps-10 md:ms-12"></li>
 							</div>
 							<div class="col-span-5 p-2 md:col-span-4">
 								<EditFields
 									name="name__{person.uuid}"
+									id="name__{person.uuid}"
 									class="input input-sm input-primary w-full border-0 text-base"
 									value={person.name}
 									placeholder="Name"
 								/>
 							</div>
-							<div class="col-span-5 p-2 md:col-span-3" id="dept__{person.uuid}">
+							<div class="col-span-5 p-2 md:col-span-3">
 								<EditFields
 									name="dept__{person.uuid}"
+									id="dept__{person.uuid}"
 									class="input input-sm input-primary w-full border-0 text-base"
 									value={person.dept}
 									placeholder="Dept"
 								/>
 							</div>
-							<div class="col-span-5 p-2 md:col-span-2" id="grade__{person.uuid}">
+							<div class="col-span-5 p-2 md:col-span-2">
 								<EditFields
 									name="grade__{person.uuid}"
+									id="grade__{person.uuid}"
 									class="input input-sm input-primary w-full border-0 text-base"
 									value={person.grade}
 									placeholder="Grade"
 								/>
 							</div>
 							<div class="col-span-5 flex justify-end p-2 md:col-span-2">
-								<button class="self-center md:mx-3" onclick={() => {}}
-									><TablerEdit class="stroke-green-400" /></button
-								>
+								<form method="POST" class="mx-3 self-center" action="?/edit" use:enhance>
+									<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
+									<input type="hidden" id="hidden-edit-name-{person.uuid}" name="edit-name" />
+									<input type="hidden" id="hidden-edit-dept-{person.uuid}" name="edit-dept" />
+									<input type="hidden" id="hidden-edit-grade-{person.uuid}" name="edit-grade" />
+									<button
+										onclick={() => {
+											let editNameValue = document.getElementById(`name__${person.uuid}`).value;
+											let editDeptValue = document.getElementById(`dept__${person.uuid}`).value;
+											let editGradeValue = document.getElementById(`grade__${person.uuid}`).value;
+											console.log(editNameValue, editDeptValue, editGradeValue);
+											let editNamePostToForm = document.getElementById(
+												`hidden-edit-name-${person.uuid}`,
+											);
+											let editDeptPostToForm = document.getElementById(
+												`hidden-edit-dept-${person.uuid}`,
+											);
+											let editGradePostToForm = document.getElementById(
+												`hidden-edit-grade-${person.uuid}`,
+											);
+											editNamePostToForm.value = editNameValue;
+											editDeptPostToForm.value = editDeptValue;
+											editGradePostToForm.value = editGradeValue;
+										}}><TablerEdit class="inline stroke-green-400" /></button
+									>
+								</form>
 								<form method="POST" class="mx-3 self-center" action="?/delete" use:enhance>
 									<input type="hidden" name="delete-target" value={person.id} />
 									<button
 										onclick={() => {
-											let el = document.getElementById(person.uuid);
-											console.log(el?.dataset.id);
+											let elDelete = document.getElementById(person.uuid);
+											console.log(elDelete?.dataset.id);
 											let cssTextFieldClasses = ['bg-secondary', 'translate-x-10', 'opacity-0'];
-											el?.classList.add(...cssTextFieldClasses);
+											elDelete?.classList.add(...cssTextFieldClasses);
 										}}><Trash class="inline stroke-red-400" /></button
 									>
 								</form>
@@ -374,9 +400,23 @@
 			{/if}
 		{/key}
 		{#key form}{#if form?.fail}
-				<div class="toast toast-center">
-					<div class="alert flex justify-center bg-red-600 text-base-100">
+				<div class="fade-in fade-out toast toast-end transition duration-700 ease-out">
+					<div class="alert flex justify-center bg-red-600 font-bold text-base-100">
 						Failed to save, please try again later.
+					</div>
+				</div>
+			{/if}
+			{#if form?.editInsertSuccess}<div
+					class="fade-in fade-out toast toast-end transition duration-700 ease-out"
+				>
+					<div class="alert flex justify-center bg-lime-500 font-bold text-base-100">
+						Successfully edited!
+					</div>
+				</div>
+			{:else if form?.editInsertFailedGrade}
+				<div class="fade-in fade-out toast toast-end transition duration-700 ease-out">
+					<div class="alert flex justify-center bg-red-600 font-bold text-base-100">
+						Failed to edit! Grade should be a single alphabet (A, B, C, D)
 					</div>
 				</div>
 			{/if}
@@ -388,5 +428,39 @@
 	.sortable-handle {
 		/* cursor: url('/hand-grab.svg'), auto; */
 		cursor: move;
+	}
+
+	.fade-in {
+		opacity: 1;
+		display: hidden;
+		animation: fade-in-keyframe 0.1s linear;
+	}
+
+	.fade-out {
+		opacity: 0;
+		display: hidden;
+		animation: fade-out-keyframe 3s linear;
+	}
+
+	@keyframes fade-in-keyframe {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	@keyframes fade-out-keyframe {
+		0% {
+			opacity: 1;
+		}
+		90% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+			display: hidden;
+		}
 	}
 </style>

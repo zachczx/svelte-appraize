@@ -66,11 +66,30 @@ export const actions = {
 		return { formInsertSuccess: true };
 	},
 
+	edit: async ({ request }) => {
+		const editData = await request.formData();
+		console.log(editData);
+		const editTarget = editData.get('edit-target');
+		const editName = String(editData.get('edit-name'));
+		const editDept = String(editData.get('edit-dept'));
+		const editGrade = String(editData.get('edit-grade'));
+		if (editGrade === 'A' || editGrade === 'B' || editGrade === 'C' || editGrade === 'D') {
+			console.log(editName, editDept, editGrade);
+			await db
+				.update(records)
+				.set({ name: editName, dept: editDept, grade: editGrade })
+				.where(eq(records.id, editTarget));
+			return { editInsertSuccess: true };
+		} else {
+			return { editInsertFailedGrade: true };
+		}
+	},
+
 	delete: async function ({ request }) {
 		const deleteData = await request.formData();
-		const target = deleteData.get('delete-target');
+		const delTarget = deleteData.get('delete-target');
 		await delay(700);
-		await db.delete(records).where(eq(records.id, target));
+		await db.delete(records).where(eq(records.id, delTarget));
 	},
 
 	save: async function ({ request, params }) {
