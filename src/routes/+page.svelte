@@ -59,7 +59,7 @@
 							</svg>{/if}
 					</button>
 				</div>
-				<div class=" px-2 pt-1 font-bold">
+				<div class=" px-2 pt-1 font-medium">
 					{#if $errors.session}
 						<span class="text-base text-red-400">{$errors.session}</span>
 					{:else}
