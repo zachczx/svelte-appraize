@@ -69,6 +69,7 @@ export const actions = {
 	delete: async function ({ request }) {
 		const deleteData = await request.formData();
 		const target = deleteData.get('delete-target');
+		await delay(700);
 		await db.delete(records).where(eq(records.id, target));
 	},
 

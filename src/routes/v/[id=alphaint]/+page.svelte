@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import Trash from '$lib/svg/Trash.svelte';
-	import { slide } from 'svelte/transition';
+	import { slide, fade } from 'svelte/transition';
 	import { circOut } from 'svelte/easing';
 	import Spinner from '$lib/Spinner.svelte';
 	import UndrawEmpty from '$lib/svg/UndrawEmpty.svelte';
@@ -216,6 +216,7 @@
 	</form>
 	<ol>
 		<div id="table" class="relative grid space-y-4 px-2 md:px-10">
+			<h2 class="text-primary">Session: {data.id}</h2>
 			{#await data.streamed.result}
 				<Spinner />
 			{:then result}
@@ -227,8 +228,10 @@
 				{:else}
 					{#each result as person}
 						<div
-							class="grid grid-cols-12 rounded-lg border border-slate-400 hover:border-primary"
+							class="grid grid-cols-12 rounded-lg border border-slate-400 transition duration-700 ease-out hover:border-primary"
+							id={person.uuid}
 							data-id={person.uuid}
+							transition:fade={{ duration: 500 }}
 						>
 							<div
 								class="sortable-handle col-span-2 row-span-2 flex items-center md:col-span-1 md:row-span-1"
@@ -268,7 +271,14 @@
 								>
 								<form method="POST" class="mx-3 self-center" action="?/delete" use:enhance>
 									<input type="hidden" name="delete-target" value={person.id} />
-									<button><Trash class="inline stroke-red-400" /></button>
+									<button
+										onclick={() => {
+											let el = document.getElementById(person.uuid);
+											console.log(el?.dataset.id);
+											let cssTextFieldClasses = ['bg-secondary', 'translate-x-10', 'opacity-0'];
+											el?.classList.add(...cssTextFieldClasses);
+										}}><Trash class="inline stroke-red-400" /></button
+									>
 								</form>
 							</div>
 						</div>
