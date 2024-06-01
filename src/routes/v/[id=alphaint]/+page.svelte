@@ -23,9 +23,9 @@
 	let order = $state();
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
-	/* 	$effect(() => {
+	$effect(() => {
 		console.log(order);
-	}); */
+	});
 
 	onMount(() => {
 		//= document.getElementById('formNameData');
@@ -69,7 +69,11 @@
 				evt.item.classList.remove(...dragShadowClassesMoving);
 			},
 		});
-		order = sortable.toArray();
+		async function initArray() {
+			await data.streamed.result;
+			order = sortable.toArray();
+		}
+		initArray();
 	});
 </script>
 
@@ -286,7 +290,7 @@
 		<div id="table" class="relative grid space-y-4 px-2 md:px-10">
 			{#await data.streamed.result}
 				<span
-					class="loading loading-spinner loading-lg justify-self-center py-5 text-primary md:py-10"
+					class="ignore-elements loading loading-spinner loading-lg justify-self-center py-5 text-primary md:py-10"
 				></span>
 			{:then result}
 				{#if !result || result.length === 0}
@@ -318,7 +322,7 @@
 								{#if helperText}
 									<div
 										class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-										data-tip="Edit"
+										data-tip="Edit > Enter"
 									></div>
 								{/if}
 								<EditFields
@@ -334,7 +338,7 @@
 								{#if helperText}
 									<div
 										class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-										data-tip="Edit"
+										data-tip="Edit > Enter"
 									></div>
 								{/if}
 								<EditFields
@@ -350,7 +354,7 @@
 								{#if helperText}
 									<div
 										class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-										data-tip="Edit"
+										data-tip="Edit > Enter"
 									></div>
 								{/if}
 								<EditFields
