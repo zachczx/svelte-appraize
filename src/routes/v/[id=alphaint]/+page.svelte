@@ -571,7 +571,7 @@
 		</form>
 	</div>
 </div>
-<!-- Open the modal using ID.showModal() method -->
+
 <dialog id="delete_session_modal" class="modal">
 	<div class="rounded-lg bg-base-100">
 		<h2 class="rounded-t-lg bg-red-500 p-5 font-bold text-base-100">Delete session</h2>
@@ -583,7 +583,7 @@
 			<form method="dialog">
 				<button class="btn btn-outline text-lg">Close</button>
 			</form>
-			<form class="" method="POST" action="?/deleteSession" use:enhance>
+			<form method="POST" action="?/deleteSession" use:enhance>
 				<button
 					id="confirm-delete-session-button-clicked"
 					class="btn min-w-40 bg-red-500 text-lg text-base-100 hover:bg-red-600"
@@ -610,10 +610,9 @@
 		cursor: move;
 	}
 
-	.modal-action,
-	.modal,
-	.modal-box {
+	.modal {
 		view-transition-name: modal;
+		animation: none;
 	}
 
 	.fade-in {
