@@ -219,7 +219,9 @@
 		<h2 class="px-2 pb-4 text-primary md:px-10">Session: {data.id}</h2>
 		<div id="table" class="relative grid space-y-4 px-2 md:px-10">
 			{#await data.streamed.result}
-				<span class="loading loading-spinner loading-lg justify-self-center text-primary"></span>
+				<span
+					class="loading loading-spinner loading-lg justify-self-center py-5 text-primary md:py-10"
+				></span>
 			{:then result}
 				{#if !result || result.length === 0}
 					<div class="p-2 lg:p-5">
