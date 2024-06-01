@@ -17,6 +17,8 @@
 	let deptData = $state();
 	let gradeData = $state();
 	let remarksData = $state();
+	let helperText = $state(false);
+	let helperTextButtonColor = $state('fill-primary');
 	let deleteSessionButtonClickedSpinner = $state(false);
 	let order = $state();
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
@@ -79,6 +81,12 @@
 		use:enhance
 	>
 		<label class="input input-bordered input-primary flex basis-1/2 items-center text-lg">
+			{#if helperText}
+				<div
+					class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+					data-tip="Add a name"
+				></div>
+			{/if}
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="1em"
@@ -104,6 +112,12 @@
 			/>
 		</label>
 		<label class="input input-bordered input-primary flex grow items-center text-lg">
+			{#if helperText}
+				<div
+					class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+					data-tip="Add a department"
+				></div>
+			{/if}
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="1em"
@@ -152,6 +166,12 @@
 					bind:group={gradeData}
 				/>
 			</label>
+			{#if helperText}
+				<div
+					class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+					data-tip="Add a grade"
+				></div>
+			{/if}
 			<label class="label cursor-pointer space-x-1">
 				<span class="label-text">C</span>
 				<input
@@ -191,7 +211,12 @@
 					d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
 				/></svg
 			>
-			<input
+			{#if helperText}
+				<div
+					class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+					data-tip="Add remarks if you want"
+				></div>
+			{/if}<input
 				type="text"
 				name="remarks"
 				bind:value={remarksData}
@@ -214,9 +239,50 @@
 				><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 9l6 6l6 -6" /></svg
 			></button
 		>
+		{#if helperText}
+			<div
+				class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+				data-tip="Add an officer"
+			></div>
+		{/if}
 	</form>
 	<ol>
-		<h2 class="px-2 pb-4 text-primary md:px-10">Session: {data.id}</h2>
+		<div class="flex px-2 pb-4 md:px-10">
+			<h2 class="grow text-primary">
+				Session: {data.id}
+				{#if helperText}
+					<div
+						class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+						data-tip="This is your current session"
+					></div>
+				{/if}
+			</h2>
+			<div class="content-end justify-end font-bold">
+				<button
+					onclick={() => {
+						helperText = !helperText;
+						if (helperTextButtonColor === 'fill-primary') {
+							helperTextButtonColor = 'fill-secondary';
+						} else {
+							helperTextButtonColor = 'fill-primary';
+						}
+					}}
+					><h2>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1.3em"
+							height="1.3em"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							class="icon icon-tabler icons-tabler-filled icon-tabler-help-square-rounded inline {helperTextButtonColor}"
+							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+								d="M12 2l.642 .005l.616 .017l.299 .013l.579 .034l.553 .046c4.687 .455 6.65 2.333 7.166 6.906l.03 .29l.046 .553l.041 .727l.006 .15l.017 .617l.005 .642l-.005 .642l-.017 .616l-.013 .299l-.034 .579l-.046 .553c-.455 4.687 -2.333 6.65 -6.906 7.166l-.29 .03l-.553 .046l-.727 .041l-.15 .006l-.617 .017l-.642 .005l-.642 -.005l-.616 -.017l-.299 -.013l-.579 -.034l-.553 -.046c-4.687 -.455 -6.65 -2.333 -7.166 -6.906l-.03 -.29l-.046 -.553l-.041 -.727l-.006 -.15l-.017 -.617l-.004 -.318v-.648l.004 -.318l.017 -.616l.013 -.299l.034 -.579l.046 -.553c.455 -4.687 2.333 -6.65 6.906 -7.166l.29 -.03l.553 -.046l.727 -.041l.15 -.006l.617 -.017c.21 -.003 .424 -.005 .642 -.005zm0 13a1 1 0 0 0 -.993 .883l-.007 .117l.007 .127a1 1 0 0 0 1.986 0l.007 -.117l-.007 -.127a1 1 0 0 0 -.993 -.883zm1.368 -6.673a2.98 2.98 0 0 0 -3.631 .728a1 1 0 0 0 1.44 1.383l.171 -.18a.98 .98 0 0 1 1.11 -.15a1 1 0 0 1 -.34 1.886l-.232 .012a1 1 0 0 0 .111 1.994a3 3 0 0 0 1.371 -5.673z"
+							/></svg
+						>
+					</h2>
+				</button>
+			</div>
+		</div>
 		<div id="table" class="relative grid space-y-4 px-2 md:px-10">
 			{#await data.streamed.result}
 				<span
@@ -238,39 +304,78 @@
 								class="sortable-handle col-span-2 row-span-2 flex items-center md:col-span-1 md:row-span-1"
 							>
 								<div class="flex h-full items-center rounded-l-lg bg-primary p-2">
+									{#if helperText}
+										<div
+											class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+											data-tip="Drag here"
+										></div>
+									{/if}
 									<GripVertical class="stroke-base-100" />
 								</div>
 								<li class="ms-8 list-decimal ps-10 md:ms-12"></li>
 							</div>
 							<div class="col-span-5 p-2 md:col-span-4">
+								{#if helperText}
+									<div
+										class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+										data-tip="Edit"
+									></div>
+								{/if}
 								<EditFields
 									name="name__{person.uuid}"
 									id="name__{person.uuid}"
+									form="edit-form-{person.uuid}"
 									class="input input-sm input-primary w-full border-0 text-base"
 									value={person.name}
 									placeholder="Name"
 								/>
 							</div>
 							<div class="col-span-5 p-2 md:col-span-3">
+								{#if helperText}
+									<div
+										class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+										data-tip="Edit"
+									></div>
+								{/if}
 								<EditFields
 									name="dept__{person.uuid}"
 									id="dept__{person.uuid}"
+									form="edit-form-{person.uuid}"
 									class="input input-sm input-primary w-full border-0 text-base"
 									value={person.dept}
 									placeholder="Dept"
 								/>
 							</div>
 							<div class="col-span-5 p-2 md:col-span-2">
+								{#if helperText}
+									<div
+										class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+										data-tip="Edit"
+									></div>
+								{/if}
 								<EditFields
 									name="grade__{person.uuid}"
 									id="grade__{person.uuid}"
+									form="edit-form-{person.uuid}"
 									class="input input-sm input-primary w-full border-0 text-base"
 									value={person.grade}
 									placeholder="Grade"
 								/>
 							</div>
 							<div class="col-span-5 flex justify-end p-2 md:col-span-2">
-								<form method="POST" class="mx-3 self-center" action="?/edit" use:enhance>
+								<form
+									method="POST"
+									class="mx-3 self-center"
+									id="edit-form-{person.uuid}"
+									action="?/edit"
+									use:enhance
+								>
+									{#if helperText}
+										<div
+											class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+											data-tip="Save"
+										></div>
+									{/if}
 									<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
 									<input type="hidden" id="hidden-edit-name-{person.uuid}" name="edit-name" />
 									<input type="hidden" id="hidden-edit-dept-{person.uuid}" name="edit-dept" />
@@ -306,6 +411,12 @@
 											elDelete?.classList.add(...cssTextFieldClasses);
 										}}><Trash class="inline stroke-red-400" /></button
 									>
+									{#if helperText}
+										<div
+											class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+											data-tip="Delete"
+										></div>
+									{/if}
 								</form>
 							</div>
 						</div>
@@ -366,7 +477,7 @@
 							stroke-width="4"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							class="icon icon-tabler icons-tabler-outline icon-tabler-check motion-safe:animate-wiggle stroke-base-100"
+							class="icon icon-tabler icons-tabler-outline icon-tabler-check stroke-base-100 motion-safe:animate-wiggle"
 							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
 								d="M5 12l5 5l10 -10"
 							/></svg
@@ -389,6 +500,12 @@
 						>
 					{/if}
 				{/key}
+				{#if helperText}
+					<div
+						class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+						data-tip="Save all changes above"
+					></div>
+				{/if}
 			</button>
 			{#key currentSaveIcon}
 				{#if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}
@@ -440,6 +557,12 @@
 				}}
 			>
 				<Trash class="inline h-[2em] w-[2em] stroke-base-100" />
+				{#if helperText}
+					<div
+						class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
+						data-tip="Delete this session"
+					></div>
+				{/if}
 			</button>
 		</form>
 	</div>
