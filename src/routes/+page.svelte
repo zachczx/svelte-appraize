@@ -60,91 +60,27 @@
 							</svg>{/if}
 					</button>
 				</div>
-				<div class=" px-2 pt-1 font-medium">
-					{#if $errors.session}
-						<span class="text-base text-red-400">{$errors.session}</span>
-					{:else}
-						<span class="text-sm"
-							>Use only letters and numbers. No spaces and special characters.</span
-						>
-					{/if}
-					<!-- <div class="space-x-3 text-sm">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="icon icon-tabler icons-tabler-outline icon-tabler-check me-1 inline"
-						>
-							<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-							<path d="M5 12l5 5l10 -10" />
-						</svg>Letters
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="icon icon-tabler icons-tabler-outline icon-tabler-check me-1 inline"
-						>
-							<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-							<path d="M5 12l5 5l10 -10" />
-						</svg>Numbers
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="icon icon-tabler icons-tabler-outline icon-tabler-x me-2 inline"
-							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path
-								d="M6 6l12 12"
-							/></svg
-						>Spaces<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="icon icon-tabler icons-tabler-outline icon-tabler-x me-2 inline"
-							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path
-								d="M6 6l12 12"
-							/></svg
-						>Special characters<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="icon icon-tabler icons-tabler-outline icon-tabler-x me-2 inline"
-							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path
-								d="M6 6l12 12"
-							/></svg
-						>Symbols
-					</div> -->
-				</div>
 			</form>
+			<div class="flex flex-wrap px-2 pt-3 font-medium">
+				{#if $errors.session}
+					<span class="text-base text-red-400">{$errors.session}</span>
+				{:else}
+					<div class="text-sm">
+						Use only <div
+							class="tooltip tooltip-top inline cursor-pointer px-0"
+							data-tip="A-Z, a-z"
+						>
+							letters,
+						</div>
+
+						<div class="tooltip tooltip-top inline cursor-pointer px-0" data-tip="0-9">
+							numbers,
+						</div>
+
+						<div class="tooltip tooltip-top inline cursor-pointer px-0" data-tip="- —">dashes.</div>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>

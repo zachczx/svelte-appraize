@@ -2,10 +2,11 @@ import { db } from '$lib/drizzle/db';
 import { records } from '$lib/drizzle/schema';
 import { desc, asc, eq, and } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
+import { fail, redirect } from '@sveltejs/kit';
 
 //superforms
 import { z } from 'zod';
-import { fail } from '@sveltejs/kit';
+
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -17,12 +18,14 @@ let delay = (time) => {
 
 export const load = (async ({ params }) => {
 	const sessionId = String(params.id);
+
+	//await delay(5000);
 	const result = await db
 		.select()
 		.from(records)
 		.where(eq(records.session, sessionId))
 		.orderBy(asc(records.sequence));
-	//await delay(5000);
+
 	return {
 		id: sessionId,
 		streamed: {
@@ -55,6 +58,7 @@ export const actions = {
 		const dept = String(submittedData.get('dept'));
 		const grade = String(submittedData.get('grade'));
 		const remarks = String(submittedData.get('remarks'));
+		console.log(name, dept, grade, remarks);
 		await db.insert(records).values({
 			name: name,
 			dept: dept,
@@ -97,14 +101,12 @@ export const actions = {
 			const sessionId = String(params.id);
 			const saveData = await request.formData();
 			const orderInput = saveData.get('order');
+
 			const orderArray = orderInput.split(',');
-			/*
-		for (let [index, element] of orderArray.entries()) {
-			console.log(index, element);
-		} */
+
 			for (let i = 0; i < orderArray.length; i++) {
 				let individualOrder = i + 1;
-				console.log(individualOrder, orderArray[i]);
+				//console.log(individualOrder, orderArray[i]);
 				await db
 					.update(records)
 					.set({ sequence: individualOrder })
@@ -115,6 +117,19 @@ export const actions = {
 		} catch (error) {
 			console.log("There's an error:");
 			console.log(error);
+			return fail(400, { formSaveFail: true });
+		}
+	},
+
+	deleteSession: async function ({ request, params }) {
+		const sessionId = params.id;
+		await delay(400);
+		const deleteSession = await db.delete(records).where(eq(records.session, sessionId));
+		if (deleteSession) {
+			console.log('Deleted successfully!');
+			redirect(307, '/');
+		} else {
+			return fail(400, { formDeleteSessionFail: true });
 		}
 	},
 };

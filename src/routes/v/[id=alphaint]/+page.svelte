@@ -4,24 +4,24 @@
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import Trash from '$lib/svg/Trash.svelte';
-	import { slide, fade } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import { circOut } from 'svelte/easing';
-	import Spinner from '$lib/Spinner.svelte';
 	import UndrawEmpty from '$lib/svg/UndrawEmpty.svelte';
 	import TablerEdit from '$lib/svg/TablerEdit.svelte';
 	import EditFields from '$lib/EditFields.svelte';
 	import GripVertical from '$lib/svg/GripVertical.svelte';
 	let { data, form } = $props();
 	let currentSaveIcon = $state('iconSave');
-	let currentSaveButtonColor = $state('btn btn-neutral');
+	let currentSaveButtonColor = $state('btn btn-primary');
 	let nameData = $state();
 	let deptData = $state();
 	let gradeData = $state();
 	let remarksData = $state();
+	let deleteSessionButtonClickedSpinner = $state(false);
 	let order = $state();
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
-	/* $effect(() => {
+	/* 	$effect(() => {
 		console.log(order);
 	}); */
 
@@ -38,6 +38,7 @@
 			dragClass: '.sortable-drag', // Class name for the dragging item
 			dataIdAttr: 'data-id',
 			handle: '.sortable-handle',
+			filter: '.ignore-elements',
 			// auto scroll plugin
 			scroll: true,
 			forceAutoScrollFallback: false,
@@ -215,10 +216,10 @@
 		>
 	</form>
 	<ol>
+		<h2 class="px-2 pb-4 text-primary md:px-10">Session: {data.id}</h2>
 		<div id="table" class="relative grid space-y-4 px-2 md:px-10">
-			<h2 class="text-primary">Session: {data.id}</h2>
 			{#await data.streamed.result}
-				<Spinner />
+				<span class="loading loading-spinner loading-lg justify-self-center text-primary"></span>
 			{:then result}
 				{#if !result || result.length === 0}
 					<div class="p-2 lg:p-5">
@@ -229,9 +230,7 @@
 					{#each result as person}
 						<div
 							class="grid grid-cols-12 rounded-lg border border-slate-400 transition duration-700 ease-out hover:border-primary"
-							id={person.uuid}
 							data-id={person.uuid}
-							transition:fade={{ duration: 500 }}
 						>
 							<div
 								class="sortable-handle col-span-2 row-span-2 flex items-center md:col-span-1 md:row-span-1"
@@ -313,121 +312,178 @@
 			{/await}
 		</div>
 	</ol>
-	<form method="POST" action="?/save" class="flex px-2 pb-2 md:px-10 md:pb-10" use:enhance>
-		<input type="hidden" name="order" value={order} />
-		<button
-			class={currentSaveButtonColor}
-			onclick={() => {
-				currentSaveIcon = 'iconSpinner';
-				setTimeout(() => {
-					if (form?.formSaveSuccess) {
-						currentSaveIcon = 'iconSave';
-						currentSaveButtonColor = 'btn btn-neutral';
-						form.formSaveSuccess = undefined;
-					} else if (!form?.formSaveSuccess || form?.formSaveSuccess == null) {
-						currentSaveIcon = 'iconError';
-						currentSaveButtonColor = 'btn bg-red-600';
-						setTimeout(() => {
+	<div class="flex space-x-4 px-2 pb-2 md:px-10 md:pb-10">
+		<form class="grow" method="POST" action="?/save" use:enhance>
+			<input type="hidden" name="order" value={order} />
+			<button
+				class={currentSaveButtonColor}
+				onclick={() => {
+					currentSaveIcon = 'iconSpinner';
+					setTimeout(() => {
+						if (form?.formSaveSuccess) {
 							currentSaveIcon = 'iconSave';
-							currentSaveButtonColor = 'btn btn-neutral';
-						}, 3000);
-					}
-				}, 5000);
-			}}
-		>
+							currentSaveButtonColor = 'btn btn-primary';
+							form.formSaveSuccess = undefined;
+						} else if (!form?.formSaveSuccess || form?.formSaveSuccess == null) {
+							currentSaveIcon = 'iconError';
+							currentSaveButtonColor = 'btn bg-red-600';
+							setTimeout(() => {
+								currentSaveIcon = 'iconSave';
+								currentSaveButtonColor = 'btn btn-primary';
+							}, 3000);
+						}
+					}, 5000);
+				}}
+			>
+				{#key currentSaveIcon}
+					{#if currentSaveIcon === 'iconSave' && (!form?.formSaveSuccess || form?.formSaveSuccess == null)}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="2em"
+							height="2em"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy stroke-base-100"
+							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+								d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"
+							/><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path
+								d="M14 4l0 4l-6 0l0 -4"
+							/></svg
+						>
+					{:else if currentSaveIcon === 'iconSpinner' && (!form?.formSaveSuccess || form?.formSaveSuccess == null)}
+						<span class="loading loading-spinner loading-md h-[2em] w-[2em] text-base-100"></span>
+					{:else if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="2em"
+							height="2em"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke-width="4"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="icon icon-tabler icons-tabler-outline icon-tabler-check motion-safe:animate-wiggle stroke-base-100"
+							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+								d="M5 12l5 5l10 -10"
+							/></svg
+						>
+					{:else if currentSaveIcon === 'iconError'}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="2em"
+							height="2em"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="icon icon-tabler icons-tabler-outline icon-tabler-exclamation-circle stroke-base-100"
+							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+								d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"
+							/><path d="M12 9v4" /><path d="M12 16v.01" /></svg
+						>
+					{/if}
+				{/key}
+			</button>
 			{#key currentSaveIcon}
-				{#if currentSaveIcon === 'iconSave' && (!form?.formSaveSuccess || form?.formSaveSuccess == null)}
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="2em"
-						height="2em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy stroke-base-100"
-						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-							d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"
-						/><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path
-							d="M14 4l0 4l-6 0l0 -4"
-						/></svg
+				{#if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}
+					<div class="fade-in fade-out toast toast-end transition duration-75 ease-out">
+						<div class="alert flex justify-center bg-lime-500 font-bold text-base-100">
+							Saved successfully!
+						</div>
+					</div>
+				{:else if form?.formSaveFail}
+					<div
+						class="fade-in fade-out toast toast-end transition duration-75 ease-out"
+						in:slide={{ duration: 150, axis: 'x', easing: circOut }}
+						out:slide={{ duration: 300, axis: 'x', easing: circOut }}
 					>
-				{:else if currentSaveIcon === 'iconSpinner' && (!form?.formSaveSuccess || form?.formSaveSuccess == null)}
-					<span class="loading loading-spinner loading-md h-[2em] w-[2em] text-base-100"></span>
-				{:else if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="2em"
-						height="2em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-check stroke-base-100"
-						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l5 5l10 -10" /></svg
-					>
-				{:else if currentSaveIcon === 'iconError'}
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="2em"
-						height="2em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-exclamation-circle stroke-base-100"
-						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-							d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"
-						/><path d="M12 9v4" /><path d="M12 16v.01" /></svg
-					>
+						<div class="alert flex justify-center bg-red-600 font-bold text-base-100">
+							Error saving!
+						</div>
+					</div>
 				{/if}
 			{/key}
-		</button>
-		{#key currentSaveIcon}
-			{#if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}<span
-					class="ms-4 inline-block self-center font-bold"
-					in:slide={{ duration: 150, axis: 'x', easing: circOut }}
-					out:slide={{ duration: 300, axis: 'x', easing: circOut }}>Saved!</span
-				>
-			{:else if currentSaveIcon === 'iconError'}<span
-					class="ms-4 inline-block self-center font-bold"
-					in:slide={{ duration: 150, axis: 'x', easing: circOut }}
-					out:slide={{ duration: 300, axis: 'x', easing: circOut }}>Error!</span
-				>
-			{/if}
-		{/key}
-		{#key form}{#if form?.fail}
-				<div class="fade-in fade-out toast toast-end transition duration-700 ease-out">
-					<div class="alert flex justify-center bg-red-600 font-bold text-base-100">
-						Failed to save, please try again later.
+			{#key form}{#if form?.fail}
+					<div class="fade-in fade-out toast toast-end transition duration-75 ease-out">
+						<div class="alert flex justify-center bg-red-600 font-bold text-base-100">
+							Failed to save, please try again later.
+						</div>
 					</div>
-				</div>
-			{/if}
-			{#if form?.editInsertSuccess}<div
-					class="fade-in fade-out toast toast-end transition duration-700 ease-out"
-				>
-					<div class="alert flex justify-center bg-lime-500 font-bold text-base-100">
-						Successfully edited!
+				{/if}
+				{#if form?.editInsertSuccess}<div
+						class="fade-in fade-out toast toast-end transition duration-75 ease-out"
+					>
+						<div class="alert flex justify-center bg-lime-500 font-bold text-base-100">
+							Edited successfully!
+						</div>
 					</div>
-				</div>
-			{:else if form?.editInsertFailedGrade}
-				<div class="fade-in fade-out toast toast-end transition duration-700 ease-out">
-					<div class="alert flex justify-center bg-red-600 font-bold text-base-100">
-						Failed to edit! Grade should be a single alphabet (A, B, C, D)
+				{:else if form?.editInsertFailedGrade}
+					<div class="fade-in fade-out toast toast-end transition duration-75 ease-out">
+						<div class="alert flex justify-center bg-red-600 font-bold text-base-100">
+							Failed to edit! Grade should be a single alphabet (A, B, C, D)
+						</div>
 					</div>
-				</div>
-			{/if}
-		{/key}
-	</form>
+				{/if}
+			{/key}
+		</form>
+		<form class="content-end">
+			<button
+				class="btn bg-red-500 hover:bg-red-700"
+				onclick={() => {
+					delete_session_modal.showModal();
+				}}
+			>
+				<Trash class="inline h-[2em] w-[2em] stroke-base-100" />
+			</button>
+		</form>
+	</div>
 </div>
+<!-- Open the modal using ID.showModal() method -->
+<dialog id="delete_session_modal" class="modal">
+	<div class="rounded-lg bg-base-100">
+		<h2 class="rounded-t-lg bg-red-500 p-5 font-bold text-base-100">Delete session</h2>
+		<p class="px-4 py-4">
+			Are you sure you want to <span class="font-bold">delete this session and all data</span>? You
+			cannot undo this action.
+		</p>
+		<div class="modal-action flex justify-end p-4">
+			<form method="dialog">
+				<button class="btn btn-outline text-lg">Close</button>
+			</form>
+			<form class="" method="POST" action="?/deleteSession" use:enhance>
+				<button
+					id="confirm-delete-session-button-clicked"
+					class="btn min-w-40 bg-red-500 text-lg text-base-100 hover:bg-red-600"
+					onclick={() => {
+						deleteSessionButtonClickedSpinner = true;
+					}}
+					>{#key deleteSessionButtonClickedSpinner}
+						{#if deleteSessionButtonClickedSpinner}
+							<span class="left-50 loading loading-spinner absolute"></span>
+							<span class="invisible">Delete Session</span>
+						{:else}
+							<span>Delete Session</span>
+						{/if}
+					{/key}
+				</button>
+			</form>
+		</div>
+	</div>
+</dialog>
 
 <style>
 	.sortable-handle {
 		/* cursor: url('/hand-grab.svg'), auto; */
 		cursor: move;
+	}
+
+	.modal,
+	.modal-box {
+		view-transition-name: modal;
 	}
 
 	.fade-in {

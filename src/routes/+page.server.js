@@ -14,7 +14,7 @@ const schema = z.object({
 	session: z
 		.string()
 		.min(1, { message: "You didn't type anything!" })
-		.regex(/^[a-zA-Z0-9]*$/, { message: 'No special characters, symbols, spaces!' }),
+		.regex(/^[a-zA-Z0-9-]*$/, { message: 'No special characters, symbols, spaces!' }),
 	//* instead of + to allow matching of blank entry
 	//original regex for special chars = /[!@#$%^&*()\-+={}[\]:;"'<>,.?\/|\\]/
 });
