@@ -25,7 +25,7 @@
 	>
 		<div>
 			<h1 class="view-header text-primary"><a href="/">Appraize</a></h1>
-			<p class="text-lg">Do your ranking session easily.</p>
+			<p class="text-lg">Ranking sessions made easy.</p>
 		</div>
 		<div>
 			<form method="POST" use:enhance>
