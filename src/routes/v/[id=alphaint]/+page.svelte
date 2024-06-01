@@ -483,6 +483,7 @@
 		cursor: move;
 	}
 
+	.modal-action,
 	.modal,
 	.modal-box {
 		view-transition-name: modal;
