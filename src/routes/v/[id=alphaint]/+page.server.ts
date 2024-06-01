@@ -16,11 +16,26 @@ let delay = (time) => {
 	});
 };
 
-export const load = (async ({ params }) => {
+/* export const load = (async ({ params }) => {
 	const sessionId = String(params.id);
-
 	//await delay(5000);
 	const result = await db
+		.select()
+		.from(records)
+		.where(eq(records.session, sessionId))
+		.orderBy(asc(records.sequence));
+
+	return {
+		id: sessionId,
+		streamed: {
+			result: result,
+		},
+	};
+}) satisfies PageServerLoad; */
+
+export const load = (({ params }) => {
+	const sessionId = String(params.id);
+	const result = db
 		.select()
 		.from(records)
 		.where(eq(records.session, sessionId))
