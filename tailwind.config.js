@@ -6,37 +6,37 @@ export default {
 			keyframes: {
 				wiggle: {
 					'0%': {
-						transform: 'skewX(9deg)',
+						transform: 'skewX(12deg)',
 					},
 					'10%': {
-						transform: 'skewX(-8deg)',
+						transform: 'skewX(-11deg)',
 					},
 					'20%': {
-						transform: 'skewX(7deg)',
+						transform: 'skewX(10deg)',
 					},
 					'30%': {
-						transform: 'skewX(-6deg)',
+						transform: 'skewX(-9deg)',
 					},
 					'40%': {
-						transform: 'skewX(5deg)',
+						transform: 'skewX(8deg)',
 					},
 					'50%': {
-						transform: 'skewX(-4deg)',
+						transform: 'skewX(-7deg)',
 					},
 					'60%': {
-						transform: 'skewX(3deg)',
+						transform: 'skewX(6deg)',
 					},
 					'70%': {
-						transform: 'skewX(-2deg)',
+						transform: 'skewX(-5deg)',
 					},
 					'80%': {
-						transform: 'skewX(1deg)',
+						transform: 'skewX(4deg)',
 					},
 					'90%': {
-						transform: 'skewX(0deg)',
+						transform: 'skewX(3deg)',
 					},
 					'100%': {
-						transform: 'skewX(0deg)',
+						transform: 'skewX(3deg)',
 					},
 				},
 			},
