@@ -38,7 +38,7 @@
 			ghostClass: '.sortable-ghost', // Class name for the drop placeholder
 			chosenClass: '.sortable-chosen', // Class name for the chosen item
 			dragClass: '.sortable-drag', // Class name for the dragging item
-			dataIdAttr: 'data-id',
+			dataIdAttr: 'data-sortable-id',
 			handle: '.sortable-handle',
 			filter: '.ignore-elements',
 			// auto scroll plugin
@@ -303,7 +303,7 @@
 						<div
 							class="grid grid-cols-12 rounded-lg border border-slate-400 transition duration-700 ease-out hover:border-primary"
 							id={person.uuid}
-							data-delete-id={person.uuid}
+							data-sortable-id={person.uuid}
 						>
 							<div
 								class="sortable-handle col-span-2 row-span-2 flex items-center md:col-span-1 md:row-span-1"
