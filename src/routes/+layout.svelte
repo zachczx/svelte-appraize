@@ -14,7 +14,7 @@
 	});
 </script>
 
-<div class="p-2">
+<div class="bg-white">
 	<slot />
 </div>
 
