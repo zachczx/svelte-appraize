@@ -23,9 +23,9 @@
 	let order = $state();
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
-	$effect(() => {
+	/* 	$effect(() => {
 		console.log(order);
-	});
+	}); */
 
 	onMount(() => {
 		//= document.getElementById('formNameData');
@@ -302,7 +302,8 @@
 					{#each result as person}
 						<div
 							class="grid grid-cols-12 rounded-lg border border-slate-400 transition duration-700 ease-out hover:border-primary"
-							data-id={person.uuid}
+							id={person.uuid}
+							data-delete-id={person.uuid}
 						>
 							<div
 								class="sortable-handle col-span-2 row-span-2 flex items-center md:col-span-1 md:row-span-1"
@@ -402,19 +403,21 @@
 											editNamePostToForm.value = editNameValue;
 											editDeptPostToForm.value = editDeptValue;
 											editGradePostToForm.value = editGradeValue;
-										}}><TablerEdit class="inline stroke-green-400" /></button
-									>
+										}}
+										><TablerEdit class="inline stroke-green-400" />
+									</button>
 								</form>
 								<form method="POST" class="mx-3 self-center" action="?/delete" use:enhance>
 									<input type="hidden" name="delete-target" value={person.id} />
 									<button
 										onclick={() => {
 											let elDelete = document.getElementById(person.uuid);
-											console.log(elDelete?.dataset.id);
+											console.log(elDelete?.dataset.deleteId);
 											let cssTextFieldClasses = ['bg-secondary', 'translate-x-10', 'opacity-0'];
 											elDelete?.classList.add(...cssTextFieldClasses);
-										}}><Trash class="inline stroke-red-400" /></button
-									>
+										}}
+										><Trash class="inline stroke-red-400" />
+									</button>
 									{#if helperText}
 										<div
 											class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
@@ -464,15 +467,16 @@
 							stroke-linecap="round"
 							stroke-linejoin="round"
 							class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy stroke-base-100"
-							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-								d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"
-							/><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path
-								d="M14 4l0 4l-6 0l0 -4"
-							/></svg
 						>
+							<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+							<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+							<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+							<path d="M14 4l0 4l-6 0l0 -4" />
+						</svg>
 					{:else if currentSaveIcon === 'iconSpinner' && (!form?.formSaveSuccess || form?.formSaveSuccess == null)}
 						<span class="loading loading-spinner loading-md h-[2em] w-[2em] text-base-100"></span>
-					{:else if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}<svg
+					{:else if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}
+						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="2em"
 							height="2em"
@@ -482,10 +486,10 @@
 							stroke-linecap="round"
 							stroke-linejoin="round"
 							class="icon icon-tabler icons-tabler-outline icon-tabler-check stroke-base-100 motion-safe:animate-wiggle"
-							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-								d="M5 12l5 5l10 -10"
-							/></svg
 						>
+							<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+							<path d="M5 12l5 5l10 -10" />
+						</svg>
 					{:else if currentSaveIcon === 'iconError'}
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -576,8 +580,7 @@
 	<div class="rounded-lg bg-base-100">
 		<h2 class="rounded-t-lg bg-red-500 p-5 font-bold text-base-100">Delete session</h2>
 		<p class="px-4 py-4">
-			Are you sure you want to <span class="font-bold">delete this session and all data</span>? You
-			cannot undo this action.
+			Are you sure you want to <b>delete this session and all data</b>? You cannot undo this action.
 		</p>
 		<div class="modal-action flex justify-end p-4">
 			<form method="dialog">
