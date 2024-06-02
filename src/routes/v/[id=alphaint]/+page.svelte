@@ -21,6 +21,7 @@
 	let remarksData = $state();
 	let helperText = $state(false);
 	let buttonClickedStars = $state(false);
+	let selectForm = $state();
 	let helperTextButtonColor = $state('fill-primary');
 	let deleteSessionButtonClickedSpinner = $state(false);
 	let order = $state();
@@ -436,39 +437,55 @@
 										{/if}
 										<GripVertical class="stroke-base-100" />
 									</div>
-									<select
-										bind:value={person.grade}
-										name="grade__{person.uuid}"
-										id="grade__{person.uuid}"
-										form="edit-form-{person.uuid}"
-										class="grade-selection select select-primary select-sm border-0 text-2xl font-bold"
-										onclick={() => {
-											gradeSelection = document.getElementsByClassName('grade-selection');
-											countGradeA = countGradeB = countGradeC = countGradeD = 0;
-											for (let i = 0; i < gradeSelection.length; i++) {
-												let val = gradeSelection[i].value;
-												switch (val) {
-													case 'A':
-														countGradeA += 1;
-														break;
-													case 'B':
-														countGradeB += 1;
-														break;
-													case 'C':
-														countGradeC += 1;
-														break;
-													default:
-														countGradeD += 1;
-														break;
-												}
-											}
-										}}
+									<!-- form="edit-form-{person.uuid}" name="grade__{person.uuid}"-->
+									<form
+										id="edit-grade-form-{person.uuid}"
+										method="POST"
+										action="?/editgrade"
+										use:enhance
 									>
-										<option>A</option>
-										<option>B</option>
-										<option>C</option>
-										<option>D</option>
-									</select>
+										<input type="hidden" name="edit-grade-target" value={person.id} />
+										<input type="hidden" name="edit-grade-target-name" value={person.name} />
+										<select
+											bind:value={person.grade}
+											name="grade"
+											id="grade__{person.uuid}"
+											class="grade-selection select select-primary select-sm border-0 text-2xl font-bold"
+											onchange={() => {
+												const currentForm = document.getElementById(
+													`edit-grade-form-${person.uuid}`,
+												);
+												currentForm.requestSubmit
+													? currentForm.requestSubmit()
+													: currentForm.submit();
+												console.log('Form submitted!');
+												gradeSelection = document.getElementsByClassName('grade-selection');
+												countGradeA = countGradeB = countGradeC = countGradeD = 0;
+												for (let i = 0; i < gradeSelection.length; i++) {
+													let val = gradeSelection[i].value;
+													switch (val) {
+														case 'A':
+															countGradeA += 1;
+															break;
+														case 'B':
+															countGradeB += 1;
+															break;
+														case 'C':
+															countGradeC += 1;
+															break;
+														default:
+															countGradeD += 1;
+															break;
+													}
+												}
+											}}
+										>
+											<option value="A">A</option>
+											<option value="B">B</option>
+											<option value="C">C</option>
+											<option value="D">D</option>
+										</select>
+									</form>
 									{#if helperText}
 										<div
 											class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
@@ -553,7 +570,7 @@
 												editDeptPostToForm.value = editDeptValue;
 												editGradePostToForm.value = editGradeValue;
 											}}
-											><TablerEdit class="inline h-[1.5em]  w-[1.5em] stroke-green-400" />
+											><TablerEdit class="inline h-[1.5em] w-[1.5em] stroke-green-400" />
 										</button>
 									</form>
 									<form method="POST" class="mx-3 self-center" action="?/delete" use:enhance>

@@ -104,6 +104,28 @@ export const actions = {
 		}
 	},
 
+	editgrade: async ({ request }) => {
+		const editGradeData = await request.formData();
+		console.log(editGradeData);
+		const editGradeGrade = String(editGradeData.get('grade'));
+		const editGradeName = String(editGradeData.get('edit-grade-target-name'));
+		const editGradeId = editGradeData.get('edit-grade-target');
+		console.log(editGradeName, editGradeGrade, editGradeId);
+		if (
+			editGradeGrade === 'A' ||
+			editGradeGrade === 'B' ||
+			editGradeGrade === 'C' ||
+			editGradeGrade === 'D'
+		) {
+			await db.update(records).set({ grade: editGradeGrade }).where(eq(records.id, editGradeId));
+			console.log('Edit grade success!');
+			return { editEditGradeSuccess: true };
+		} else {
+			console.log('Edit grade failed');
+			return { editEditGradeSuccess: false };
+		}
+	},
+
 	delete: async function ({ request }) {
 		const deleteData = await request.formData();
 		const delTarget = deleteData.get('delete-target');
