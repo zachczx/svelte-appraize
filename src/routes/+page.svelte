@@ -21,7 +21,7 @@
 <div class="max-w-dvw flex min-h-dvh flex-wrap content-center justify-center">
 	<UndrawDecide />
 	<div
-		class="view-outline z-20 grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary bg-base-100 p-3 pt-4 shadow-lg lg:p-10"
+		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary bg-base-100 p-3 pt-4 shadow-lg lg:p-10"
 	>
 		<div>
 			<div class="view-header text-7xl font-black text-primary">
@@ -33,7 +33,7 @@
 			<form method="POST" use:enhance>
 				<div class="flex w-full">
 					<label
-						class="input input-bordered input-primary relative flex w-full self-center rounded-full text-lg"
+						class="view-input input input-bordered input-primary relative flex w-full self-center rounded-full text-lg"
 						for="session"
 					>
 						<input
@@ -96,6 +96,9 @@
 		view-transition-name: view-header;
 	}
 
+	.view-input {
+		view-transition-name: view-input;
+	}
 	.view-outline {
 		view-transition-name: view-outline;
 	}
