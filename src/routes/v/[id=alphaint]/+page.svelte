@@ -118,7 +118,7 @@
 			<a href="/">Appraize</a>
 		</h1>
 	</div>
-	<div class="col-span-3 flex border-b-2 border-gray-100 bg-gray-50 px-8 pt-4">
+	<div class="col-span-3 flex px-8 pt-4">
 		<form method="POST" action="?/redirect" class="flex w-full justify-center" use:enhance>
 			<label
 				class="view-input input input-bordered input-primary relative flex w-full max-w-[30rem] self-center rounded-full text-lg"
@@ -514,7 +514,7 @@
 											stroke-width="2"
 											stroke-linecap="round"
 											stroke-linejoin="round"
-											class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy stroke-base-100"
+											class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle stroke-base-100"
 										>
 											<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 											<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
@@ -527,8 +527,8 @@
 									{:else if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
-											width="2em"
-											height="2em"
+											width="1.5em"
+											height="1.5em"
 											viewBox="0 0 24 24"
 											fill="none"
 											stroke-width="4"
