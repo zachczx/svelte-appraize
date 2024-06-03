@@ -24,41 +24,50 @@
 		class="view-outline z-20 grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary bg-base-100 p-3 pt-4 shadow-lg lg:p-10"
 	>
 		<div>
-			<h1 class="view-header text-primary"><a href="/">Appraize</a></h1>
+			<div class="view-header text-7xl font-black text-primary">
+				<a href="/">Appraize</a>
+			</div>
 			<p class="text-lg">Ranking sessions made easy.</p>
 		</div>
 		<div>
 			<form method="POST" use:enhance>
-				<div class="flex w-full gap-1">
-					<label for="session"></label>
-					<input
-						type="text"
-						name="session"
-						placeholder="Create or continue a ranking session (e.g. cssranking2024)"
-						class="input input-bordered input-primary w-full text-lg"
-						bind:value={$form.session}
-						required
-					/>
-					<button class="btn btn-primary text-xl font-bold" id="goButton">
-						{#if submittedSpinner}
-							<span class="loading loading loading-spinner"></span>
-						{:else}
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1.5em"
-								height="1.5em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right inline"
-							>
-								<path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l14 0" />
-								<path d="M13 18l6 -6" /><path d="M13 6l6 6" />
-							</svg>{/if}
-					</button>
+				<div class="flex w-full">
+					<label
+						class="input input-bordered input-primary relative flex w-full self-center rounded-full text-lg"
+						for="session"
+					>
+						<input
+							type="text"
+							name="session"
+							placeholder="Create or continue a ranking session (e.g. cssranking2024)"
+							bind:value={$form.session}
+							class="w-full"
+							required
+						/>
+
+						<button
+							class="group absolute -top-0 right-1"
+							id="goButton"
+							onsubmit={() => {
+								submittedSpinner = true;
+							}}
+						>
+							{#if submittedSpinner}
+								<span class="loading loading loading-spinner"></span>
+							{:else}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="2.5em"
+									height="2.5em"
+									viewBox="0 0 24 24"
+									class="icon icon-tabler icons-tabler-filled icon-tabler-circle-arrow-right inline fill-primary group-hover:fill-purple-700"
+									><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+										d="M12 2l.324 .005a10 10 0 1 1 -.648 0l.324 -.005zm.613 5.21a1 1 0 0 0 -1.32 1.497l2.291 2.293h-5.584l-.117 .007a1 1 0 0 0 .117 1.993h5.584l-2.291 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l4 -4l.073 -.082l.064 -.089l.062 -.113l.044 -.11l.03 -.112l.017 -.126l.003 -.075l-.007 -.118l-.029 -.148l-.035 -.105l-.054 -.113l-.071 -.111a1.008 1.008 0 0 0 -.097 -.112l-4 -4z"
+									/></svg
+								>
+							{/if}
+						</button>
+					</label>
 				</div>
 			</form>
 			<div class="flex flex-wrap px-2 pt-3 font-medium">
@@ -66,16 +75,9 @@
 					<span class="text-base text-red-400">{$errors.session}</span>
 				{:else}
 					<div class="text-sm">
-						Use only <div
-							class="tooltip tooltip-top inline cursor-pointer px-0"
-							data-tip="A-Z, a-z"
-						>
-							letters,
-						</div>
+						Use only <div class="tooltip tooltip-top inline cursor-pointer px-0" data-tip="A-Z, a-z">letters,</div>
 
-						<div class="tooltip tooltip-top inline cursor-pointer px-0" data-tip="0-9">
-							numbers,
-						</div>
+						<div class="tooltip tooltip-top inline cursor-pointer px-0" data-tip="0-9">numbers,</div>
 
 						<div class="tooltip tooltip-top inline cursor-pointer px-0" data-tip="- —">dashes.</div>
 					</div>

@@ -39,12 +39,30 @@ export default {
 						transform: 'skewX(3deg)',
 					},
 				},
+				scale: {
+					'0%': { scale: '100%' },
+					'50%': { scale: '130%' },
+					'100%': { scale: '100%' },
+				},
 			},
 			animation: { wiggle: 'wiggle 2s ease-out infinite' },
+			animation: { wiggleOne: 'wiggle 2s ease-out' },
+			animation: { scale: 'scale 1s ease-out' },
 		},
 	},
 	plugins: [require('daisyui')],
 	daisyui: {
-		themes: ['light'],
+		themes: [
+			{
+				light: {
+					...require('daisyui/src/theming/themes')['light'],
+					//primary: '#DA0C81',
+					secondary: '#DA0C81',
+					info: '#940B92',
+					accent: '#E95793',
+					'base-200': '#F8F4EC',
+				},
+			},
+		],
 	},
 };

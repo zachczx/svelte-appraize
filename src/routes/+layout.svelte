@@ -14,9 +14,7 @@
 	});
 </script>
 
-<div class="bg-white">
-	<slot />
-</div>
+<slot />
 
 <style>
 	@keyframes fade-in {

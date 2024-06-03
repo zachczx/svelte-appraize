@@ -16,6 +16,8 @@ let delay = (time) => {
 	});
 };
 
+const regexRoute = /^[a-zA-Z0-9-]*$/;
+
 /* export const load = (async ({ params }) => {
 	const sessionId = String(params.id);
 	//await delay(5000);
@@ -35,11 +37,7 @@ let delay = (time) => {
 
 export const load = (({ params }) => {
 	const sessionId = String(params.id);
-	const result = db
-		.select()
-		.from(records)
-		.where(eq(records.session, sessionId))
-		.orderBy(asc(records.sequence));
+	const result = db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence));
 
 	return {
 		id: sessionId,
@@ -111,12 +109,7 @@ export const actions = {
 		const editGradeName = String(editGradeData.get('edit-grade-target-name'));
 		const editGradeId = editGradeData.get('edit-grade-target');
 		console.log(editGradeName, editGradeGrade, editGradeId);
-		if (
-			editGradeGrade === 'A' ||
-			editGradeGrade === 'B' ||
-			editGradeGrade === 'C' ||
-			editGradeGrade === 'D'
-		) {
+		if (editGradeGrade === 'A' || editGradeGrade === 'B' || editGradeGrade === 'C' || editGradeGrade === 'D') {
 			await db.update(records).set({ grade: editGradeGrade }).where(eq(records.id, editGradeId));
 			console.log('Edit grade success!');
 			return { editEditGradeSuccess: true };
@@ -149,7 +142,9 @@ export const actions = {
 					.set({ sequence: individualOrder })
 					.where(and(eq(records.session, sessionId), eq(records.uuid, orderArray[i])));
 			}
+
 			await delay(500);
+			console.log('saved successfully');
 			return { formSaveSuccess: true };
 		} catch (error) {
 			console.log("There's an error:");
@@ -167,6 +162,17 @@ export const actions = {
 			redirect(307, '/');
 		} else {
 			return fail(400, { formDeleteSessionFail: true });
+		}
+	},
+
+	redirect: async function ({ request }) {
+		const inputData = await request.formData();
+		const inputSession = inputData.get('session');
+		const inputSessionTrimmed = inputSession.trim();
+		if (regexRoute.test(inputSessionTrimmed)) {
+			redirect(307, `/v/${inputSessionTrimmed}`);
+		} else {
+			return fail(400, { formRedirectFailed: true });
 		}
 	},
 };
