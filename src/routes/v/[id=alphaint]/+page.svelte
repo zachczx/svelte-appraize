@@ -121,7 +121,7 @@
 	<div class="col-span-3 flex border-b-2 border-gray-100 bg-gray-50 px-8 pt-4">
 		<form method="POST" action="?/redirect" class="flex w-full justify-center" use:enhance>
 			<label
-				class="input input-bordered input-primary relative flex w-full max-w-[30rem] self-center rounded-full text-lg"
+				class="view-input input input-bordered input-primary relative flex w-full max-w-[30rem] self-center rounded-full text-lg"
 				for="session"
 			>
 				<input type="text" name="session" placeholder="Jump to another session" class="w-full" required />
@@ -200,8 +200,7 @@
 						<path d="M5 12l-2 0l9 -9l9 9l-2 0" />
 						<path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
 						<path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-					</svg>
-					<a href="/">Home</a>
+					</svg><a href="/">Home</a>
 				</h3>
 			</div>
 
@@ -479,8 +478,7 @@
 							d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"
 						/>
 						<path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-					</svg>
-					Manage Session
+					</svg>Manage Session
 				</h3>
 				<div class="ms-7 w-auto border-l-2 border-gray-200 pe-4 pt-4">
 					<div class="join grid grid-cols-2 pe-4 ps-8">
@@ -865,6 +863,9 @@
 <style>
 	.view-header {
 		view-transition-name: view-header;
+	}
+	.view-input {
+		view-transition-name: view-input;
 	}
 	.sortable-handle {
 		/* cursor: url('/hand-grab.svg'), auto; */
