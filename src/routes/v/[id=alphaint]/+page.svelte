@@ -291,6 +291,7 @@
 				</h3>
 				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
 					<form method="POST" action="?/insert" class="ms-4 space-y-1 rounded-lg p-4" use:enhance>
+						{#if form?.insertNameMissing}<span class="text-lg text-error">Please enter a name:</span>{/if}
 						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
 							<!-- {#if helperText}
 								<div class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold" data-tip="Add a name"></div>
@@ -315,6 +316,7 @@
 							</svg>
 							<input type="text" name="name" bind:value={nameData} class="shrink text-lg" placeholder="Name" required />
 						</label>
+						{#if form?.insertDeptMissing}<span class="text-lg text-error">Please enter a dept:</span>{/if}
 						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
 							<!-- {#if helperText}
 								<div
@@ -325,7 +327,7 @@
 							<Home class="me-2 flex-none" />
 							<input type="text" name="dept" bind:value={deptData} class="grow text-lg" placeholder="Dept" required />
 						</label>
-
+						{#if form?.insertGradeMissing}<span class="text-lg text-error">Please select a grade:</span>{/if}
 						<div class="grid grid-cols-4 items-center justify-items-start text-lg">
 							<label class="label cursor-pointer space-x-1">
 								<span class="label-text text-lg font-medium">A</span>
@@ -347,6 +349,7 @@
 									bind:group={gradeData}
 								/>
 							</label>
+
 							<!-- {#if helperText}
 								<div class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold" data-tip="Add a grade"></div>
 							{/if} -->
@@ -371,6 +374,7 @@
 								/>
 							</label>
 						</div>
+
 						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -686,7 +690,6 @@
 												name="grade"
 												id="grade__{person.uuid}"
 												class="grade-selection select select-primary select-sm border-0 text-2xl font-extrabold"
-												required
 												onchange={() => {
 													const currentForm = document.getElementById(`edit-grade-form-${person.uuid}`);
 													currentForm.requestSubmit ? currentForm.requestSubmit() : currentForm.submit();

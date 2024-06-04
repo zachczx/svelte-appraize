@@ -67,6 +67,15 @@ export const actions = {
 		}
 
 		const submittedData = await request.formData();
+		if (!submittedData.get('name')) {
+			return fail(400, { insertNameMissing: true });
+		}
+		if (!submittedData.get('dept')) {
+			return fail(400, { insertDeptMissing: true });
+		}
+		if (!submittedData.get('grade')) {
+			return fail(400, { insertGradeMissing: true });
+		}
 		const name = String(submittedData.get('name'));
 		const dept = String(submittedData.get('dept'));
 		const grade = String(submittedData.get('grade'));
