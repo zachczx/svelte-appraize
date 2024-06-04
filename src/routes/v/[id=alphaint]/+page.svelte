@@ -686,6 +686,7 @@
 												name="grade"
 												id="grade__{person.uuid}"
 												class="grade-selection select select-primary select-sm border-0 text-2xl font-extrabold"
+												required
 												onchange={() => {
 													const currentForm = document.getElementById(`edit-grade-form-${person.uuid}`);
 													currentForm.requestSubmit ? currentForm.requestSubmit() : currentForm.submit();

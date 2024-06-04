@@ -43,9 +43,12 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@libsql/client": "^0.6.2",
+		"@paralleldrive/cuid2": "^2.2.2",
 		"@sveltejs/enhanced-img": "^0.2.0",
 		"drizzle-orm": "^0.31.0",
 		"pg": "^8.11.5",
+		"postgres": "^3.4.4",
 		"sortablejs": "^1.15.2"
 	}
 }
