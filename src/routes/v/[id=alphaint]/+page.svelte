@@ -12,6 +12,8 @@
 	import TablerEdit from '$lib/svg/TablerEdit.svelte';
 	import EditFields from '$lib/EditFields.svelte';
 	import GripVertical from '$lib/svg/GripVertical.svelte';
+	import User from '$lib/svg/User.svelte';
+	import Home from '$lib/svg/Home.svelte';
 	let { data, form } = $props();
 	let submittedSpinner = $state(false);
 	let currentSaveIcon = $state('iconSave');
@@ -28,13 +30,14 @@
 	let order = $state();
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
-	$effect(() => {
+	/* 	$effect(() => {
 		console.log(form?.formRedirectFailed);
-	});
+	}); */
 	let countGradeA = $state(0);
 	let countGradeB = $state(0);
 	let countGradeC = $state(0);
 	let countGradeD = $state(0);
+	let countGradeTotal = $derived(countGradeA + countGradeB + countGradeC + countGradeD);
 	let gradeSelection = $state();
 	onMount(() => {
 		//= document.getElementById('formNameData');
@@ -121,7 +124,7 @@
 	<div class="col-span-3 flex px-8 pt-4">
 		<form method="POST" action="?/redirect" class="flex w-full justify-center" use:enhance>
 			<label
-				class="view-input input input-bordered input-primary relative flex w-full max-w-[30rem] self-center rounded-full text-lg"
+				class="view-input input input-bordered relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
 				for="session"
 			>
 				<input type="text" name="session" placeholder="Jump to another session" class="w-full" required />
@@ -134,7 +137,7 @@
 							width="2.5em"
 							height="2.5em"
 							viewBox="0 0 24 24"
-							class="icon icon-tabler icons-tabler-filled icon-tabler-circle-arrow-right inline fill-primary group-hover:fill-purple-700"
+							class="icon icon-tabler icons-tabler-filled icon-tabler-circle-arrow-right inline fill-primary group-hover:saturate-50"
 							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
 								d="M12 2l.324 .005a10 10 0 1 1 -.648 0l.324 -.005zm.613 5.21a1 1 0 0 0 -1.32 1.497l2.291 2.293h-5.584l-.117 .007a1 1 0 0 0 .117 1.993h5.584l-2.291 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l4 -4l.073 -.082l.064 -.089l.062 -.113l.044 -.11l.03 -.112l.017 -.126l.003 -.075l-.007 -.118l-.029 -.148l-.035 -.105l-.054 -.113l-.071 -.111a1.008 1.008 0 0 0 -.097 -.112l-4 -4z"
 							/></svg
@@ -222,39 +225,49 @@
 						/><path d="M9 17l0 -5" /><path d="M12 17l0 -1" /><path d="M15 17l0 -3" /></svg
 					>Summary
 				</h3>
+
 				{#await data.streamed.result}
 					<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
 				{:then}
-					<ul class="ms-7 border-l-2 border-gray-200 ps-4">
-						<li>
-							<button class="btn btn-ghost"
-								><span class="text-2xl">A:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-									>{countGradeA}</span
-								></button
-							>
-						</li>
-						<li>
-							<button class="btn btn-ghost">
-								<span class="text-2xl">B:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-									>{countGradeB}</span
-								></button
-							>
-						</li>
-						<li>
-							<button class="btn btn-ghost"
-								><span class="text-2xl">C:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-									>{countGradeC}</span
-								></button
-							>
-						</li>
-						<li>
-							<button class="btn btn-ghost"
-								><span class="text-2xl">D:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-									>{countGradeD}</span
-								></button
-							>
-						</li>
-					</ul>
+					{#key form?.formInsertSuccess}
+						<ul class="ms-7 border-l-2 border-gray-200 ps-4">
+							<li>
+								<button class="btn btn-ghost"
+									><span class="text-2xl">A:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
+										>{countGradeA}</span
+									></button
+								>
+							</li>
+							<li>
+								<button class="btn btn-ghost">
+									<span class="text-2xl">B:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
+										>{countGradeB}</span
+									></button
+								>
+							</li>
+							<li>
+								<button class="btn btn-ghost"
+									><span class="text-2xl">C:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
+										>{countGradeC}</span
+									></button
+								>
+							</li>
+							<li>
+								<button class="btn btn-ghost"
+									><span class="text-2xl">D:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
+										>{countGradeD}</span
+									></button
+								>
+							</li>
+							<li>
+								<button class="btn btn-ghost"
+									><span class="text-2xl">Total:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
+										>{countGradeTotal}</span
+									></button
+								>
+							</li>
+						</ul>
+					{/key}
 				{/await}
 			</div>
 
@@ -309,24 +322,7 @@
 									data-tip="Add a department"
 								></div>
 							{/if} -->
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-home-plus me-2 flex-none"
-							>
-								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-								<path d="M19 12h2l-9 -9l-9 9h2v7a2 2 0 0 0 2 2h5.5" />
-								<path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2" />
-								<path d="M16 19h6" />
-								<path d="M19 16v6" />
-							</svg>
+							<Home class="me-2 flex-none" />
 							<input type="text" name="dept" bind:value={deptData} class="grow text-lg" placeholder="Dept" required />
 						</label>
 
@@ -605,12 +601,12 @@
 							{/key}
 						</form>
 						<button
-							class="btn btn-error join-item w-full"
+							class="group btn btn-outline join-item btn-neutral w-full"
 							onclick={() => {
 								delete_session_modal.showModal();
 							}}
 						>
-							<Trash class="inline h-[2em] w-[2em] stroke-base-100" />
+							<Trash class="inline h-[2em] w-[2em] stroke-neutral group-hover:stroke-base-100" />
 
 							<!-- {#if helperText}
 								<div
@@ -689,7 +685,7 @@
 												bind:value={person.grade}
 												name="grade"
 												id="grade__{person.uuid}"
-												class="grade-selection select select-primary select-sm border-0 text-2xl font-bold"
+												class="grade-selection select select-primary select-sm border-0 text-2xl font-extrabold"
 												onchange={() => {
 													const currentForm = document.getElementById(`edit-grade-form-${person.uuid}`);
 													currentForm.requestSubmit ? currentForm.requestSubmit() : currentForm.submit();
@@ -730,39 +726,39 @@
 										<!-- <li class="ms-8 list-decimal ps-10 md:ms-12"></li> -->
 									</div>
 									<div class="col-span-5 grid space-y-3 p-2 md:col-span-4">
-										<div>
-											<!-- {#if helperText}
+										<!-- {#if helperText}
 												<div
 													class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
 													data-tip="Edit > Enter"
 												></div>
 											{/if} -->
+										<label class="input input-sm input-primary flex items-center border-0 text-2xl font-bold">
 											<EditFields
 												name="name__{person.uuid}"
 												id="name__{person.uuid}"
 												form="edit-form-{person.uuid}"
-												class="input input-xs input-primary w-full border-0 text-2xl text-base font-bold"
+												class="grow "
 												value={person.name}
 												placeholder="Name"
 											/>
-										</div>
-										<div>
-											<!-- {#if helperText}
+										</label>
+
+										<!-- {#if helperText}
 												<div
 													class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
 													data-tip="Edit > Enter"
 												></div>
 											{/if} -->
-
+										<label class="input input-sm input-primary flex items-center border-0 text-xl">
 											<EditFields
 												name="dept__{person.uuid}"
 												id="dept__{person.uuid}"
 												form="edit-form-{person.uuid}"
-												class="input input-xs input-primary w-full border-0 text-base"
+												class="grow"
 												value={person.dept}
 												placeholder="Dept"
 											/>
-										</div>
+										</label>
 									</div>
 									<div class="col-span-5 grid p-2 md:col-span-4">
 										<div>{person.remarks}</div>

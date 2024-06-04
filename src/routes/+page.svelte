@@ -21,7 +21,7 @@
 <div class="max-w-dvw flex min-h-dvh flex-wrap content-center justify-center">
 	<UndrawDecide />
 	<div
-		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary bg-base-100 p-3 pt-4 shadow-lg lg:p-10"
+		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-neutral bg-base-100 p-3 pt-4 shadow-lg lg:p-10"
 	>
 		<div>
 			<div class="view-header text-7xl font-black text-primary">
@@ -33,7 +33,7 @@
 			<form method="POST" use:enhance>
 				<div class="flex w-full">
 					<label
-						class="view-input input input-bordered input-primary relative flex w-full self-center rounded-full text-lg"
+						class="view-input input input-bordered input-primary relative flex w-full self-center rounded-full text-lg shadow"
 						for="session"
 					>
 						<input
@@ -60,7 +60,7 @@
 									width="2.5em"
 									height="2.5em"
 									viewBox="0 0 24 24"
-									class="icon icon-tabler icons-tabler-filled icon-tabler-circle-arrow-right inline fill-primary group-hover:fill-purple-700"
+									class="icon icon-tabler icons-tabler-filled icon-tabler-circle-arrow-right inline fill-primary group-hover:saturate-50"
 									><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
 										d="M12 2l.324 .005a10 10 0 1 1 -.648 0l.324 -.005zm.613 5.21a1 1 0 0 0 -1.32 1.497l2.291 2.293h-5.584l-.117 .007a1 1 0 0 0 .117 1.993h5.584l-2.291 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l4 -4l.073 -.082l.064 -.089l.062 -.113l.044 -.11l.03 -.112l.017 -.126l.003 -.075l-.007 -.118l-.029 -.148l-.035 -.105l-.054 -.113l-.071 -.111a1.008 1.008 0 0 0 -.097 -.112l-4 -4z"
 									/></svg
