@@ -17,14 +17,14 @@
 </script>
 
 <!-- <SuperDebug data={$form} /> -->
-
+<!---->
 <div class="max-w-dvw flex min-h-dvh flex-wrap content-center justify-center">
 	<UndrawDecide />
 	<div
 		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-neutral bg-base-100 p-3 pt-4 shadow-lg lg:p-10"
 	>
 		<div>
-			<div class="view-header text-7xl font-black text-secondary">
+			<div class="view-header text-7xl font-black text-primary">
 				<a href="/">Appraize</a>
 			</div>
 			<p class="text-lg">Ranking sessions made easy.</p>
