@@ -8,9 +8,9 @@ jobs:
       - name: multiple command
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SERVER }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.REMOTE_KEY }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
           script: |
             cd svelte-appraize
             git pull
