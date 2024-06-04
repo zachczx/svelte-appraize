@@ -1,0 +1,23 @@
+name: remote ssh command
+on: [push]
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+- name: multiple command
+  uses: appleboy/ssh-action@v1.0.3
+  with:
+    host: ${{ secrets.SERVER }}
+    username: ${{ secrets.REMOTE_USER }}
+    key: ${{ secrets.REMOTE_KEY }}
+    script: |
+      	cd svelte-appraize
+	git pull
+	npm install
+	npm run generate
+	npm run migrate
+	npm run push 
+	npm run build
+	pm2 restart 0
