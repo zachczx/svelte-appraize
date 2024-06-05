@@ -14,6 +14,8 @@
 	import GripVertical from '$lib/svg/GripVertical.svelte';
 	import User from '$lib/svg/User.svelte';
 	import Home from '$lib/svg/Home.svelte';
+	import { navigating } from '$app/stores';
+	import { beforeNavigate, afterNavigate } from '$app/navigation';
 	let { data, form } = $props();
 	let submittedSpinner = $state(false);
 	let currentSaveIcon = $state('iconSave');
@@ -39,6 +41,7 @@
 	let countGradeD = $state(0);
 	let countGradeTotal = $derived(countGradeA + countGradeB + countGradeC + countGradeD);
 	let gradeSelection = $state();
+
 	onMount(() => {
 		//= document.getElementById('formNameData');
 		// let deptData = document.getElementById('formDeptData');
@@ -112,6 +115,9 @@
 		}
 
 		countNumberGrades();
+		beforeNavigate(() => {
+			countNumberGrades();
+		});
 	});
 </script>
 

@@ -38,7 +38,7 @@ const regexRoute = /^[a-zA-Z0-9-]*$/;
 export const load = (({ params }) => {
 	const sessionId = String(params.id);
 	const result = db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence));
-
+	// await delay(5000);
 	return {
 		id: sessionId,
 		streamed: {
