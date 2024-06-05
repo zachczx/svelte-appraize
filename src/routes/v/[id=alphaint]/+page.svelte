@@ -189,7 +189,7 @@
 	<div class="border-r-2 border-gray-100 bg-gray-50 py-4 pb-4 text-2xl">
 		<div class="sticky top-20 space-y-4">
 			<div>
-				<h3 class="view-home-sidebar px-4 font-extrabold">
+				<h3 class=" px-4 font-extrabold">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="1em"
@@ -274,7 +274,7 @@
 				{/await}
 			</div>
 
-			<div class="view-add-sidebar">
+			<div class="">
 				<h3 class="px-4 font-extrabold">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -462,7 +462,7 @@
 					</form>
 				</div>
 			</div>
-			<div class="view-manage-sidebar">
+			<div class="">
 				<h3 class="px-4 font-extrabold">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
