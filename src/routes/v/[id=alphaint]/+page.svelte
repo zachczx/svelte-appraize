@@ -125,9 +125,9 @@
 		</h1>
 	</div>
 	<div class="col-span-3 flex px-8 pt-4">
-		<form method="POST" action="?/redirect" class="view-jump-topbar flex w-full justify-center" use:enhance>
+		<form method="POST" action="?/redirect" class=" flex w-full justify-center" use:enhance>
 			<label
-				class="input input-bordered relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
+				class="view-input input input-bordered relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
 				for="session"
 			>
 				<input type="text" name="session" placeholder="Jump to another session" class="w-full" required />
@@ -881,8 +881,8 @@
 	.view-manage-sidebar {
 		view-transition-name: view-manage-sidebar;
 	}
-	.view-jump-topbar {
-		view-transition-name: view-jump-topbar;
+	.view-input {
+		view-transition-name: view-input;
 	}
 
 	.sortable-handle {
