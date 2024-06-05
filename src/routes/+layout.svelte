@@ -1,6 +1,6 @@
 <script>
 	import '../app.css';
-	import { beforeNavigate, onNavigate, afterNavigate } from '$app/navigation';
+	import { onNavigate } from '$app/navigation';
 
 	onNavigate((navigation) => {
 		if (!document.startViewTransition) return;
