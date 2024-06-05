@@ -210,7 +210,7 @@
 				</h3>
 			</div>
 
-			<div class="view-summary-sidebar grid">
+			<div class="grid">
 				<h3 class="px-4 font-extrabold">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
