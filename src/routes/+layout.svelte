@@ -2,14 +2,6 @@
 	import '../app.css';
 	import { beforeNavigate, onNavigate, afterNavigate } from '$app/navigation';
 
-	let isLoading = $state(false);
-	beforeNavigate(() => {
-		isLoading = true;
-	});
-	afterNavigate(() => {
-		isLoading = false;
-	});
-
 	onNavigate((navigation) => {
 		if (!document.startViewTransition) return;
 
@@ -22,13 +14,7 @@
 	});
 </script>
 
-{#if isLoading}
-	<div class="z-30 flex min-h-dvh w-full justify-center">
-		<span class="loading loading-spinner loading-lg text-primary"></span>
-	</div>
-{:else}
-	<slot />
-{/if}
+<slot />
 
 <style>
 	@keyframes fade-in {
