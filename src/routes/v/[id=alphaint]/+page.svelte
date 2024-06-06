@@ -230,7 +230,7 @@
 					<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
 				{:then newCounts}
 					<div class="ms-7 border-l-2 border-gray-200 pe-8 ps-7">
-						<div class="stats w-full bg-gray-100">
+						<div class="stats w-full bg-gray-50">
 							<div class="stat place-items-center">
 								<div class="stat-title text-xl">A</div>
 								<div class="stat-value animate-scale text-2xl font-bold">{newCounts.percentageA}%</div>
