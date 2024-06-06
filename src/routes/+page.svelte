@@ -17,14 +17,14 @@
 </script>
 
 <svelte:head>
-	<title>Appraize - Work appraisal ranking made easier</title>
+	<title>Appraize | Work Ranking Sessions Made Easy</title>
 </svelte:head>
 <!-- <SuperDebug data={$form} /> -->
 <!---->
 <div class="max-w-dvw flex min-h-dvh flex-wrap content-center justify-center">
 	<UndrawDecide />
 	<div
-		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-neutral bg-base-100 p-3 pt-4 shadow-lg lg:p-10"
+		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border border-gray-300 bg-gradient-to-br from-base-100 to-base-200 p-3 pt-4 shadow-lg lg:p-10"
 	>
 		<div>
 			<div class="view-header text-7xl font-black text-primary">
@@ -36,7 +36,7 @@
 			<form method="POST" use:enhance>
 				<div class="flex w-full">
 					<label
-						class="view-input input input-bordered input-primary relative flex w-full self-center rounded-full text-lg shadow"
+						class="view-input input input-bordered input-primary relative flex w-full self-center rounded-full border-2 text-lg shadow"
 						for="session"
 					>
 						<input
