@@ -1,17 +1,24 @@
 import { relations, sql } from 'drizzle-orm';
-import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
-import { createId } from '@paralleldrive/cuid2';
+import {
+	pgTable,
+	integer,
+	uuid,
+	boolean,
+	serial,
+	text,
+	timestamp,
+	varchar,
+} from 'drizzle-orm/pg-core';
 
-export const records = sqliteTable('records', {
-	id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-	uuid: text('uuid').$defaultFn(() => createId()),
+export const records = pgTable('records', {
+	id: serial('serial').primaryKey(),
+	uuid: uuid('uuid').defaultRandom(),
 	name: text('name').notNull(),
 	dept: text('dept').notNull(),
 	grade: text('grade').notNull(),
 	session: text('session').notNull(),
 	sequence: integer('sequence'),
-	remarks: text('remarks'),
-	createdAt: integer('created_at')
-		.notNull()
-		.default(sql`(cast (unixepoch() as int))`),
+	previous: boolean('boolean'),
+	remarks: varchar('remarks', { length: 256 }),
+	timestamp: timestamp('timestamp3').defaultNow(),
 });

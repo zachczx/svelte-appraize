@@ -24,7 +24,7 @@
 		"autoprefixer": "^10.4.19",
 		"daisyui": "^4.11.1",
 		"dotenv": "^16.4.5",
-		"drizzle-kit": "^0.22.1",
+		"drizzle-kit": "^0.22.2",
 		"eslint": "^9.4.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0-next.4",
@@ -46,7 +46,7 @@
 		"@libsql/client": "^0.6.2",
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@sveltejs/enhanced-img": "^0.2.0",
-		"drizzle-orm": "^0.31.0",
+		"drizzle-orm": "^0.31.1",
 		"pg": "^8.11.5",
 		"postgres": "^3.4.4",
 		"sortablejs": "^1.15.2"

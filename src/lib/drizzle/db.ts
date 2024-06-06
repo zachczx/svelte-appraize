@@ -1,8 +1,12 @@
-import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
-import { TURSO_DATABASE_URL, TURSO_AUTH_TOKEN } from '$env/static/private';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
+import postgres from 'postgres';
 import * as schema from './schema';
+import { CONNECTION_STRING } from '$env/static/private';
 
-const client = createClient({ url: TURSO_DATABASE_URL, authToken: TURSO_AUTH_TOKEN });
+const client = postgres(CONNECTION_STRING);
+const migrationsClient = postgres(CONNECTION_STRING, {
+	max: 1,
+});
 
 export const db = drizzle(client, { schema });
