@@ -14,8 +14,6 @@
 	import GripVertical from '$lib/svg/GripVertical.svelte';
 	import User from '$lib/svg/User.svelte';
 	import Home from '$lib/svg/Home.svelte';
-	import { navigating } from '$app/stores';
-	import { beforeNavigate, afterNavigate } from '$app/navigation';
 	let { data, form } = $props();
 	let submittedSpinner = $state(false);
 	let currentSaveIcon = $state('iconSave');
@@ -24,23 +22,34 @@
 	let deptData = $state();
 	let gradeData = $state();
 	let remarksData = $state();
-	// let helperText = $state(false);
+
 	let buttonClickedStars = $state(false);
 	let selectForm = $state();
-	// let helperTextButtonColor = $state('fill-primary');
+
 	let deleteSessionButtonClickedSpinner = $state(false);
 	let order = $state();
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
-	/* 	$effect(() => {
-		console.log(form?.formRedirectFailed);
-	}); */
-	let countGradeA = $state(0);
-	let countGradeB = $state(0);
-	let countGradeC = $state(0);
-	let countGradeD = $state(0);
-	let countGradeTotal = $derived(countGradeA + countGradeB + countGradeC + countGradeD);
-	let gradeSelection = $state();
+
+	let newCounts = $derived.by(async () => {
+		let newCounts = { A: 0, B: 0, C: 0, D: 0, total: 0 };
+		let tempResult = await data.streamed.result;
+
+		for (let i = 0; i < tempResult.length; i++) {
+			if (tempResult[i].grade === 'A') {
+				newCounts.A += 1;
+			} else if (tempResult[i].grade === 'B') {
+				newCounts.B += 1;
+			} else if (tempResult[i].grade === 'C') {
+				newCounts.C += 1;
+			} else if (tempResult[i].grade === 'D') {
+				newCounts.D += 1;
+			}
+		}
+		newCounts.total = newCounts.A + newCounts.B + newCounts.C + newCounts.D;
+		console.log(newCounts);
+		return newCounts;
+	});
 
 	onMount(() => {
 		//= document.getElementById('formNameData');
@@ -90,31 +99,6 @@
 			order = sortable.toArray();
 		}
 		initArray();
-
-		async function countNumberGrades() {
-			await data.streamed.result;
-			gradeSelection = document.getElementsByClassName('grade-selection');
-
-			for (let i = 0; i < gradeSelection.length; i++) {
-				let val = gradeSelection[i].value;
-				switch (val) {
-					case 'A':
-						countGradeA += 1;
-						break;
-					case 'B':
-						countGradeB += 1;
-						break;
-					case 'C':
-						countGradeC += 1;
-						break;
-					default:
-						countGradeD += 1;
-						break;
-				}
-			}
-		}
-
-		countNumberGrades();
 	});
 </script>
 
@@ -228,49 +212,46 @@
 						/><path d="M9 17l0 -5" /><path d="M12 17l0 -1" /><path d="M15 17l0 -3" /></svg
 					>Summary
 				</h3>
-
-				{#await data.streamed.result}
+				{#await newCounts}
 					<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
-				{:then}
-					{#key form?.formInsertSuccess}
-						<ul class="ms-7 border-l-2 border-gray-200 ps-4">
-							<li>
-								<button class="btn btn-ghost"
-									><span class="text-2xl">A:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-										>{countGradeA}</span
-									></button
-								>
-							</li>
-							<li>
-								<button class="btn btn-ghost">
-									<span class="text-2xl">B:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-										>{countGradeB}</span
-									></button
-								>
-							</li>
-							<li>
-								<button class="btn btn-ghost"
-									><span class="text-2xl">C:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-										>{countGradeC}</span
-									></button
-								>
-							</li>
-							<li>
-								<button class="btn btn-ghost"
-									><span class="text-2xl">D:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-										>{countGradeD}</span
-									></button
-								>
-							</li>
-							<li>
-								<button class="btn btn-ghost"
-									><span class="text-2xl">Total:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-										>{countGradeTotal}</span
-									></button
-								>
-							</li>
-						</ul>
-					{/key}
+				{:then newCounts}
+					<ul class="ms-7 border-l-2 border-gray-200 ps-4">
+						<li>
+							<button class="btn btn-ghost"
+								><span class="text-2xl">A:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
+									>{newCounts.A}</span
+								></button
+							>
+						</li>
+						<li>
+							<button class="btn btn-ghost">
+								<span class="text-2xl">B:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
+									>{newCounts.B}</span
+								></button
+							>
+						</li>
+						<li>
+							<button class="btn btn-ghost"
+								><span class="text-2xl">C:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
+									>{newCounts.C}</span
+								></button
+							>
+						</li>
+						<li>
+							<button class="btn btn-ghost"
+								><span class="text-2xl">D:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
+									>{newCounts.D}</span
+								></button
+							>
+						</li>
+						<li>
+							<button class="btn btn-ghost"
+								><span class="text-2xl">Total:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
+									>{newCounts.total}</span
+								></button
+							>
+						</li>
+					</ul>
 				{/await}
 			</div>
 
@@ -411,14 +392,14 @@
 							/>
 						</label>
 						<button
-							class="btn btn-primary relative w-full text-lg font-bold text-base-100"
+							class="btn btn-primary relative w-full text-xl font-bold text-base-100"
 							onclick={() => {
 								// buttonClickedStars = !buttonClickedStars;
 								// setTimeout(() => {
 								// 	buttonClickedStars = !buttonClickedStars;
 								// }, 2000);
 							}}
-							>Add <svg
+							>Add<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="1.2em"
 								height="1.2em"
@@ -523,8 +504,7 @@
 											<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
 											<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
 											<path d="M14 4l0 4l-6 0l0 -4" />
-										</svg>
-										<!-- <span class="text-lg font-bold text-base-100"></span> -->
+										</svg><span class="ms-0 hidden text-xl font-bold text-base-100 lg:contents">Save</span>
 									{:else if currentSaveIcon === 'iconSpinner' && (!form?.formSaveSuccess || form?.formSaveSuccess == null)}
 										<span class="loading loading-spinner loading-md h-[2em] w-[2em] text-base-100"></span>
 									{:else if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}
@@ -613,7 +593,9 @@
 								delete_session_modal.showModal();
 							}}
 						>
-							<Trash class="inline h-[2em] w-[2em] stroke-neutral group-hover:stroke-base-100" />
+							<Trash class="inline h-[2em] w-[2em] stroke-neutral group-hover:stroke-base-100" /><span
+								class="ms-0 hidden text-xl font-bold lg:contents">Delete</span
+							>
 
 							<!-- {#if helperText}
 								<div
@@ -697,25 +679,6 @@
 													const currentForm = document.getElementById(`edit-grade-form-${person.uuid}`);
 													currentForm.requestSubmit ? currentForm.requestSubmit() : currentForm.submit();
 													console.log('Form submitted!');
-													gradeSelection = document.getElementsByClassName('grade-selection');
-													countGradeA = countGradeB = countGradeC = countGradeD = 0;
-													for (let i = 0; i < gradeSelection.length; i++) {
-														let val = gradeSelection[i].value;
-														switch (val) {
-															case 'A':
-																countGradeA += 1;
-																break;
-															case 'B':
-																countGradeB += 1;
-																break;
-															case 'C':
-																countGradeC += 1;
-																break;
-															default:
-																countGradeD += 1;
-																break;
-														}
-													}
 												}}
 											>
 												<option value="A">A</option>
