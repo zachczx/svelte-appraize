@@ -1,10 +1,11 @@
 <script>
 	import '../app.css';
-	import { onNavigate } from '$app/navigation';
+	import { beforeNavigate, onNavigate, afterNavigate } from '$app/navigation';
+
+	let isLoading = $state(false);
 
 	onNavigate((navigation) => {
 		if (!document.startViewTransition) return;
-
 		return new Promise((resolve) => {
 			document.startViewTransition(async () => {
 				resolve();
@@ -13,6 +14,10 @@
 		});
 	});
 </script>
+
+<svelte:head>
+	<title>Appraize</title>
+</svelte:head>
 
 <slot />
 
