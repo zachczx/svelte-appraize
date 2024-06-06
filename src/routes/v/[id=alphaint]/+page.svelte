@@ -170,7 +170,7 @@
 		</div> -->
 	</div>
 	<!-- Sidebar -->
-	<div class="border-r-2 border-gray-100 bg-gray-50 py-4 pb-4 text-2xl">
+	<div class="view-outline border-r-2 border-gray-100 bg-gray-50 py-4 pb-4 text-2xl">
 		<div class="view-home-sidebar sticky top-20 space-y-4">
 			<div>
 				<h3 class="px-4 font-extrabold">
@@ -830,7 +830,9 @@
 	.view-header {
 		view-transition-name: view-header;
 	}
-
+	.view-outline {
+		view-transition-name: view-outline;
+	}
 	.view-home-sidebar {
 		view-transition-name: view-home-sidebar;
 	}
