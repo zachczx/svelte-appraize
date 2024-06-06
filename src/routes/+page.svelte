@@ -41,12 +41,12 @@
 							name="session"
 							placeholder="Create or continue a ranking session (e.g. cssranking2024)"
 							bind:value={$form.session}
-							class="w-full"
+							class="view-input-button w-full"
 							required
 						/>
 
 						<button
-							class="group absolute -top-0 right-1"
+							class="view-input-button group absolute -top-0 right-1"
 							id="goButton"
 							onsubmit={() => {
 								submittedSpinner = true;
@@ -99,7 +99,7 @@
 	.view-input {
 		view-transition-name: view-input;
 	}
-	.view-outline {
+	/* 	.view-outline {
 		view-transition-name: view-outline;
-	}
+	} */
 </style>

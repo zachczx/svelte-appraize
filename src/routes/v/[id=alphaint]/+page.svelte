@@ -131,7 +131,7 @@
 				for="session"
 			>
 				<input type="text" name="session" placeholder="Jump to another session" class="w-full" required />
-				<button class="group absolute -top-0 right-1">
+				<button class="view-input-button group absolute -top-0 right-1">
 					{#if submittedSpinner}
 						<span class="loading loading loading-spinner"></span>
 					{:else}
@@ -187,9 +187,9 @@
 	</div>
 	<!-- Sidebar -->
 	<div class="border-r-2 border-gray-100 bg-gray-50 py-4 pb-4 text-2xl">
-		<div class="sticky top-20 space-y-4">
+		<div class="view-home-sidebar sticky top-20 space-y-4">
 			<div>
-				<h3 class=" px-4 font-extrabold">
+				<h3 class="px-4 font-extrabold">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="1em"
@@ -210,7 +210,7 @@
 				</h3>
 			</div>
 
-			<div class="grid">
+			<div class="view-summary-sidebar grid">
 				<h3 class="px-4 font-extrabold">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -274,7 +274,7 @@
 				{/await}
 			</div>
 
-			<div class="">
+			<div class="view-add-sidebar">
 				<h3 class="px-4 font-extrabold">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -462,7 +462,7 @@
 					</form>
 				</div>
 			</div>
-			<div class="">
+			<div class="view-manage-sidebar">
 				<h3 class="px-4 font-extrabold">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -632,7 +632,7 @@
 	<div class="col-span-3 min-h-dvh space-y-12 pb-4 pt-4">
 		<div>
 			<ol>
-				<div class="px-2 pb-4 md:px-10">
+				<div class="view-ranking-title px-2 pb-4 md:px-10">
 					<h1>Ranking</h1>
 					<div class="text-2xl">
 						<svg
@@ -873,6 +873,9 @@
 	}
 	.view-summary-sidebar {
 		view-transition-name: view-summary-sidebar;
+	}
+	.view-ranking-title {
+		view-transition-name: view-ranking-title;
 	}
 
 	.view-add-sidebar {
