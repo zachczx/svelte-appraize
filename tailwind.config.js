@@ -40,9 +40,9 @@ export default {
 					},
 				},
 				scale: {
-					'0%': { scale: '100%' },
-					'50%': { scale: '130%' },
-					'100%': { scale: '100%' },
+					'0%': { scale: '100%', color: 'currentColor' },
+					'50%': { scale: '120%', color: '#491eff', fontWeight: '900' },
+					'100%': { scale: '100%', color: 'currentColor' },
 				},
 			},
 			animation: { wiggle: 'wiggle 2s ease-out infinite' },
@@ -56,7 +56,8 @@ export default {
 			{
 				light: {
 					...require('daisyui/src/theming/themes')['light'],
-					//primary: '#DA0C81',
+					//primary for color palette: '#DA0C81',
+					//primary in theme is #491eff
 					secondary: '#DA0C81',
 					info: '#940B92',
 					accent: '#E95793',
