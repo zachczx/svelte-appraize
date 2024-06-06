@@ -16,6 +16,9 @@
 	const regex = /[!@#$%^&*()\-+={}[\]:;"'<>,.?\/|\\]/;
 </script>
 
+<svelte:head>
+	<title>Appraize - Work appraisal ranking made easier</title>
+</svelte:head>
 <!-- <SuperDebug data={$form} /> -->
 <!---->
 <div class="max-w-dvw flex min-h-dvh flex-wrap content-center justify-center">
