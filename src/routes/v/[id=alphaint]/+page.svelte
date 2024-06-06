@@ -32,22 +32,36 @@
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
 
 	let newCounts = $derived.by(async () => {
-		let newCounts = { A: 0, B: 0, C: 0, D: 0, total: 0 };
+		let newCounts = {
+			a: 0,
+			b: 0,
+			c: 0,
+			d: 0,
+			total: 0,
+			percentageA: 0,
+			percentageB: 0,
+			percentageC: 0,
+			percentageD: 0,
+		};
 		let tempResult = await data.streamed.result;
 
 		for (let i = 0; i < tempResult.length; i++) {
 			if (tempResult[i].grade === 'A') {
-				newCounts.A += 1;
+				newCounts.a += 1;
 			} else if (tempResult[i].grade === 'B') {
-				newCounts.B += 1;
+				newCounts.b += 1;
 			} else if (tempResult[i].grade === 'C') {
-				newCounts.C += 1;
+				newCounts.c += 1;
 			} else if (tempResult[i].grade === 'D') {
-				newCounts.D += 1;
+				newCounts.d += 1;
 			}
 		}
-		newCounts.total = newCounts.A + newCounts.B + newCounts.C + newCounts.D;
+		newCounts.total = newCounts.a + newCounts.b + newCounts.c + newCounts.d;
 		// console.log(newCounts);
+		newCounts.percentageA = Math.round((newCounts.a / newCounts.total) * 100);
+		newCounts.percentageB = Math.round((newCounts.b / newCounts.total) * 100);
+		newCounts.percentageC = Math.round((newCounts.c / newCounts.total) * 100);
+		newCounts.percentageD = Math.round((newCounts.d / newCounts.total) * 100);
 		return newCounts;
 	});
 
@@ -219,40 +233,24 @@
 						<div class="stats w-full bg-gray-50">
 							<div class="stat place-items-center">
 								<div class="stat-title text-xl">A</div>
-								<div class="stat-value animate-scale font-bold">{newCounts.A}</div>
+								<div class="stat-value animate-scale text-2xl font-bold">{newCounts.percentageA}%</div>
+								<div class="stat-value animate-scale text-2xl font-bold">({newCounts.a})</div>
 							</div>
 
 							<div class="stat place-items-center">
 								<div class="stat-title text-xl">B</div>
-								<div class="stat-value animate-scale font-bold">{newCounts.B}</div>
+								<div class="stat-value animate-scale text-2xl font-bold">{newCounts.percentageB}%</div>
+								<div class="stat-value animate-scale text-2xl font-bold">({newCounts.b})</div>
 							</div>
 							<div class="stat place-items-center">
 								<div class="stat-title text-xl">C</div>
-								<div class="stat-value animate-scale font-bold">{newCounts.C}</div>
+								<div class="stat-value animate-scale text-2xl font-bold">{newCounts.percentageC}%</div>
+								<div class="stat-value animate-scale text-2xl font-bold">({newCounts.c})</div>
 							</div>
 							<div class="stat place-items-center">
 								<div class="stat-title text-xl">D</div>
-								<div class="stat-value animate-scale font-bold">{newCounts.D}</div>
-							</div>
-							<div class="stat place-items-center">
-								<div class="stat-title text-xl">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="1em"
-										height="1em"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="icon icon-tabler icons-tabler-outline icon-tabler-plus-equal"
-										><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7h6" /><path d="M7 4v6" /><path
-											d="M20 16h-6"
-										/><path d="M20 19h-6" /><path d="M5 19l14 -14" /></svg
-									>
-								</div>
-								<div class="stat-value animate-scale font-black">{newCounts.total}</div>
+								<div class="stat-value animate-scale text-2xl font-bold">{newCounts.percentageD}%</div>
+								<div class="stat-value animate-scale text-2xl font-bold">({newCounts.d})</div>
 							</div>
 						</div>
 					</div>
@@ -620,24 +618,49 @@
 			<ol>
 				<div class="view-ranking-title px-2 pb-4 md:px-10">
 					<h1>Ranking</h1>
-					<div class="text-2xl">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="icon icon-tabler icons-tabler-outline icon-tabler-clipboard-list mb-1 me-2 inline"
-							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-								d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"
-							/><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /><path
-								d="M9 12l.01 0"
-							/><path d="M13 12l2 0" /><path d="M9 16l.01 0" /><path d="M13 16l2 0" /></svg
-						>{data.id}
+					<div class="space-x-16 text-2xl">
+						<span
+							><svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="1em"
+								height="1em"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="icon icon-tabler icons-tabler-outline icon-tabler-clipboard-list mb-1 me-2 inline"
+								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+									d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"
+								/><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /><path
+									d="M9 12l.01 0"
+								/><path d="M13 12l2 0" /><path d="M9 16l.01 0" /><path d="M13 16l2 0" /></svg
+							>{data.id}</span
+						>
+						<span>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="1em"
+								height="1em"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="icon icon-tabler icons-tabler-outline icon-tabler-users mb-1 me-2 inline"
+								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+									d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
+								/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path
+									d="M21 21v-2a4 4 0 0 0 -3 -3.85"
+								/></svg
+							>{#await newCounts}
+								<span class="loading loading-spinner loading-sm justify-self-center py-5 text-primary md:py-10"></span>
+							{:then newCounts}
+								{newCounts.total}
+							{/await}</span
+						>
 					</div>
 				</div>
 				<div id="table" class="relative grid space-y-4 px-2 md:px-10">
