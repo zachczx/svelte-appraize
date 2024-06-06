@@ -18,31 +18,13 @@ let delay = (time) => {
 
 const regexRoute = /^[a-zA-Z0-9-]*$/;
 
-/* export const load = (async ({ params }) => {
+export const load = (async ({ params }) => {
 	const sessionId = String(params.id);
-	//await delay(5000);
-	const result = await db
-		.select()
-		.from(records)
-		.where(eq(records.session, sessionId))
-		.orderBy(asc(records.sequence));
-
 	return {
 		id: sessionId,
 		streamed: {
-			result: result,
-		},
-	};
-}) satisfies PageServerLoad; */
-
-export const load = (({ params }) => {
-	const sessionId = String(params.id);
-	const result = db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence));
-	// await delay(5000);
-	return {
-		id: sessionId,
-		streamed: {
-			result: result,
+			result: await db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence)),
+			//delay: await delay(5000),
 		},
 	};
 }) satisfies PageServerLoad;
