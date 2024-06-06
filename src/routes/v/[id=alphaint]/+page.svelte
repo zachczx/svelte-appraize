@@ -47,7 +47,7 @@
 			}
 		}
 		newCounts.total = newCounts.A + newCounts.B + newCounts.C + newCounts.D;
-		console.log(newCounts);
+		// console.log(newCounts);
 		return newCounts;
 	});
 
@@ -215,43 +215,47 @@
 				{#await newCounts}
 					<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
 				{:then newCounts}
-					<ul class="ms-7 border-l-2 border-gray-200 ps-4">
-						<li>
-							<button class="btn btn-ghost"
-								><span class="text-2xl">A:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-									>{newCounts.A}</span
-								></button
-							>
-						</li>
-						<li>
-							<button class="btn btn-ghost">
-								<span class="text-2xl">B:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-									>{newCounts.B}</span
-								></button
-							>
-						</li>
-						<li>
-							<button class="btn btn-ghost"
-								><span class="text-2xl">C:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-									>{newCounts.C}</span
-								></button
-							>
-						</li>
-						<li>
-							<button class="btn btn-ghost"
-								><span class="text-2xl">D:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-									>{newCounts.D}</span
-								></button
-							>
-						</li>
-						<li>
-							<button class="btn btn-ghost"
-								><span class="text-2xl">Total:</span><span class="inline-block animate-scale px-2 text-2xl font-black"
-									>{newCounts.total}</span
-								></button
-							>
-						</li>
-					</ul>
+					<div class="ms-7 border-l-2 border-gray-200 pe-8 ps-7">
+						<div class="stats w-full bg-gray-50">
+							<div class="stat place-items-center">
+								<div class="stat-title text-xl">A</div>
+								<div class="stat-value animate-scale font-bold">{newCounts.A}</div>
+							</div>
+
+							<div class="stat place-items-center">
+								<div class="stat-title text-xl">B</div>
+								<div class="stat-value animate-scale font-bold">{newCounts.B}</div>
+							</div>
+							<div class="stat place-items-center">
+								<div class="stat-title text-xl">C</div>
+								<div class="stat-value animate-scale font-bold">{newCounts.C}</div>
+							</div>
+							<div class="stat place-items-center">
+								<div class="stat-title text-xl">D</div>
+								<div class="stat-value animate-scale font-bold">{newCounts.D}</div>
+							</div>
+							<div class="stat place-items-center">
+								<div class="stat-title text-xl">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="1em"
+										height="1em"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="icon icon-tabler icons-tabler-outline icon-tabler-plus-equal"
+										><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 7h6" /><path d="M7 4v6" /><path
+											d="M20 16h-6"
+										/><path d="M20 19h-6" /><path d="M5 19l14 -14" /></svg
+									>
+								</div>
+								<div class="stat-value animate-scale font-black">{newCounts.total}</div>
+							</div>
+						</div>
+					</div>
 				{/await}
 			</div>
 
@@ -702,7 +706,10 @@
 													data-tip="Edit > Enter"
 												></div>
 											{/if} -->
-										<label class="input input-sm input-primary flex items-center border-0 text-2xl font-bold">
+										<label
+											class="input input-sm input-primary flex items-center border-0 text-2xl font-bold"
+											for="name__{person.uuid}"
+										>
 											<EditFields
 												name="name__{person.uuid}"
 												id="name__{person.uuid}"
@@ -719,19 +726,22 @@
 													data-tip="Edit > Enter"
 												></div>
 											{/if} -->
-										<label class="input input-sm input-primary flex items-center border-0 text-xl">
+										<label
+											class="input input-sm input-primary flex items-center border-0 text-xl"
+											for="dept__{person.uuid}"
+										>
 											<EditFields
 												name="dept__{person.uuid}"
 												id="dept__{person.uuid}"
 												form="edit-form-{person.uuid}"
-												class="grow"
+												class="grow text-gray-500"
 												value={person.dept}
 												placeholder="Dept"
 											/>
 										</label>
 									</div>
 									<div class="col-span-5 grid p-2 md:col-span-4">
-										<div>{person.remarks}</div>
+										<div class="text-gray-500">{person.remarks}</div>
 									</div>
 
 									<div class="col-span-5 flex justify-end p-2 md:col-span-2">
