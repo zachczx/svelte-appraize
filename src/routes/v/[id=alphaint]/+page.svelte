@@ -15,6 +15,8 @@
 	import User from '$lib/svg/User.svelte';
 	import Home from '$lib/svg/Home.svelte';
 	let { data, form } = $props();
+	let formSaveSession;
+	let autoSave = $state(true);
 	let submittedSpinner = $state(false);
 	let currentSaveIcon = $state('iconSave');
 	let currentSaveButtonColor = $state('btn-primary');
@@ -117,6 +119,14 @@
 			order = sortable.toArray();
 		}
 		initArray();
+	});
+
+	$effect(() => {
+		setInterval(() => {
+			if (order && autoSave) {
+				formSaveSession.requestSubmit();
+			}
+		}, 30000);
 	});
 </script>
 
@@ -459,6 +469,19 @@
 					</div>
 				</div>
 			</div>
+			<!-- 
+			/////////////////////////////////////////
+			/
+			/
+			/
+			/
+			/	Manage Session
+			/
+			/
+			/	
+			/
+			///////////////////////////////////////// 
+			-->
 			<div class="view-manage-sidebar">
 				<h3 class="px-4 font-extrabold">
 					<svg
@@ -480,10 +503,28 @@
 						<path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
 					</svg>Manage Session
 				</h3>
-				<div class="ms-7 w-auto border-l-2 border-gray-200 pe-4 pt-4">
+				<div class="ms-7 w-auto space-y-4 border-l-2 border-gray-200 pe-4 pt-4">
 					<div class="join grid grid-cols-2 pe-4 ps-8">
-						<form method="POST" action="?/save" use:enhance>
-							<button
+						<form method="POST" action="?/save" bind:this={formSaveSession} use:enhance>
+							<button class="btn btn-primary join-item w-full font-bold text-base-100"
+								><svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="2em"
+									height="2em"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle stroke-base-100"
+								>
+									<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+									<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+									<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+									<path d="M14 4l0 4l-6 0l0 -4" />
+								</svg><span class="text-xl">Save</span></button
+							>
+							<!-- 							<button
 								class="btn join-item w-full {currentSaveButtonColor}"
 								onclick={() => {
 									currentSaveIcon = 'iconSpinner';
@@ -557,9 +598,9 @@
 											<path d="M12 16v.01" /></svg
 										>
 									{/if}
-								{/key}
-							</button><input type="hidden" name="order" value={order} />
-							{#key currentSaveIcon}
+								{/key} </button>-->
+							<input type="hidden" name="order" value={order} />
+							<!-- 							{#key currentSaveIcon}
 								{#if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}
 									<div class="fade-in fade-out toast toast-end transition duration-75 ease-out">
 										<div class="alert flex justify-center bg-lime-500 font-bold text-base-100">Saved successfully!</div>
@@ -595,7 +636,7 @@
 										</div>
 									</div>
 								{/if}
-							{/key}
+							{/key} -->
 						</form>
 						<button
 							class="group btn btn-outline join-item btn-neutral w-full"
@@ -608,11 +649,21 @@
 							>
 						</button>
 					</div>
+					<div class="flex items-center pe-4 ps-8">
+						<input type="checkbox" class="checkbox-primary checkbox me-2" bind:checked={autoSave} />
+						<label class="text-lg font-medium">Auto save progress</label>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<!-- Toasts -->
+
+	{#if form?.formSaveSuccess}
+		<div class="fade-in fade-out toast toast-end z-30 transition duration-75 ease-out">
+			<div class="alert flex justify-center bg-lime-500 font-bold text-base-100">Saved successfully!</div>
+		</div>{/if}
 	<!-- 
 	/////////////////////////////////////////
 	/
@@ -809,7 +860,7 @@
 											<div class="col-span-3 text-2xl font-bold">{person.name}</div>
 											<div class="col-span-3 text-2xl text-gray-500">{person.dept}</div>
 											{#if person.remarks}<div
-													class="col-span-6 mt-4 rounded-lg border border-gray-500 bg-gray-50 p-2 text-gray-500"
+													class="col-span-6 mt-4 rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-500"
 												>
 													<div>
 														<svg
@@ -832,7 +883,7 @@
 															/>
 														</svg><b>Remarks</b>
 													</div>
-													{person.remarks}
+													<div>{person.remarks}</div>
 												</div>{/if}
 										</div>
 									{/if}
