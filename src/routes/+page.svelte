@@ -21,8 +21,7 @@
 </svelte:head>
 <!-- <SuperDebug data={$form} /> -->
 <!---->
-<div class="max-w-dvw flex min-h-dvh flex-wrap content-center justify-center">
-	<UndrawDecide />
+<div class="max-w-dvw background flex min-h-dvh flex-wrap content-center justify-center">
 	<div
 		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border border-gray-300 bg-gradient-to-b from-base-100 to-gray-100 p-3 pt-4 shadow-lg lg:p-10"
 	>
@@ -104,5 +103,22 @@
 	}
 	.view-outline {
 		view-transition-name: view-outline;
+	}
+	.background {
+		background-image: radial-gradient(
+			circle,
+			#49108b,
+			#53169b,
+			#5c1caa,
+			#6622bb,
+			#7028cb,
+			#7f2fd2,
+			#8e36da,
+			#9d3de1,
+			#b148e1,
+			#c354e2,
+			#d361e3,
+			#e26ee5
+		);
 	}
 </style>
