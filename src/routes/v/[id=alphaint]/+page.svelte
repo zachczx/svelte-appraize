@@ -58,10 +58,14 @@
 		}
 		newCounts.total = newCounts.a + newCounts.b + newCounts.c + newCounts.d;
 		// console.log(newCounts);
-		newCounts.percentageA = Math.round((newCounts.a / newCounts.total) * 100);
-		newCounts.percentageB = Math.round((newCounts.b / newCounts.total) * 100);
-		newCounts.percentageC = Math.round((newCounts.c / newCounts.total) * 100);
-		newCounts.percentageD = Math.round((newCounts.d / newCounts.total) * 100);
+		if (newCounts.total == 0 || !newCounts.total) {
+			newCounts.percentageA = newCounts.percentageB = newCounts.percentageC = newCounts.percentageD = 0;
+		} else {
+			newCounts.percentageA = Math.round((newCounts.a / newCounts.total) * 100);
+			newCounts.percentageB = Math.round((newCounts.b / newCounts.total) * 100);
+			newCounts.percentageC = Math.round((newCounts.c / newCounts.total) * 100);
+			newCounts.percentageD = Math.round((newCounts.d / newCounts.total) * 100);
+		}
 		return newCounts;
 	});
 
