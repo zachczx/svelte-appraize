@@ -78,9 +78,9 @@ export const actions = {
 		const editData = await request.formData();
 		console.log(editData);
 		const editTarget = editData.get('edit-target');
-		const editName = String(editData.get('edit-person-name'));
-		const editDept = String(editData.get('edit-person-dept'));
-		const editRemarks = String(editData.get('edit-person-remarks'));
+		const editName = String(editData.get('edit-person-name')).trim();
+		const editDept = String(editData.get('edit-person-dept')).trim();
+		const editRemarks = String(editData.get('edit-person-remarks')).trim();
 
 		if (!editName || editName == '' || !editDept || editDept == '') {
 			return { editInsertFailedGrade: true };

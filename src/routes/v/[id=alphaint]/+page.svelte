@@ -699,8 +699,10 @@
 									</div>
 									{#if person.edit}
 										<div
-											class="col-span-10 grid grid-cols-6 gap-4 bg-base-300 px-4 py-2 md:col-span-8"
+											class="col-span-10 grid grid-cols-6 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2 md:col-span-8"
 											id="div__{person.uuid}"
+											in:slide={{ duration: 500, axis: 'y', easing: circOut }}
+											out:slide={{ duration: 10, axis: 'y', easing: circOut }}
 										>
 											<div class="col-span-6">
 												<form method="POST" id="edit-form-{person.uuid}" action="?/edit" use:enhance>
@@ -741,7 +743,8 @@
 												<label
 													class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
 													for="edit-person-dept-{person.uuid}"
-													><Home class="me-2 flex-none" />
+												>
+													<Home class="me-2 flex-none" />
 													<EditFields
 														name="edit-person-dept"
 														class="grow"
@@ -749,8 +752,8 @@
 														value={person.dept}
 														id="edit-person-dept-{person.uuid}"
 														placeholder="Dept"
-													/></label
-												>
+													/>
+												</label>
 											</div>
 											<div class="col-span-6 md:col-span-6">
 												<label
@@ -779,11 +782,12 @@
 														form="edit-form-{person.uuid}"
 														name="edit-person-remarks"
 														id="edit-person-remarks-{person.uuid}"
-														class="h-full grow focus:outline-none"
+														class="h-full w-full focus:outline-none"
 														maxlength="999"
-														placeholder="Remarks">{person.remarks}</textarea
-													></label
-												>
+														placeholder="Remarks"
+														value={person.remarks}
+													></textarea>
+												</label>
 											</div>
 											<div class="col-span-6 bg-base-300 md:col-span-6">
 												<button class="btn join-item btn-neutral text-lg" form="edit-form-{person.uuid}">
@@ -792,11 +796,16 @@
 											</div>
 										</div>
 									{:else}
-										<div class="col-span-10 grid grid-cols-6 p-2 md:col-span-8" id="div__{person.uuid}">
+										<div
+											class="col-span-10 grid grid-cols-6 p-2 md:col-span-8"
+											id="div__{person.uuid}"
+											in:slide={{ duration: 600, axis: 'y', easing: circOut }}
+											out:slide={{ duration: 10, axis: 'y', easing: circOut }}
+										>
 											<div class="col-span-3 text-2xl font-bold">{person.name}</div>
 											<div class="col-span-3 text-2xl text-gray-500">{person.dept}</div>
 											{#if person.remarks}<div
-													class="col-span-6 mt-4 rounded-lg border border-gray-500 bg-base-200 p-2 text-gray-500"
+													class="col-span-6 mt-4 rounded-lg border border-gray-500 bg-gray-50 p-2 text-gray-500"
 												>
 													<div>
 														<svg
