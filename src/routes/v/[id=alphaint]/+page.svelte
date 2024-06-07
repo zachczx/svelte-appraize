@@ -117,7 +117,7 @@
 </script>
 
 <div class="grid grid-cols-4">
-	<div class="sticky top-0 col-span-1 border-b-2 border-r-2 border-gray-100 bg-gray-50 py-4 pe-4 ps-5 text-2xl">
+	<div class="col-span-1 border-b-2 border-r-2 border-gray-100 bg-gray-50 py-4 pe-4 ps-5 text-2xl">
 		<h1 class="view-header font-black text-primary">
 			<a href="/">Appraize</a>
 		</h1>
@@ -156,36 +156,10 @@
 						</div>
 					</div>{/if}{/key}
 		</form>
-
-		<!-- <div class="inline content-center justify-end font-bold">
-			<button
-				onclick={() => {
-					helperText = !helperText;
-					if (helperTextButtonColor === 'fill-neutral') {
-						helperTextButtonColor = 'fill-secondary';
-					} else {
-						helperTextButtonColor = 'fill-neutral';
-					}
-				}}
-				><h2>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="1.5em"
-						height="1.5em"
-						viewBox="0 0 24 24"
-						fill="currentColor"
-						class="icon icon-tabler icons-tabler-filled icon-tabler-help-square-rounded inline {helperTextButtonColor}"
-						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-							d="M12 2l.642 .005l.616 .017l.299 .013l.579 .034l.553 .046c4.687 .455 6.65 2.333 7.166 6.906l.03 .29l.046 .553l.041 .727l.006 .15l.017 .617l.005 .642l-.005 .642l-.017 .616l-.013 .299l-.034 .579l-.046 .553c-.455 4.687 -2.333 6.65 -6.906 7.166l-.29 .03l-.553 .046l-.727 .041l-.15 .006l-.617 .017l-.642 .005l-.642 -.005l-.616 -.017l-.299 -.013l-.579 -.034l-.553 -.046c-4.687 -.455 -6.65 -2.333 -7.166 -6.906l-.03 -.29l-.046 -.553l-.041 -.727l-.006 -.15l-.017 -.617l-.004 -.318v-.648l.004 -.318l.017 -.616l.013 -.299l.034 -.579l.046 -.553c.455 -4.687 2.333 -6.65 6.906 -7.166l.29 -.03l.553 -.046l.727 -.041l.15 -.006l.617 -.017c.21 -.003 .424 -.005 .642 -.005zm0 13a1 1 0 0 0 -.993 .883l-.007 .117l.007 .127a1 1 0 0 0 1.986 0l.007 -.117l-.007 -.127a1 1 0 0 0 -.993 -.883zm1.368 -6.673a2.98 2.98 0 0 0 -3.631 .728a1 1 0 0 0 1.44 1.383l.171 -.18a.98 .98 0 0 1 1.11 -.15a1 1 0 0 1 -.34 1.886l-.232 .012a1 1 0 0 0 .111 1.994a3 3 0 0 0 1.371 -5.673z"
-						/></svg
-					>
-				</h2>
-			</button>
-		</div> -->
 	</div>
 	<!-- Sidebar -->
 	<div class="view-outline border-r-2 border-gray-100 bg-gray-50 py-4 pb-4 text-2xl">
-		<div class="view-home-sidebar sticky top-20 space-y-4">
+		<div class="view-home-sidebar space-y-10">
 			<div>
 				<h3 class="px-4 font-extrabold">
 					<svg
@@ -224,33 +198,48 @@
 						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path
 							d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"
 						/><path d="M9 17l0 -5" /><path d="M12 17l0 -1" /><path d="M15 17l0 -3" /></svg
-					>Summary
+					>Grade Distribution
 				</h3>
 				{#await newCounts}
 					<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
 				{:then newCounts}
 					<div class="ms-7 border-l-2 border-gray-200 pe-8 ps-7">
-						<div class="stats w-full bg-gray-50">
-							<div class="stat place-items-center">
-								<div class="stat-title text-xl">A</div>
-								<div class="stat-value animate-scale text-2xl font-bold">{newCounts.percentageA}%</div>
-								<div class="stat-value animate-scale text-2xl font-bold">({newCounts.a})</div>
+						<div class="grid w-full grid-cols-4 gap-2 pt-4">
+							<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+								<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
+									A
+								</div>
+								<div class="animate-scale text-4xl font-black">
+									{newCounts.a}
+								</div>
+								<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageA}%</div>
 							</div>
-
-							<div class="stat place-items-center">
-								<div class="stat-title text-xl">B</div>
-								<div class="stat-value animate-scale text-2xl font-bold">{newCounts.percentageB}%</div>
-								<div class="stat-value animate-scale text-2xl font-bold">({newCounts.b})</div>
+							<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+								<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
+									B
+								</div>
+								<div class="animate-scale text-4xl font-black">
+									{newCounts.b}
+								</div>
+								<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageB}%</div>
 							</div>
-							<div class="stat place-items-center">
-								<div class="stat-title text-xl">C</div>
-								<div class="stat-value animate-scale text-2xl font-bold">{newCounts.percentageC}%</div>
-								<div class="stat-value animate-scale text-2xl font-bold">({newCounts.c})</div>
+							<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+								<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
+									C
+								</div>
+								<div class="animate-scale text-4xl font-black">
+									{newCounts.c}
+								</div>
+								<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageC}%</div>
 							</div>
-							<div class="stat place-items-center">
-								<div class="stat-title text-xl">D</div>
-								<div class="stat-value animate-scale text-2xl font-bold">{newCounts.percentageD}%</div>
-								<div class="stat-value animate-scale text-2xl font-bold">({newCounts.d})</div>
+							<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+								<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
+									D
+								</div>
+								<div class="animate-scale text-4xl font-black">
+									{newCounts.d}
+								</div>
+								<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageD}%</div>
 							</div>
 						</div>
 					</div>
@@ -273,15 +262,12 @@
 						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
 							d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"
 						/><path d="M15 12h-6" /><path d="M12 9v6" /></svg
-					>Add Someone
+					>Add Officer
 				</h3>
 				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
 					<form method="POST" action="?/insert" class="ms-4 space-y-1 rounded-lg p-4" use:enhance>
 						{#if form?.insertNameMissing}<span class="text-lg text-error">Please enter a name:</span>{/if}
 						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
-							<!-- {#if helperText}
-								<div class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold" data-tip="Add a name"></div>
-							{/if} -->
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="1em"
@@ -304,12 +290,6 @@
 						</label>
 						{#if form?.insertDeptMissing}<span class="text-lg text-error">Please enter a dept:</span>{/if}
 						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
-							<!-- {#if helperText}
-								<div
-									class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-									data-tip="Add a department"
-								></div>
-							{/if} -->
 							<Home class="me-2 flex-none" />
 							<input type="text" name="dept" bind:value={deptData} class="grow text-lg" placeholder="Dept" required />
 						</label>
@@ -335,10 +315,6 @@
 									bind:group={gradeData}
 								/>
 							</label>
-
-							<!-- {#if helperText}
-								<div class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold" data-tip="Add a grade"></div>
-							{/if} -->
 							<label class="label cursor-pointer space-x-1">
 								<span class="label-text text-lg font-medium">C</span>
 								<input
@@ -379,12 +355,7 @@
 								<path d="M8 13h6" />
 								<path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
 							</svg>
-							<!-- {#if helperText}
-								<div
-									class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-									data-tip="Add remarks if you want"
-								></div>
-							{/if} -->
+
 							<input
 								type="text"
 								name="remarks"
@@ -439,10 +410,49 @@
 					/>
 				{/if} -->
 						</button>
-						<!-- {#if helperText}
-							<div class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold" data-tip="Add an officer"></div>
-						{/if} -->
 					</form>
+				</div>
+			</div>
+			<div class="view-filter-sidebar">
+				<h3 class="px-4 font-extrabold">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1em"
+						height="1em"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="icon icon-tabler icons-tabler-outline icon-tabler-filter mb-1 me-4 inline"
+						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+							d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
+						/></svg
+					>Search & Filter
+				</h3>
+				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
+					<div class="join ms-4 flex w-full items-stretch rounded-lg py-4 pe-8 ps-4">
+						<label
+							class="border-1 input join-item input-bordered input-primary flex w-full items-center border-gray-400 text-lg"
+							><svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="1em"
+								height="1em"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="icon icon-tabler icons-tabler-outline icon-tabler-search me-2 inline"
+								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+									d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"
+								/><path d="M21 21l-6 -6" /></svg
+							>
+							<input type="text" name="filter" class="grow text-lg" placeholder="Type some keywords here" />
+						</label><button class="btn btn-primary join-item text-xl font-bold text-base-100">Filter</button>
+					</div>
 				</div>
 			</div>
 			<div class="view-manage-sidebar">
@@ -544,12 +554,6 @@
 										>
 									{/if}
 								{/key}
-								<!-- {#if helperText}
-									<div
-										class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-										data-tip="Save all changes above"
-									></div>
-								{/if} -->
 							</button><input type="hidden" name="order" value={order} />
 							{#key currentSaveIcon}
 								{#if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}
@@ -598,13 +602,6 @@
 							<Trash class="inline h-[2em] w-[2em] stroke-neutral group-hover:stroke-base-100" /><span
 								class="ms-0 hidden text-xl font-bold lg:contents">Delete</span
 							>
-
-							<!-- {#if helperText}
-								<div
-									class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-									data-tip="Delete this session"
-								></div>
-							{/if} -->
 						</button>
 					</div>
 				</div>
@@ -616,51 +613,30 @@
 	<div class="col-span-3 min-h-dvh space-y-12 pb-4 pt-4">
 		<div>
 			<ol>
-				<div class="view-ranking-title px-2 pb-4 md:px-10">
-					<h1>Ranking</h1>
-					<div class="space-x-16 text-2xl">
-						<span
-							><svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-clipboard-list mb-1 me-2 inline"
-								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-									d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"
-								/><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /><path
-									d="M9 12l.01 0"
-								/><path d="M13 12l2 0" /><path d="M9 16l.01 0" /><path d="M13 16l2 0" /></svg
-							>{data.id}</span
-						>
-						<span>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-users mb-1 me-2 inline"
-								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-									d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
-								/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path
-									d="M21 21v-2a4 4 0 0 0 -3 -3.85"
-								/></svg
-							>{#await newCounts}
-								<span class="loading loading-spinner loading-sm justify-self-center py-5 text-primary md:py-10"></span>
-							{:then newCounts}
-								{newCounts.total}
-							{/await}</span
-						>
+				<div class="view-ranking-title px-4 pb-4 md:px-10">
+					<h1>Ranking: {data.id}</h1>
+					<div class="flex items-center text-2xl text-gray-500">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1em"
+							height="1em"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="icon icon-tabler icons-tabler-outline icon-tabler-users mb-1 me-2 inline"
+							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+								d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
+							/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path
+								d="M21 21v-2a4 4 0 0 0 -3 -3.85"
+							/></svg
+						>{#await newCounts}
+							<span class="loading loading-spinner loading-sm text-primary"></span>
+						{:then newCounts}
+							<span class="animate-scale">{newCounts.total}</span>
+						{/await}
 					</div>
 				</div>
 				<div id="table" class="relative grid space-y-4 px-2 md:px-10">
@@ -685,12 +661,6 @@
 										class="sortable-handle col-span-2 row-span-2 flex items-center space-x-2 md:col-span-2 md:row-span-1"
 									>
 										<div class="flex h-full items-center rounded-l-lg bg-neutral p-2">
-											<!-- {#if helperText}
-												<div
-													class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-													data-tip="Drag here"
-												></div>
-											{/if} -->
 											<GripVertical class="stroke-base-100" />
 										</div>
 										<!-- form="edit-form-{person.uuid}" name="grade__{person.uuid}"-->
@@ -714,21 +684,8 @@
 												<option value="D">D</option>
 											</select>
 										</form>
-										<!-- {#if helperText}
-											<div
-												class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-												data-tip="Select grade"
-											></div>
-										{/if} -->
-										<!-- <li class="ms-8 list-decimal ps-10 md:ms-12"></li> -->
 									</div>
 									<div class="col-span-5 grid space-y-3 p-2 md:col-span-4">
-										<!-- {#if helperText}
-												<div
-													class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-													data-tip="Edit > Enter"
-												></div>
-											{/if} -->
 										<label
 											class="input input-sm input-primary flex items-center border-0 text-2xl font-bold"
 											for="name__{person.uuid}"
@@ -742,13 +699,6 @@
 												placeholder="Name"
 											/>
 										</label>
-
-										<!-- {#if helperText}
-												<div
-													class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-													data-tip="Edit > Enter"
-												></div>
-											{/if} -->
 										<label
 											class="input input-sm input-primary flex items-center border-0 text-xl"
 											for="dept__{person.uuid}"
@@ -775,9 +725,6 @@
 											action="?/edit"
 											use:enhance
 										>
-											<!-- {#if helperText}
-												<div class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold" data-tip="Save"></div>
-											{/if} -->
 											<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
 											<input type="hidden" id="hidden-edit-name-{person.uuid}" name="edit-name" />
 											<input type="hidden" id="hidden-edit-dept-{person.uuid}" name="edit-dept" />
@@ -809,12 +756,6 @@
 												}}
 												><Trash class="inline h-[1.5em] w-[1.5em] stroke-error" />
 											</button>
-											<!-- {#if helperText}
-												<div
-													class="tooltip tooltip-top tooltip-open tooltip-secondary font-bold"
-													data-tip="Delete"
-												></div>
-											{/if} -->
 										</form>
 									</div>
 								</div>
@@ -875,9 +816,11 @@
 	.view-ranking-title {
 		view-transition-name: view-ranking-title;
 	}
-
 	.view-add-sidebar {
 		view-transition-name: view-add-sidebar;
+	}
+	.view-filter-sidebar {
+		view-transition-name: view-filter-sidebar;
 	}
 	.view-manage-sidebar {
 		view-transition-name: view-manage-sidebar;
