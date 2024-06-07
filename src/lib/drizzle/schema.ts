@@ -1,14 +1,5 @@
 import { relations, sql } from 'drizzle-orm';
-import {
-	pgTable,
-	integer,
-	uuid,
-	boolean,
-	serial,
-	text,
-	timestamp,
-	varchar,
-} from 'drizzle-orm/pg-core';
+import { pgTable, integer, uuid, boolean, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 export const records = pgTable('records', {
 	id: serial('serial').primaryKey(),
@@ -19,6 +10,6 @@ export const records = pgTable('records', {
 	session: text('session').notNull(),
 	sequence: integer('sequence'),
 	previous: boolean('boolean'),
-	remarks: varchar('remarks', { length: 256 }),
+	remarks: varchar('remarks', { length: 1000 }),
 	timestamp: timestamp('timestamp3').defaultNow(),
 });
