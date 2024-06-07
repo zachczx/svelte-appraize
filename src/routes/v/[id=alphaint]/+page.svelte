@@ -801,7 +801,7 @@
 										</div>
 									{:else}
 										<div
-											class="col-span-10 grid grid-cols-6 p-2 md:col-span-8"
+											class="col-span-10 grid grid-cols-6 items-center p-2 md:col-span-8"
 											id="div__{person.uuid}"
 											in:slide={{ duration: 600, axis: 'y', easing: circOut }}
 											out:slide={{ duration: 10, axis: 'y', easing: circOut }}
