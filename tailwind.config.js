@@ -61,7 +61,7 @@ export default {
 					secondary: '#DA0C81',
 					info: '#940B92',
 					accent: '#E95793',
-					'base-200': '#F8F4EC',
+					//'base-200': '#F8F4EC',
 				},
 			},
 		],
