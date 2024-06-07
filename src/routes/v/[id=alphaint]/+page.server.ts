@@ -78,18 +78,19 @@ export const actions = {
 		const editData = await request.formData();
 		console.log(editData);
 		const editTarget = editData.get('edit-target');
-		const editName = String(editData.get('edit-name'));
-		const editDept = String(editData.get('edit-dept'));
-		const editGrade = String(editData.get('edit-grade'));
-		if (editGrade === 'A' || editGrade === 'B' || editGrade === 'C' || editGrade === 'D') {
-			console.log(editName, editDept, editGrade);
+		const editName = String(editData.get('edit-person-name'));
+		const editDept = String(editData.get('edit-person-dept'));
+		const editRemarks = String(editData.get('edit-person-remarks'));
+
+		if (!editName || editName == '' || !editDept || editDept == '') {
+			return { editInsertFailedGrade: true };
+		} else {
+			console.log('Name: ', editName, '\n', 'Dept: ', editDept, '\n', 'Remarks: ', editRemarks);
 			await db
 				.update(records)
-				.set({ name: editName, dept: editDept, grade: editGrade })
+				.set({ name: editName, dept: editDept, remarks: editRemarks })
 				.where(eq(records.id, editTarget));
 			return { editInsertSuccess: true };
-		} else {
-			return { editInsertFailedGrade: true };
 		}
 	},
 

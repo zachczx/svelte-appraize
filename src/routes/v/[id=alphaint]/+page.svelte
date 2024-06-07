@@ -450,8 +450,8 @@
 									d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"
 								/><path d="M21 21l-6 -6" /></svg
 							>
-							<input type="text" name="filter" class="grow text-lg" placeholder="Type some keywords here" />
-						</label><button class="btn btn-primary join-item text-xl font-bold text-base-100">Filter</button>
+							<input type="text" name="filter" class="grow text-lg" placeholder="Type some keywords here" disabled />
+						</label><button class="btn btn-primary join-item text-xl font-bold text-base-100" disabled>Filter</button>
 					</div>
 				</div>
 			</div>
@@ -609,11 +609,23 @@
 		</div>
 	</div>
 
-	<!-- Content -->
+	<!-- 
+	/////////////////////////////////////////
+	/
+	/
+	/
+	/
+	/	Content 
+	/
+	/
+	/	
+	/
+	///////////////////////////////////////// 
+	-->
 	<div class="col-span-3 min-h-dvh space-y-12 pb-4 pt-4">
 		<div>
-			<ol>
-				<div class="view-ranking-title px-4 pb-4 md:px-10">
+			<ol class="space-y-4">
+				<div class="view-ranking-title space-y-2 px-4 pb-4 md:px-10">
 					<h1>Ranking: {data.id}</h1>
 					<div class="flex items-center text-2xl text-gray-500">
 						<svg
@@ -685,76 +697,171 @@
 											</select>
 										</form>
 									</div>
-									<div class="col-span-5 grid space-y-3 p-2 md:col-span-4">
-										<label
-											class="input input-sm input-primary flex items-center border-0 text-2xl font-bold"
-											for="name__{person.uuid}"
+									{#if person.edit}
+										<div
+											class="col-span-10 grid grid-cols-6 gap-4 bg-base-300 px-4 py-2 md:col-span-8"
+											id="div__{person.uuid}"
 										>
-											<EditFields
-												name="name__{person.uuid}"
-												id="name__{person.uuid}"
-												form="edit-form-{person.uuid}"
-												class="grow "
-												value={person.name}
-												placeholder="Name"
-											/>
-										</label>
-										<label
-											class="input input-sm input-primary flex items-center border-0 text-xl"
-											for="dept__{person.uuid}"
-										>
-											<EditFields
-												name="dept__{person.uuid}"
-												id="dept__{person.uuid}"
-												form="edit-form-{person.uuid}"
-												class="grow text-gray-500"
-												value={person.dept}
-												placeholder="Dept"
-											/>
-										</label>
-									</div>
-									<div class="col-span-5 grid p-2 md:col-span-4">
-										<div class="text-gray-500">{person.remarks}</div>
-									</div>
+											<div class="col-span-6">
+												<form method="POST" id="edit-form-{person.uuid}" action="?/edit" use:enhance>
+													<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
+												</form>
+											</div>
+											<div class="col-span-3 md:col-span-3">
+												<label
+													class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
+													for="edit-person-name-{person.uuid}"
+													><svg
+														xmlns="http://www.w3.org/2000/svg"
+														width="1em"
+														height="1em"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="2"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														class="icon icon-tabler icons-tabler-outline icon-tabler-user me-2 inline"
+														><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+															d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"
+														/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg
+													>
+													<EditFields
+														name="edit-person-name"
+														id="edit-person-name-{person.uuid}"
+														form="edit-form-{person.uuid}"
+														class="grow"
+														value={person.name}
+														placeholder="Name"
+													/></label
+												>
+											</div>
 
-									<div class="col-span-5 flex justify-end p-2 md:col-span-2">
-										<form
-											method="POST"
-											class="mx-3 self-center"
-											id="edit-form-{person.uuid}"
-											action="?/edit"
-											use:enhance
-										>
-											<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
-											<input type="hidden" id="hidden-edit-name-{person.uuid}" name="edit-name" />
-											<input type="hidden" id="hidden-edit-dept-{person.uuid}" name="edit-dept" />
-											<input type="hidden" id="hidden-edit-grade-{person.uuid}" name="edit-grade" />
+											<div class="col-span-3 md:col-span-3">
+												<label
+													class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
+													for="edit-person-dept-{person.uuid}"
+													><Home class="me-2 flex-none" />
+													<EditFields
+														name="edit-person-dept"
+														class="grow"
+														form="edit-form-{person.uuid}"
+														value={person.dept}
+														id="edit-person-dept-{person.uuid}"
+														placeholder="Dept"
+													/></label
+												>
+											</div>
+											<div class="col-span-6 md:col-span-6">
+												<label
+													class="textarea textarea-bordered flex h-24 w-full items-center items-center gap-2 border-gray-400 text-lg md:h-56"
+													for="edit-person-remarks-{person.uuid}"
+													><svg
+														xmlns="http://www.w3.org/2000/svg"
+														width="1em"
+														height="1em"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="2"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
+													>
+														<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+														<path d="M8 9h8" />
+														<path d="M8 13h6" />
+														<path
+															d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
+														/>
+													</svg>
+													<textarea
+														form="edit-form-{person.uuid}"
+														name="edit-person-remarks"
+														id="edit-person-remarks-{person.uuid}"
+														class="h-full grow focus:outline-none"
+														maxlength="999"
+														placeholder="Remarks">{person.remarks}</textarea
+													></label
+												>
+											</div>
+											<div class="col-span-6 bg-base-300 md:col-span-6">
+												<button class="btn join-item btn-neutral text-lg" form="edit-form-{person.uuid}">
+													<TablerEdit class="inline h-[1em] w-[1em]" />Save
+												</button>
+											</div>
+										</div>
+									{:else}
+										<div class="col-span-10 grid grid-cols-6 p-2 md:col-span-8" id="div__{person.uuid}">
+											<div class="col-span-3 text-2xl font-bold">{person.name}</div>
+											<div class="col-span-3 text-2xl text-gray-500">{person.dept}</div>
+											{#if person.remarks}<div
+													class="col-span-6 mt-4 rounded-lg border border-gray-500 bg-base-200 p-2 text-gray-500"
+												>
+													<div>
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															width="1em"
+															height="1em"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															stroke-width="2"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															class="icon icon-tabler icons-tabler-outline icon-tabler-message mb-1 me-2 inline"
+														>
+															<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+															<path d="M8 9h8" />
+															<path d="M8 13h6" />
+															<path
+																d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
+															/>
+														</svg><b>Remarks</b>
+													</div>
+													{person.remarks}
+												</div>{/if}
+										</div>
+									{/if}
+									<!-- 
+									/////////////////////////////////////////
+									/
+									/
+									/
+									/
+									/	Edit/Save/Del panel
+									/
+									/
+									/	
+									/
+									///////////////////////////////////////// 
+									-->
+									<div class="join col-span-5 flex justify-end p-2 md:col-span-2">
+										<div class="self-center">
 											<button
+												class="btn join-item text-lg {person.edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
 												onclick={() => {
-													let editNameValue = document.getElementById(`name__${person.uuid}`).value;
-													let editDeptValue = document.getElementById(`dept__${person.uuid}`).value;
-													let editGradeValue = document.getElementById(`grade__${person.uuid}`).value;
-													console.log(editNameValue, editDeptValue, editGradeValue);
-													let editNamePostToForm = document.getElementById(`hidden-edit-name-${person.uuid}`);
-													let editDeptPostToForm = document.getElementById(`hidden-edit-dept-${person.uuid}`);
-													let editGradePostToForm = document.getElementById(`hidden-edit-grade-${person.uuid}`);
-													editNamePostToForm.value = editNameValue;
-													editDeptPostToForm.value = editDeptValue;
-													editGradePostToForm.value = editGradeValue;
-												}}
-												><TablerEdit class="inline h-[1.5em] w-[1.5em] stroke-green-400" />
-											</button>
-										</form>
-										<form method="POST" class="mx-3 self-center" action="?/delete" use:enhance>
+													if (!person.edit) {
+														person.edit = true;
+													} else if (person.edit == true || person.edit == false) {
+														person.edit = !person.edit;
+													}
+													console.log(person.edit);
+												}}><TablerEdit class="inline h-[1.5em] w-[1.5em]" /> Edit</button
+											>
+										</div>
+
+										<form method="POST" class="self-center" action="?/delete" use:enhance>
 											<input type="hidden" name="delete-target" value={person.id} />
 											<button
+												class="btn btn-outline btn-error join-item stroke-error hover:stroke-base-100"
 												onclick={() => {
 													let elDelete = document.getElementById(person.uuid);
 													console.log(elDelete?.dataset.deleteId);
-													let cssTextFieldClasses = ['bg-secondary', 'translate-x-10', 'opacity-0'];
+													let cssTextFieldClasses = ['bg-base-300', 'translate-x-10', 'opacity-0'];
 													elDelete?.classList.add(...cssTextFieldClasses);
 												}}
-												><Trash class="inline h-[1.5em] w-[1.5em] stroke-error" />
+												><Trash class="inline h-[1.5em] w-[1.5em]" />
 											</button>
 										</form>
 									</div>
