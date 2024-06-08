@@ -133,18 +133,38 @@
 					formSaveSuccessLoading = false;
 				}, 1500);
 			}
-		}, 30000);
+		}, 60000);
+
+		data.streamed.result.forEach((item) => {
+			console.log(
+				'ID: ',
+				item.id,
+				'\n',
+				'UUID: ',
+				item.uuid,
+				'\n',
+				'Name: ',
+				item.name,
+				'\n',
+				'Dept: ',
+				item.dept,
+				'\n',
+				'Grade: ',
+				item.grade,
+				'\n',
+			);
+		});
 	});
 </script>
 
 <div class="grid grid-cols-4">
-	<div class="col-span-1 border-b-2 border-r-2 border-gray-100 bg-gray-50 py-4 pe-4 ps-5 text-2xl">
+	<div class="col-span-1 border-b-2 border-r-2 border-gray-200 bg-gray-50 py-4 pe-4 ps-5 text-2xl">
 		<h1 class="view-header font-black text-primary">
 			<a href="/">Appraize</a>
 		</h1>
 	</div>
-	<div class="col-span-3 flex px-8 pt-4">
-		<form method="POST" action="?/redirect" class=" flex w-full justify-center" use:enhance>
+	<div class="col-span-3 flex items-center border-b border-b-gray-200 bg-gray-50 px-8">
+		<form method="POST" action="?/redirect" class="flex w-full justify-center" use:enhance>
 			<label
 				class="view-input input input-bordered relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
 				for="session"
@@ -179,7 +199,7 @@
 		</form>
 	</div>
 	<!-- Sidebar -->
-	<div class="view-outline border-r-2 border-gray-100 bg-gray-50 py-4 pb-4 text-2xl">
+	<div class="view-outline border-r-2 border-gray-200 bg-gray-50 py-4 pb-4 text-2xl">
 		<div class="view-home-sidebar space-y-10">
 			<div>
 				<h3 class="px-4 font-extrabold">

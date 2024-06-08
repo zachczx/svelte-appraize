@@ -122,8 +122,9 @@ export const actions = {
 		try {
 			const sessionId = String(params.id);
 			const saveData = await request.formData();
-			const orderInput = saveData.get('order');
 
+			// Grab the sortable order
+			const orderInput = saveData.get('order');
 			const orderArray = orderInput.split(',');
 
 			for (let i = 0; i < orderArray.length; i++) {
@@ -135,8 +136,9 @@ export const actions = {
 					.where(and(eq(records.session, sessionId), eq(records.uuid, orderArray[i])));
 			}
 
+			// Delay for the spinner icon/toast
 			await delay(1000);
-			console.log('saved successfully');
+			console.log('Order saved successfully');
 			return { formSaveSuccess: true };
 		} catch (error) {
 			console.log("There's an error:");
