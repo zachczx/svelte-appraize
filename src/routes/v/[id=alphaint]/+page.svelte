@@ -6,7 +6,7 @@
 	import Trash from '$lib/svg/Trash.svelte';
 	import Stars from '$lib/svg/Stars.svelte';
 	import IconoirStar from '$lib/svg/IconoirStar.svelte';
-	import { fly, slide, fade } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import { circOut } from 'svelte/easing';
 	import UndrawEmpty from '$lib/svg/UndrawEmpty.svelte';
 	import TablerEdit from '$lib/svg/TablerEdit.svelte';
@@ -16,6 +16,8 @@
 	import Home from '$lib/svg/Home.svelte';
 	let { data, form } = $props();
 	let formSaveSession;
+	let formAutoSaveSession = $state();
+	let formSaveSuccessLoading = $state(false);
 	let autoSave = $state(true);
 	let submittedSpinner = $state(false);
 	let currentSaveIcon = $state('iconSave');
@@ -124,8 +126,12 @@
 	$effect(() => {
 		setInterval(() => {
 			if (order && autoSave) {
-				formSaveSession.requestSubmit();
-				console.log('Auto submitted (client msg)');
+				formAutoSaveSession.requestSubmit();
+				console.log('Auto saved successfully');
+				formSaveSuccessLoading = true;
+				setTimeout(() => {
+					formSaveSuccessLoading = false;
+				}, 1500);
 			}
 		}, 30000);
 	});
@@ -465,7 +471,7 @@
 									d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"
 								/><path d="M21 21l-6 -6" /></svg
 							>
-							<input type="text" name="filter" class="grow text-lg" placeholder="Type some keywords here" disabled />
+							<input type="text" name="filter" class="grow text-lg" placeholder="Type keywords here" disabled />
 						</label><button class="btn btn-primary join-item text-xl font-bold text-base-100" disabled>Filter</button>
 					</div>
 				</div>
@@ -507,137 +513,36 @@
 				<div class="ms-7 w-auto space-y-4 border-l-2 border-gray-200 pe-4 pt-4">
 					<div class="join grid grid-cols-2 pe-4 ps-8">
 						<form method="POST" action="?/save" bind:this={formSaveSession} use:enhance>
-							<button class="btn btn-primary join-item w-full font-bold text-base-100"
-								><svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="2em"
-									height="2em"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle stroke-base-100"
-								>
-									<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-									<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-									<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-									<path d="M14 4l0 4l-6 0l0 -4" />
-								</svg><span class="text-xl">Save</span></button
-							>
-							<!-- 							<button
-								class="btn join-item w-full {currentSaveButtonColor}"
+							<button
+								class="btn btn-primary join-item w-full font-bold text-base-100"
 								onclick={() => {
-									currentSaveIcon = 'iconSpinner';
+									formSaveSuccessLoading = true;
 									setTimeout(() => {
-										if (form?.formSaveSuccess) {
-											currentSaveIcon = 'iconSave';
-											currentSaveButtonColor = 'btn-primary';
-											form.formSaveSuccess = undefined;
-										} else if (!form?.formSaveSuccess || form?.formSaveSuccess == null) {
-											currentSaveIcon = 'iconError';
-											currentSaveButtonColor = 'btn-error';
-											setTimeout(() => {
-												currentSaveIcon = 'iconSave';
-												currentSaveButtonColor = 'btn-primary';
-											}, 3000);
-										}
-									}, 5000);
+										formSaveSuccessLoading = false;
+									}, 1500);
 								}}
 							>
-								{#key currentSaveIcon}
-									{#if currentSaveIcon === 'iconSave' && (!form?.formSaveSuccess || form?.formSaveSuccess == null)}
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="2em"
-											height="2em"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke-width="2"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle stroke-base-100"
-										>
-											<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-											<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-											<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-											<path d="M14 4l0 4l-6 0l0 -4" />
-										</svg><span class="ms-0 hidden text-xl font-bold text-base-100 lg:contents">Save</span>
-									{:else if currentSaveIcon === 'iconSpinner' && (!form?.formSaveSuccess || form?.formSaveSuccess == null)}
-										<span class="loading loading-spinner loading-md h-[2em] w-[2em] text-base-100"></span>
-									{:else if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="1.5em"
-											height="1.5em"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke-width="4"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											class="icon icon-tabler icons-tabler-outline icon-tabler-check motion-safe:animate-wiggle stroke-base-100"
-										>
-											<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-											<path d="M5 12l5 5l10 -10" />
-										</svg>
-									{:else if currentSaveIcon === 'iconError'}
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="2em"
-											height="2em"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											class="icon icon-tabler icons-tabler-outline icon-tabler-exclamation-circle stroke-base-100"
-										>
-											<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-											<path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-											<path d="M12 9v4" />
-											<path d="M12 16v.01" /></svg
-										>
-									{/if}
-								{/key} </button>-->
+								{#if formSaveSuccessLoading}
+									<span class="loading loading-spinner text-base-100"></span>
+								{:else}
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="2em"
+										height="2em"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle stroke-base-100"
+									>
+										<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+										<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+										<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+										<path d="M14 4l0 4l-6 0l0 -4" />
+									</svg><span class="text-xl">Save</span>{/if}</button
+							>
 							<input type="hidden" name="order" value={order} />
-							<!-- 							{#key currentSaveIcon}
-								{#if currentSaveIcon === 'iconSpinner' && form?.formSaveSuccess}
-									<div class="fade-in fade-out toast toast-end transition duration-75 ease-out">
-										<div class="alert flex justify-center bg-lime-500 font-bold text-base-100">Saved successfully!</div>
-									</div>
-								{:else if form?.formSaveFail}
-									<div
-										class="fade-in fade-out toast toast-end transition duration-75 ease-out"
-										in:slide={{ duration: 150, axis: 'x', easing: circOut }}
-										out:slide={{ duration: 300, axis: 'x', easing: circOut }}
-									>
-										<div class="alert flex justify-center bg-error font-bold text-base-100">Error saving!</div>
-									</div>
-								{/if}
-							{/key}
-							{#key form}{#if form?.fail}
-									<div class="fade-in fade-out toast toast-end transition duration-75 ease-out">
-										<div class="alert flex justify-center bg-error font-bold text-base-100">
-											Failed to save, please try again later.
-										</div>
-									</div>
-								{/if}
-								{#if form?.editInsertSuccess}<div
-										class="fade-in fade-out toast toast-end transition duration-75 ease-out"
-									>
-										<div class="alert flex justify-center bg-lime-500 font-bold text-base-100">
-											Edited successfully!
-										</div>
-									</div>
-								{:else if form?.editInsertFailedGrade}
-									<div class="fade-in fade-out toast toast-end transition duration-75 ease-out">
-										<div class="alert flex justify-center bg-error font-bold text-base-100">
-											Failed to edit! Grade should be a single alphabet (A, B, C, D)
-										</div>
-									</div>
-								{/if}
-							{/key} -->
 						</form>
 						<button
 							class="group btn btn-outline join-item btn-neutral w-full"
@@ -653,18 +558,108 @@
 					<div class="flex items-center pe-4 ps-8">
 						<input type="checkbox" class="checkbox-primary checkbox me-2" bind:checked={autoSave} />
 						<label class="text-lg font-medium">Auto save progress</label>
+
+						{#if formSaveSuccessLoading}
+							<span class="loading loading-dots loading-sm ms-2 self-end text-primary"></span>
+						{/if}
+
+						<form method="POST" action="?/save" bind:this={formAutoSaveSession} use:enhance>
+							<!-- <button class="hidden"></button> -->
+							<input type="hidden" name="order" value={order} />
+						</form>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<!-- Toasts -->
+	<!-- 
+	/////////////////////////////////////////
+	/
+	/
+	/
+	/
+	/	Toasts
+	/
+	/
+	/	
+	/
+	///////////////////////////////////////// 
+	-->
 
 	{#if form?.formSaveSuccess}
-		<div class="fade-in fade-out toast toast-end z-30 transition duration-75 ease-out">
-			<div class="alert flex justify-center bg-lime-500 font-bold text-base-100">Saved successfully!</div>
-		</div>{/if}
+		<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
+			<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="2em"
+					height="2em"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
+				>
+					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+					<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
+					<path d="M9 10h.01" />
+					<path d="M15 10h.01" />
+					<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
+					<path d="M15 19l2 2l4 -4" />
+				</svg>Saved successfully!
+			</div>
+		</div>
+	{/if}
+	{#if form?.formSaveFail}
+		<div
+			class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out"
+			in:slide={{ duration: 150, axis: 'x', easing: circOut }}
+			out:slide={{ duration: 300, axis: 'x', easing: circOut }}
+		>
+			<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">Error saving!</div>
+		</div>
+	{/if}
+
+	<!-- {#if form?.fail}
+	<div class="fade-in fade-out toast toast-end transition duration-75 ease-out">
+	<div class="alert flex justify-center bg-error font-bold text-base-100">
+	Failed to save, please try again later.
+	</div>
+	</div>
+	{/if}  -->
+	{#if form?.editInsertSuccess}
+		<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
+			<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="2em"
+					height="2em"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
+				>
+					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+					<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
+					<path d="M9 10h.01" />
+					<path d="M15 10h.01" />
+					<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
+					<path d="M15 19l2 2l4 -4" />
+				</svg>Edited successfully!
+			</div>
+		</div>
+	{:else if form?.editInsertFailedGrade}
+		<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
+			<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">
+				Failed to edit! Grade should be a single alphabet (A, B, C, D)
+			</div>
+		</div>
+	{/if}
 	<!-- 
 	/////////////////////////////////////////
 	/

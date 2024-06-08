@@ -135,12 +135,13 @@ export const actions = {
 					.where(and(eq(records.session, sessionId), eq(records.uuid, orderArray[i])));
 			}
 
-			await delay(500);
+			await delay(1000);
 			console.log('saved successfully');
 			return { formSaveSuccess: true };
 		} catch (error) {
 			console.log("There's an error:");
 			console.log(error);
+			await delay(1000);
 			return fail(400, { formSaveFail: true });
 		}
 	},
