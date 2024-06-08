@@ -114,7 +114,7 @@ export const actions = {
 	delete: async function ({ request }) {
 		const deleteData = await request.formData();
 		const delTarget = deleteData.get('delete-target');
-		await delay(700);
+		//await delay(700);
 		await db.delete(records).where(eq(records.id, delTarget));
 	},
 
@@ -128,7 +128,7 @@ export const actions = {
 
 			for (let i = 0; i < orderArray.length; i++) {
 				let individualOrder = i + 1;
-				//console.log(individualOrder, orderArray[i]);
+				console.log(individualOrder, orderArray[i]);
 				await db
 					.update(records)
 					.set({ sequence: individualOrder })

@@ -105,20 +105,21 @@
 		view-transition-name: view-outline;
 	}
 	.background {
-		background-image: radial-gradient(
-			circle,
-			#49108b,
-			#53169b,
-			#5c1caa,
-			#6622bb,
-			#7028cb,
-			#7f2fd2,
-			#8e36da,
-			#9d3de1,
-			#b148e1,
-			#c354e2,
-			#d361e3,
-			#e26ee5
+		/* https://colorhunt.co/palette/610c9f940b92da0c81e95793 */
+		background-image: linear-gradient(
+			to right,
+			#f5f5f5,
+			#e2d6f1,
+			#d9b5e5,
+			#d891d2,
+			#da68b5,
+			#d154a7,
+			#c83d9a,
+			#be1f8c,
+			#a72991,
+			#903094,
+			#773594,
+			#5d3891
 		);
 	}
 </style>

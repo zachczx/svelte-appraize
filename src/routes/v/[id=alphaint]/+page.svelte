@@ -125,6 +125,7 @@
 		setInterval(() => {
 			if (order && autoSave) {
 				formSaveSession.requestSubmit();
+				console.log('Auto submitted (client msg)');
 			}
 		}, 30000);
 	});

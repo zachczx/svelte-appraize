@@ -41,7 +41,7 @@ export default {
 				},
 				scale: {
 					'0%': { scale: '100%', color: 'currentColor' },
-					'50%': { scale: '120%', color: '#491eff', fontWeight: '900' },
+					'50%': { scale: '120%', color: '#610C9F', fontWeight: '900' },
 					'100%': { scale: '100%', color: 'currentColor' },
 				},
 			},
@@ -56,12 +56,18 @@ export default {
 			{
 				light: {
 					...require('daisyui/src/theming/themes')['light'],
-					//primary for color palette: '#DA0C81',
+
 					//primary in theme is #491eff
+					// secondary: '#DA0C81',
+					// info: '#940B92',
+					// accent: '#E95793',
+					// //'base-200': '#F8F4EC',
+					primary: '#610C9F',
 					secondary: '#DA0C81',
-					info: '#940B92',
-					accent: '#E95793',
-					//'base-200': '#F8F4EC',
+					'primary-content': 'white',
+					'secondary-content': 'white',
+					warning: '#940B92',
+					info: '#E95793',
 				},
 			},
 		],
