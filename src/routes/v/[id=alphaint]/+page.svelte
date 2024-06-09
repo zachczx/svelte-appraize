@@ -1058,20 +1058,20 @@
 													<li class="">
 														<form
 															method="POST"
-															class="group m-0 w-full justify-center self-center rounded-lg stroke-error p-0 hover:bg-error hover:stroke-base-100"
+															class="group m-0 w-full justify-center self-center rounded-lg border-2 border-error stroke-error p-0 hover:border-red-700 hover:bg-error hover:stroke-base-100"
 															action="?/delete"
 															use:enhance
 														>
 															<input type="hidden" name="delete-target" value={person.id} />
 															<button
-																class="px-1 py-2 text-lg text-error group-hover:text-base-100"
+																class="px-1 py-2 text-lg font-bold text-error group-hover:text-base-100"
 																onclick={() => {
 																	let elDelete = document.getElementById(person.uuid);
-																	console.log(elDelete?.dataset.deleteId);
+																	console.log(elDelete);
 																	let cssTextFieldClasses = ['bg-base-300', 'translate-x-10', 'opacity-0'];
 																	elDelete?.classList.add(...cssTextFieldClasses);
 																}}
-																><Trash class="inline h-[1.5em] w-[1.5em]" /> Delete
+																><Trash class="mb-1 inline h-[1.5em] w-[1.5em]" /> Delete this entry
 															</button>
 														</form>
 													</li>

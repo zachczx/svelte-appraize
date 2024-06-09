@@ -114,7 +114,8 @@ export const actions = {
 	delete: async function ({ request }) {
 		const deleteData = await request.formData();
 		const delTarget = deleteData.get('delete-target');
-		//await delay(700);
+		//give a delay so delete animation can finish
+		await delay(500);
 		await db.delete(records).where(eq(records.id, delTarget));
 	},
 
