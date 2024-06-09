@@ -1002,10 +1002,7 @@
 														<path d="M6 9l6 6l6 -6" />
 													</svg>
 												</div>
-												<ul
-													tabindex="0"
-													class="menu dropdown-content z-[1] m-0 w-52 rounded-box bg-base-100 p-0 shadow"
-												>
+												<ul tabindex="0" class="menu dropdown-content z-[1] m-0 w-52 rounded-lg bg-base-100 p-0 shadow">
 													<li class="">
 														<form
 															method="POST"
