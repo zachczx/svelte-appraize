@@ -794,7 +794,12 @@
 										} else {
 											setTimeout(() => {
 												filterResult();
-											}, 1000);
+											}, 10);
+										}
+									}}
+									onkeyup={(evt) => {
+										if (filterInput == '') {
+											filterNothingFound = false;
 										}
 									}}
 								/>
