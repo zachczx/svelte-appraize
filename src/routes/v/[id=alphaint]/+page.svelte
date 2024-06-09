@@ -43,30 +43,7 @@
 		//reset the nothing found notice when soft navigating, cos new els dont have hidden css applied
 		filterNothingFound = false;
 	});
-	/* 	let filterResult = $derived.by(() => {
-		let filterResult;
-		let result = data.streamed.result;
-		console.log('Results: ', result);
-		filterResult = result.filter((item) => {
-			return item.name.includes(filterInput);
-		});
-		console.log('Raw filtered objects: ', filterResult);
-		let filterResultArray = [];
-		for (let i = 0; i < filterResult.length; i++) {
-			let filterResultArrayTemp = filterResult[i].id;
-			filterResultArray.push(filterResultArrayTemp);
-		}
-		console.log(filterResultArray);
-		let addHiddenClassForFilter;
-		for (let i = 0; i < result.length; i++) {
-			if (filterResultArray.indexOf(result[i].id) > -1) {
-				console.log('found these!', result[i]);
-			} else {
-				addHiddenClassForFilter = document.getElementById(result[i].uuid);
-				addHiddenClassForFilter?.classList.add('hidden');
-			}
-		}
-	}); */
+
 	async function filterResult() {
 		let result = data.streamed.result;
 		console.log('Results: ', result);
@@ -519,59 +496,6 @@
 					</form>
 				</div>
 			</div>
-			<!-- <div class="view-filter-sidebar">
-				<h3 class="px-4 font-extrabold">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="1em"
-						height="1em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-filter mb-1 me-4 inline"
-						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-							d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
-						/></svg
-					>Search & Filter
-				</h3>
-				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
-					<div class="join ms-4 flex w-full items-stretch rounded-lg py-4 pe-8 ps-4">
-						<label
-							class="border-1 input join-item input-bordered input-primary flex w-full items-center border-gray-400 text-lg"
-							><svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-search me-2 inline"
-								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-									d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"
-								/><path d="M21 21l-6 -6" /></svg
-							>
-							<input
-								type="text"
-								name="filter"
-								class="grow text-lg"
-								bind:value={filterInput}
-								placeholder="Type keywords here"
-							/>
-						</label><button
-							class="btn btn-primary join-item text-xl font-bold text-base-100"
-							onclick={() => {
-								console.log(filterResult);
-							}}>Filter</button
-						>
-					</div>
-				</div>
-			</div> -->
 			<!-- 
 			/////////////////////////////////////////
 			/
@@ -837,7 +761,7 @@
 									}}
 								/>
 							</label><button
-								class="btn join-item btn-neutral text-xl font-bold text-base-100"
+								class="btn btn-primary join-item text-xl font-bold text-base-100"
 								onclick={() => {
 									console.log(filterResult);
 								}}>Filter</button
@@ -1166,9 +1090,6 @@
 	}
 	.view-add-sidebar {
 		view-transition-name: view-add-sidebar;
-	}
-	.view-filter-sidebar {
-		view-transition-name: view-filter-sidebar;
 	}
 	.view-manage-sidebar {
 		view-transition-name: view-manage-sidebar;
