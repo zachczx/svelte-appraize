@@ -9,11 +9,13 @@
 	import { slide } from 'svelte/transition';
 	import { circOut } from 'svelte/easing';
 	import UndrawEmpty from '$lib/svg/UndrawEmpty.svelte';
+	import UndrawNoData from '$lib/svg/UndrawNoData.svelte';
 	import TablerEdit from '$lib/svg/TablerEdit.svelte';
 	import EditFields from '$lib/EditFields.svelte';
 	import GripVertical from '$lib/svg/GripVertical.svelte';
 	import User from '$lib/svg/User.svelte';
 	import Home from '$lib/svg/Home.svelte';
+	import { onNavigate } from '$app/navigation';
 	let { data, form } = $props();
 	let formSaveSession;
 	let formAutoSaveSession = $state();
@@ -34,6 +36,68 @@
 	let order = $state();
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
+
+	let filterInput = $state('');
+	let filterNothingFound = $state(false);
+	onNavigate(() => {
+		//reset the nothing found notice when soft navigating, cos new els dont have hidden css applied
+		filterNothingFound = false;
+	});
+	/* 	let filterResult = $derived.by(() => {
+		let filterResult;
+		let result = data.streamed.result;
+		console.log('Results: ', result);
+		filterResult = result.filter((item) => {
+			return item.name.includes(filterInput);
+		});
+		console.log('Raw filtered objects: ', filterResult);
+		let filterResultArray = [];
+		for (let i = 0; i < filterResult.length; i++) {
+			let filterResultArrayTemp = filterResult[i].id;
+			filterResultArray.push(filterResultArrayTemp);
+		}
+		console.log(filterResultArray);
+		let addHiddenClassForFilter;
+		for (let i = 0; i < result.length; i++) {
+			if (filterResultArray.indexOf(result[i].id) > -1) {
+				console.log('found these!', result[i]);
+			} else {
+				addHiddenClassForFilter = document.getElementById(result[i].uuid);
+				addHiddenClassForFilter?.classList.add('hidden');
+			}
+		}
+	}); */
+	async function filterResult() {
+		let result = data.streamed.result;
+		console.log('Results: ', result);
+		let filterResult = result.filter((item) => {
+			return item.name.includes(filterInput);
+		});
+		// console.log('Raw filtered objects: ', filterResult);
+		let filterResultArray = [];
+		for (let i = 0; i < filterResult.length; i++) {
+			let filterResultArrayTemp = filterResult[i].id;
+			filterResultArray.push(filterResultArrayTemp);
+		}
+		// console.log(filterResultArray);
+		let addHiddenClassForFilter;
+		let hiddenCount = 0;
+		for (let i = 0; i < result.length; i++) {
+			let resetClasses = document.getElementById(result[i].uuid);
+			resetClasses?.classList.remove('hidden');
+			if (filterResultArray.indexOf(result[i].id) > -1) {
+				console.log('found these!', result[i]);
+			} else {
+				addHiddenClassForFilter = document.getElementById(result[i].uuid);
+				addHiddenClassForFilter?.classList.add('hidden');
+				hiddenCount += 1;
+			}
+		}
+		if (hiddenCount === result.length) {
+			console.log("everything's hidden!!!");
+			filterNothingFound = true;
+		}
+	}
 
 	let newCounts = $derived.by(async () => {
 		let newCounts = {
@@ -135,7 +199,7 @@
 			}
 		}, 60000);
 
-		data.streamed.result.forEach((item) => {
+		/* data.streamed.result.forEach((item) => {
 			console.log(
 				'ID: ',
 				item.id,
@@ -153,7 +217,7 @@
 				item.grade,
 				'\n',
 			);
-		});
+		}); */
 	});
 </script>
 
@@ -163,7 +227,7 @@
 			<a href="/">Appraize</a>
 		</h1>
 	</div>
-	<div class="col-span-3 flex items-center border-b border-b-gray-200 bg-gray-50 px-8">
+	<div class="col-span-3 flex items-center border-b-2 border-b-gray-200 bg-gray-50 px-8">
 		<form method="POST" action="?/redirect" class="flex w-full justify-center" use:enhance>
 			<label
 				class="view-input input input-bordered relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
@@ -186,7 +250,8 @@
 						>{/if}
 				</button>
 			</label>
-			{#key form}{#if form?.formRedirectFailed}
+			{#key form}
+				{#if form?.formRedirectFailed}
 					<div
 						class="fade-in fade-out toast toast-end transition duration-75 ease-out"
 						in:slide={{ duration: 150, axis: 'x', easing: circOut }}
@@ -454,7 +519,7 @@
 					</form>
 				</div>
 			</div>
-			<div class="view-filter-sidebar">
+			<!-- <div class="view-filter-sidebar">
 				<h3 class="px-4 font-extrabold">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -491,11 +556,22 @@
 									d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"
 								/><path d="M21 21l-6 -6" /></svg
 							>
-							<input type="text" name="filter" class="grow text-lg" placeholder="Type keywords here" disabled />
-						</label><button class="btn btn-primary join-item text-xl font-bold text-base-100" disabled>Filter</button>
+							<input
+								type="text"
+								name="filter"
+								class="grow text-lg"
+								bind:value={filterInput}
+								placeholder="Type keywords here"
+							/>
+						</label><button
+							class="btn btn-primary join-item text-xl font-bold text-base-100"
+							onclick={() => {
+								console.log(filterResult);
+							}}>Filter</button
+						>
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<!-- 
 			/////////////////////////////////////////
 			/
@@ -695,34 +771,89 @@
 	-->
 	<div class="col-span-3 min-h-dvh space-y-12 pb-4 pt-4">
 		<div>
-			<ol class="space-y-4">
+			<ol class="view-content space-y-4">
 				<div class="view-ranking-title space-y-2 px-4 pb-4 md:px-10">
 					<h1>Ranking: {data.id}</h1>
 					<div class="flex items-center text-2xl text-gray-500">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="icon icon-tabler icons-tabler-outline icon-tabler-users mb-1 me-2 inline"
-							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-								d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
-							/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path
-								d="M21 21v-2a4 4 0 0 0 -3 -3.85"
-							/></svg
-						>{#await newCounts}
-							<span class="loading loading-spinner loading-sm text-primary"></span>
-						{:then newCounts}
-							<span class="animate-scale">{newCounts.total}</span>
-						{/await}
+						<div class="grow">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="1em"
+								height="1em"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="icon icon-tabler icons-tabler-outline icon-tabler-users mb-1 me-2 inline"
+								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+									d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
+								/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path
+									d="M21 21v-2a4 4 0 0 0 -3 -3.85"
+								/></svg
+							>{#await newCounts}
+								<span class="loading loading-spinner loading-sm text-primary"></span>
+							{:then newCounts}
+								<span class="animate-scale font-extrabold">{newCounts.total}</span>
+							{/await}
+						</div>
+						<div class="join flex justify-start rounded-lg">
+							<label
+								class="border-1 input join-item input-bordered input-primary flex items-center border-gray-400 text-lg"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1em"
+									height="1em"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class="icon icon-tabler icons-tabler-outline icon-tabler-filter me-2 inline"
+								>
+									<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+									<path
+										d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
+									/>
+								</svg>
+								<input
+									type="text"
+									name="filter"
+									class="grow text-lg"
+									bind:value={filterInput}
+									placeholder="Type keywords here"
+									onkeydown={(evt) => {
+										if (evt.key === 'Enter') {
+											console.log('Enter pressed');
+											filterResult();
+										} else {
+											setTimeout(() => {
+												filterResult();
+											}, 1000);
+										}
+									}}
+								/>
+							</label><button
+								class="btn join-item btn-neutral text-xl font-bold text-base-100"
+								onclick={() => {
+									console.log(filterResult);
+								}}>Filter</button
+							>
+						</div>
 					</div>
 				</div>
+
 				<div id="table" class="relative grid space-y-4 px-2 md:px-10">
+					{#if filterNothingFound}
+						<div class="space-y-4 p-2 lg:px-10 lg:py-28">
+							<div class="flex justify-center"><UndrawNoData /></div>
+							<h2 class="text-center">Couldn't find anything that matches your filter!</h2>
+						</div>
+					{/if}
+
 					{#await data.streamed.result}
 						<span
 							class="ignore-elements loading loading-spinner loading-lg justify-self-center py-5 text-primary md:py-10"
@@ -916,8 +1047,8 @@
 									/
 									///////////////////////////////////////// 
 									-->
-									<div class="join col-span-5 flex justify-end p-2 md:col-span-2">
-										<div class="self-center">
+									<div class=" col-span-5 flex justify-end p-2 md:col-span-2">
+										<div class="join self-center">
 											<button
 												class="btn join-item text-lg {person.edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
 												onclick={() => {
@@ -927,23 +1058,53 @@
 														person.edit = !person.edit;
 													}
 													console.log(person.edit);
-												}}><TablerEdit class="inline h-[1.5em] w-[1.5em]" /> Edit</button
-											>
-										</div>
-
-										<form method="POST" class="self-center" action="?/delete" use:enhance>
-											<input type="hidden" name="delete-target" value={person.id} />
-											<button
-												class="btn btn-outline btn-error join-item stroke-error hover:stroke-base-100"
-												onclick={() => {
-													let elDelete = document.getElementById(person.uuid);
-													console.log(elDelete?.dataset.deleteId);
-													let cssTextFieldClasses = ['bg-base-300', 'translate-x-10', 'opacity-0'];
-													elDelete?.classList.add(...cssTextFieldClasses);
 												}}
-												><Trash class="inline h-[1.5em] w-[1.5em]" />
+												><TablerEdit class="inline h-[1.5em] w-[1.5em]" />
 											</button>
-										</form>
+											<div class="btn dropdown dropdown-end btn-outline join-item btn-neutral">
+												<div tabindex="0" role="button" class="m-0 flex h-full items-center text-xl">
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														width="1.2em"
+														height="1.2em"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="2"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"
+														><path stroke="none" d="M0 0h24v24H0z" fill="none" />
+														<path d="M6 9l6 6l6 -6" />
+													</svg>
+												</div>
+												<ul
+													tabindex="0"
+													class="menu dropdown-content z-[1] m-0 w-52 rounded-box bg-base-100 p-0 shadow"
+												>
+													<li class="">
+														<form
+															method="POST"
+															class="group m-0 w-full justify-center self-center rounded-lg stroke-error p-0 hover:bg-error hover:stroke-base-100"
+															action="?/delete"
+															use:enhance
+														>
+															<input type="hidden" name="delete-target" value={person.id} />
+															<button
+																class="px-1 py-2 text-lg text-error group-hover:text-base-100"
+																onclick={() => {
+																	let elDelete = document.getElementById(person.uuid);
+																	console.log(elDelete?.dataset.deleteId);
+																	let cssTextFieldClasses = ['bg-base-300', 'translate-x-10', 'opacity-0'];
+																	elDelete?.classList.add(...cssTextFieldClasses);
+																}}
+																><Trash class="inline h-[1.5em] w-[1.5em]" /> Delete
+															</button>
+														</form>
+													</li>
+												</ul>
+											</div>
+										</div>
 									</div>
 								</div>
 							{/each}
@@ -1014,6 +1175,10 @@
 	}
 	.view-input {
 		view-transition-name: view-input;
+	}
+
+	.view-content {
+		view-transition-name: view-content;
 	}
 
 	.sortable-handle {

@@ -160,6 +160,12 @@ export const actions = {
 		}
 	},
 
+	filter: async function ({ request, params }) {
+		const rawFilterFormInput = await request.formData();
+		const FilterFormInput = rawFilterFormInput.get('filter');
+		console.log('Server received filter string: ', FilterFormInput);
+	},
+
 	redirect: async function ({ request }) {
 		const inputData = await request.formData();
 		const inputSession = inputData.get('session');
