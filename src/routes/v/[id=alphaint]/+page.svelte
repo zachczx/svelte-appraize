@@ -40,12 +40,13 @@
 
 	let filterInput = $state('');
 	let filterNothingFound = $state(false);
+	let filterGrade = $state('');
 	onNavigate(() => {
 		//reset the nothing found notice when soft navigating, cos new els dont have hidden css applied
 		filterNothingFound = false;
 	});
 
-	async function filterResult() {
+	/* 	async function filterResult() {
 		let result = data.streamed.result;
 		console.log('Results: ', result);
 		let filterResult = result.filter((item) => {
@@ -75,8 +76,47 @@
 			console.log("everything's hidden!!!");
 			filterNothingFound = true;
 		}
+	} */
+	async function filterResult(filterField, filterInputToFilter) {
+		let result = data.streamed.result;
+		console.log('Results: ', result);
+		let filterResult = result.filter((item) => {
+			let field = item[filterField];
+			return field.includes(filterInputToFilter);
+		});
+		// console.log('Raw filtered objects: ', filterResult);
+		let filterResultArray = [];
+		for (let i = 0; i < filterResult.length; i++) {
+			let filterResultArrayTemp = filterResult[i].id;
+			filterResultArray.push(filterResultArrayTemp);
+		}
+		// console.log(filterResultArray);
+		let addHiddenClassForFilter;
+		let hiddenCount = 0;
+		for (let i = 0; i < result.length; i++) {
+			let resetClasses = document.getElementById(result[i].uuid);
+			resetClasses?.classList.remove('hidden');
+			if (filterResultArray.indexOf(result[i].id) > -1) {
+				console.log('found these!', result[i]);
+			} else {
+				addHiddenClassForFilter = document.getElementById(result[i].uuid);
+				addHiddenClassForFilter?.classList.add('hidden');
+				hiddenCount += 1;
+			}
+		}
+		if (hiddenCount === result.length) {
+			console.log("everything's hidden!!!");
+			filterNothingFound = true;
+		}
 	}
 
+	async function resetFilters() {
+		await data.streamed.result;
+		for (let i = 0; i < data.streamed.result.length; i++) {
+			let resetFilterGrade = document.getElementById(data.streamed.result[i].uuid);
+			resetFilterGrade.classList.remove('hidden');
+		}
+	}
 	let newCounts = $derived.by(async () => {
 		let newCounts = {
 			a: 0,
@@ -760,7 +800,7 @@
 								<span class="animate-scale font-extrabold">{newCounts.total}</span>
 							{/await}
 						</div>
-						<div class="join flex justify-start rounded-lg">
+						<div id="filter-name" class="join me-2 flex justify-start rounded-lg">
 							<label
 								class="border-1 input join-item input-bordered input-primary flex items-center border-gray-400 text-lg"
 							>
@@ -786,14 +826,14 @@
 									name="filter"
 									class="grow text-lg"
 									bind:value={filterInput}
-									placeholder="Type keywords here"
+									placeholder="Filter by keywords"
 									onkeydown={(evt) => {
 										if (evt.key === 'Enter') {
 											console.log('Enter pressed');
-											filterResult();
+											filterResult('name', filterInput);
 										} else {
 											setTimeout(() => {
-												filterResult();
+												filterResult('name', filterInput);
 											}, 10);
 										}
 									}}
@@ -803,13 +843,27 @@
 										}
 									}}
 								/>
-							</label><button
-								class="btn btn-primary join-item text-xl font-bold text-base-100"
-								onclick={() => {
-									console.log(filterResult);
-								}}>Filter</button
-							>
+							</label><button class="btn btn-primary join-item text-xl font-bold text-base-100">Filter</button>
 						</div>
+						<select
+							id="filter-grade"
+							class="select select-bordered select-primary border-gray-400 text-lg"
+							onchange={() => {
+								let chosenGrade = document.getElementById('filter-grade');
+								if (chosenGrade.value === 'All') {
+									resetFilters();
+								} else {
+									filterResult('grade', chosenGrade.value);
+								}
+							}}
+						>
+							<option disabled selected>Grade</option>
+							<option>A</option>
+							<option>B</option>
+							<option>C</option>
+							<option>D</option>
+							<option>All</option>
+						</select>
 					</div>
 				</div>
 
