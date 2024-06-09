@@ -4,6 +4,8 @@
 	import UndrawDecide from '$lib/svg/UndrawDecide.svelte';
 	import { goto } from '$app/navigation';
 
+	import { editFormSubmitKeyboardShortcut } from '$lib/FormSubmitKeyboardShortcut';
+
 	//superforms imports
 	import { superForm } from 'sveltekit-superforms';
 	//import SuperDebug from 'sveltekit-superforms';
@@ -32,7 +34,7 @@
 			<p class="text-lg">Ranking sessions made easy.</p>
 		</div>
 		<div>
-			<form method="POST" use:enhance>
+			<form method="POST" id="landing-input" use:enhance>
 				<div class="flex w-full">
 					<label
 						class="view-input input input-bordered input-primary relative flex w-full self-center rounded-full border-2 text-lg shadow"
@@ -44,6 +46,9 @@
 							placeholder="Create or continue a ranking session (e.g. cssranking2024)"
 							bind:value={$form.session}
 							class="view-input-button w-full"
+							onkeydown={(evt) => {
+								editFormSubmitKeyboardShortcut(evt, 'landing-input');
+							}}
 							required
 						/>
 

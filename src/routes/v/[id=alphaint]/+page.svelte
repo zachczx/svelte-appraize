@@ -16,6 +16,7 @@
 	import User from '$lib/svg/User.svelte';
 	import Home from '$lib/svg/Home.svelte';
 	import { onNavigate } from '$app/navigation';
+	import { editFormSubmitKeyboardShortcut } from '$lib/FormSubmitKeyboardShortcut';
 	let { data, form } = $props();
 	let formSaveSession;
 	let formAutoSaveSession = $state();
@@ -205,12 +206,21 @@
 		</h1>
 	</div>
 	<div class="col-span-3 flex items-center border-b-2 border-b-gray-200 bg-gray-50 px-8">
-		<form method="POST" action="?/redirect" class="flex w-full justify-center" use:enhance>
+		<form method="POST" id="view-top-navbar-input" action="?/redirect" class="flex w-full justify-center" use:enhance>
 			<label
 				class="view-input input input-bordered relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
 				for="session"
 			>
-				<input type="text" name="session" placeholder="Jump to another session" class="w-full" required />
+				<input
+					type="text"
+					name="session"
+					placeholder="Jump to another session"
+					class="w-full"
+					onkeydown={(evt) => {
+						editFormSubmitKeyboardShortcut(evt, 'view-top-navbar-input');
+					}}
+					required
+				/>
 				<button class="view-input-button group absolute -top-0 right-1">
 					{#if submittedSpinner}
 						<span class="loading loading loading-spinner"></span>
@@ -348,7 +358,7 @@
 					>Add Officer
 				</h3>
 				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
-					<form method="POST" action="?/insert" class="ms-4 space-y-1 rounded-lg p-4" use:enhance>
+					<form method="POST" id="insert-form" action="?/insert" class="ms-4 space-y-1 rounded-lg p-4" use:enhance>
 						{#if form?.insertNameMissing}<span class="text-lg text-error">Please enter a name:</span>{/if}
 						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
 							<svg
@@ -369,12 +379,32 @@
 								<path d="M19 16v6" />
 								<path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
 							</svg>
-							<input type="text" name="name" bind:value={nameData} class="shrink text-lg" placeholder="Name" required />
+							<input
+								type="text"
+								name="name"
+								bind:value={nameData}
+								class="shrink text-lg"
+								placeholder="Name"
+								onkeydown={(evt) => {
+									editFormSubmitKeyboardShortcut(evt, 'insert-form');
+								}}
+								required
+							/>
 						</label>
 						{#if form?.insertDeptMissing}<span class="text-lg text-error">Please enter a dept:</span>{/if}
 						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
 							<Home class="me-2 flex-none" />
-							<input type="text" name="dept" bind:value={deptData} class="grow text-lg" placeholder="Dept" required />
+							<input
+								type="text"
+								name="dept"
+								bind:value={deptData}
+								class="grow text-lg"
+								placeholder="Dept"
+								onkeydown={(evt) => {
+									editFormSubmitKeyboardShortcut(evt, 'insert-form');
+								}}
+								required
+							/>
 						</label>
 						{#if form?.insertGradeMissing}<span class="text-lg text-error">Please select a grade:</span>{/if}
 						<div class="grid grid-cols-4 items-center justify-items-start text-lg">
@@ -445,6 +475,9 @@
 								bind:value={remarksData}
 								class="grow text-lg"
 								placeholder="Remarks (Optional)"
+								onkeydown={(evt) => {
+									editFormSubmitKeyboardShortcut(evt, 'insert-form');
+								}}
 							/>
 						</label>
 						<button
@@ -576,8 +609,13 @@
 						</button>
 					</div>
 					<div class="flex items-center pe-4 ps-8">
-						<input type="checkbox" class="checkbox-primary checkbox me-2" bind:checked={autoSave} />
-						<label class="text-lg font-medium">Auto save progress</label>
+						<input
+							type="checkbox"
+							id="auto-save-checkbox"
+							class="checkbox-primary checkbox me-2"
+							bind:checked={autoSave}
+						/>
+						<label for="auto-save-checkbox" class="text-lg font-medium">Auto save progress</label>
 
 						{#if formSaveSuccessLoading}
 							<span class="loading loading-dots loading-sm ms-2 self-end text-primary"></span>
@@ -861,6 +899,9 @@
 														class="grow"
 														value={person.name}
 														placeholder="Name"
+														onkeydown={(evt) => {
+															editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
+														}}
 													/></label
 												>
 											</div>
@@ -878,6 +919,9 @@
 														value={person.dept}
 														id="edit-person-dept-{person.uuid}"
 														placeholder="Dept"
+														onkeydown={(evt) => {
+															editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
+														}}
 													/>
 												</label>
 											</div>
@@ -912,6 +956,9 @@
 														maxlength="999"
 														placeholder="Remarks"
 														value={person.remarks}
+														onkeydown={(evt) => {
+															editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
+														}}
 													></textarea>
 												</label>
 											</div>
