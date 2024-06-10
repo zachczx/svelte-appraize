@@ -800,7 +800,13 @@
 						</form>
 					</div>
 				</div>
-
+				<div class="mx-2 grid grid-cols-12 rounded-lg pt-10 text-xl font-extrabold text-gray-500 md:mx-10">
+					<div class="col-span-1"></div>
+					<div class="col-span-1">Grade</div>
+					<div class="col-span-4">Name</div>
+					<div class="col-span-4">Dept</div>
+					<div class="col-span-2"></div>
+				</div>
 				<div id="table" class="relative grid space-y-4 px-2 md:px-10">
 					{#if filterNothingFound}
 						<div class="space-y-4 p-2 lg:px-10 lg:py-28">
@@ -822,16 +828,16 @@
 						{:else}
 							{#each result as person}
 								<div
-									class="grid grid-cols-12 rounded-lg border border-slate-400 transition duration-700 ease-out hover:border-primary"
+									class="grid grid-cols-12 rounded-lg border border-gray-400 transition duration-700 ease-out hover:border-primary"
 									id={person.uuid}
 									data-sortable-id={person.uuid}
 								>
-									<div
-										class="sortable-handle col-span-2 row-span-2 flex items-center space-x-2 md:col-span-2 md:row-span-1"
-									>
+									<div class="sortable-handle col-span-1 flex items-center">
 										<div class="flex h-full items-center rounded-l-lg bg-neutral p-2">
 											<GripVertical class="stroke-base-100" />
 										</div>
+									</div>
+									<div class="sortable-handle col-span-1 flex items-center">
 										<!-- form="edit-form-{person.uuid}" name="grade__{person.uuid}"-->
 										<form id="edit-grade-form-{person.uuid}" method="POST" action="?/editgrade" use:enhance>
 											<input type="hidden" name="edit-grade-target" value={person.id} />
@@ -856,17 +862,17 @@
 									</div>
 									{#if person.edit}
 										<div
-											class="col-span-10 grid grid-cols-6 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2 md:col-span-8"
+											class="col-span-8 grid grid-cols-8 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2"
 											id="div__{person.uuid}"
 											in:slide={{ duration: 500, axis: 'y', easing: circOut }}
 											out:slide={{ duration: 10, axis: 'y', easing: circOut }}
 										>
-											<div class="col-span-6">
+											<div class="col-span-8">
 												<form method="POST" id="edit-form-{person.uuid}" action="?/edit" use:enhance>
 													<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
 												</form>
 											</div>
-											<div class="col-span-3 md:col-span-3">
+											<div class="col-span-4">
 												<label
 													class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
 													for="edit-person-name-{person.uuid}"
@@ -899,7 +905,7 @@
 												>
 											</div>
 
-											<div class="col-span-3 md:col-span-3">
+											<div class="col-span-4">
 												<label
 													class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
 													for="edit-person-dept-{person.uuid}"
@@ -918,14 +924,14 @@
 													/>
 												</label>
 											</div>
-											<div class="col-span-6 md:col-span-6">
+											<div class="col-span-8">
 												<label
 													class="textarea textarea-bordered flex h-24 w-full items-center items-center gap-2 border-gray-400 text-lg md:h-56"
 													for="edit-person-remarks-{person.uuid}"
 													><svg
 														xmlns="http://www.w3.org/2000/svg"
-														width="1em"
-														height="1em"
+														width="1.5em"
+														height="1.5em"
 														viewBox="0 0 24 24"
 														fill="none"
 														stroke="currentColor"
@@ -962,22 +968,16 @@
 											</div>
 										</div>
 									{:else}
-										<div
-											class="col-span-10 grid grid-cols-6 items-center p-2 md:col-span-8"
-											id="div__{person.uuid}"
-											in:slide={{ duration: 600, axis: 'y', easing: circOut }}
-											out:slide={{ duration: 10, axis: 'y', easing: circOut }}
-										>
-											<div class="col-span-3 text-2xl font-bold">{person.name}</div>
-											<div class="col-span-3 text-2xl text-gray-500">{person.dept}</div>
-											{#if person.remarks}<div
-													class="col-span-6 mt-4 rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-500"
-												>
-													<div>
+										<div class="col-span-8 self-center" id="div__{person.uuid}">
+											<div class="grid grid-cols-8 items-center py-2">
+												<div class="col-span-4 text-2xl font-bold">{person.name}</div>
+												<div class="col-span-4 text-2xl text-gray-500">{person.dept}</div>
+												{#if person.remarks}
+													<div class="col-span-8 mt-4 rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-500">
 														<svg
 															xmlns="http://www.w3.org/2000/svg"
-															width="1em"
-															height="1em"
+															width="1.5em"
+															height="1.5em"
 															viewBox="0 0 24 24"
 															fill="none"
 															stroke="currentColor"
@@ -992,10 +992,10 @@
 															<path
 																d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
 															/>
-														</svg><b>Remarks</b>
+														</svg>{person.remarks}
 													</div>
-													<div>{person.remarks}</div>
-												</div>{/if}
+												{/if}
+											</div>
 										</div>
 									{/if}
 									<!-- 
@@ -1011,7 +1011,7 @@
 									/
 									///////////////////////////////////////// 
 									-->
-									<div class=" col-span-5 flex justify-end p-2 md:col-span-2">
+									<div class="col-span-2 flex justify-end p-2">
 										<div class="join self-center">
 											<button
 												class="btn join-item text-lg {person.edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
