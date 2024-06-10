@@ -1,6 +1,6 @@
 import { db } from '$lib/drizzle/db';
 import { records } from '$lib/drizzle/schema';
-import { desc, asc, eq, and } from 'drizzle-orm';
+import { desc, asc, eq, and, or, as, ilike } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 
@@ -18,12 +18,60 @@ let delay = (time) => {
 
 const regexRoute = /^[a-zA-Z0-9-]*$/;
 
-export const load = (async ({ params }) => {
+export const load = (async ({ params, url }) => {
 	const sessionId = String(params.id);
+	const filterParam = url.searchParams.get('filter');
+	const filterGradeParam = url.searchParams.get('grade');
+	console.log(`Found a param, ${filterParam}`);
+	let result;
+	if (!filterParam || !filterGradeParam) {
+		const sq = db.select().from(records).where(eq(records.session, sessionId)).as('sq');
+		result = await db
+			.select()
+			.from(sq)
+			.where(
+				or(
+					filterParam ? ilike(sq.name, `%${filterParam}%`) : undefined,
+					filterParam ? ilike(sq.dept, `%${filterParam}%`) : undefined,
+					filterParam ? ilike(sq.remarks, `%${filterParam}%`) : undefined,
+					filterGradeParam ? eq(sq.grade, filterGradeParam) : undefined,
+				),
+			)
+			.orderBy(asc(sq.sequence));
+
+		/*result = await db
+			.select()
+			.from(records)
+			.where(
+				and(
+					eq(records.session, sessionId),
+					filterParam ? ilike(records.name, `%${filterParam}%`) : undefined,
+					filterGradeParam ? eq(records.grade, filterGradeParam) : undefined,
+				),
+			)
+			.orderBy(asc(records.sequence)); */
+	} else if (filterParam && filterGradeParam) {
+		result = await db
+			.select()
+			.from(records)
+			.where(
+				and(
+					eq(records.session, sessionId),
+					or(ilike(records.name, `%${filterParam}%`), ilike(records.dept, `%${filterParam}%`)),
+					eq(records.grade, filterGradeParam),
+				),
+			)
+			.orderBy(asc(records.sequence));
+	} else {
+		result = await db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence));
+	}
+
+	console.log(result);
+
 	return {
 		id: sessionId,
 		streamed: {
-			result: await db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence)),
+			result,
 			//delay: await delay(5000),
 		},
 	};
@@ -162,9 +210,39 @@ export const actions = {
 	},
 
 	filter: async function ({ request, params }) {
-		const rawFilterFormInput = await request.formData();
-		const FilterFormInput = rawFilterFormInput.get('filter');
-		console.log('Server received filter string: ', FilterFormInput);
+		const rawFormInput = await request.formData();
+		const sessionId = String(params.id);
+		let filterFormInput;
+		let filterFormGradeInput;
+		let finalUrlString;
+
+		if (rawFormInput.get('filter')) {
+			filterFormInput = 'filter=' + String(rawFormInput.get('filter')).trim();
+			console.log('Server received filter string: ', filterFormInput);
+		}
+
+		if (
+			rawFormInput.get('grade') === 'A' ||
+			rawFormInput.get('grade') === 'B' ||
+			rawFormInput.get('grade') === 'C' ||
+			rawFormInput.get('grade') === 'D'
+		) {
+			filterFormGradeInput = 'grade=' + String(rawFormInput.get('grade'));
+			console.log('Server received filter string: ', filterFormGradeInput);
+		} else if (rawFormInput.get('grade') === 'All') {
+			filterFormGradeInput = '';
+		}
+
+		if (filterFormInput && (!filterFormGradeInput || filterFormGradeInput === 'All')) {
+			finalUrlString = filterFormInput;
+		} else if (!filterFormInput && filterFormGradeInput) {
+			finalUrlString = filterFormGradeInput;
+		} else if (filterFormInput && filterFormGradeInput) {
+			finalUrlString = filterFormInput + '&' + filterFormGradeInput;
+		} else {
+			finalUrlString = '';
+		}
+		redirect(307, `/v/${sessionId}/?${finalUrlString}`);
 	},
 
 	redirect: async function ({ request }) {

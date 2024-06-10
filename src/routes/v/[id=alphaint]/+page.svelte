@@ -6,7 +6,8 @@
 	import Trash from '$lib/svg/Trash.svelte';
 	import Stars from '$lib/svg/Stars.svelte';
 	import IconoirStar from '$lib/svg/IconoirStar.svelte';
-	import { slide } from 'svelte/transition';
+	import { slide, fly } from 'svelte/transition';
+	import { page } from '$app/stores';
 	import { circOut } from 'svelte/easing';
 	import UndrawEmpty from '$lib/svg/UndrawEmpty.svelte';
 	import UndrawNoData from '$lib/svg/UndrawNoData.svelte';
@@ -23,8 +24,6 @@
 	let formSaveSuccessLoading = $state(false);
 	let autoSave = $state(true);
 	let submittedSpinner = $state(false);
-	let currentSaveIcon = $state('iconSave');
-	let currentSaveButtonColor = $state('btn-primary');
 	let nameData = $state();
 	let deptData = $state();
 	let gradeData = $state();
@@ -40,83 +39,13 @@
 
 	let filterInput = $state('');
 	let filterNothingFound = $state(false);
-	let filterGrade = $state('');
+	let filterGradeValue = $state('Grade');
+	let filterForm;
 	onNavigate(() => {
 		//reset the nothing found notice when soft navigating, cos new els dont have hidden css applied
 		filterNothingFound = false;
 	});
 
-	/* 	async function filterResult() {
-		let result = data.streamed.result;
-		console.log('Results: ', result);
-		let filterResult = result.filter((item) => {
-			return item.name.includes(filterInput);
-		});
-		// console.log('Raw filtered objects: ', filterResult);
-		let filterResultArray = [];
-		for (let i = 0; i < filterResult.length; i++) {
-			let filterResultArrayTemp = filterResult[i].id;
-			filterResultArray.push(filterResultArrayTemp);
-		}
-		// console.log(filterResultArray);
-		let addHiddenClassForFilter;
-		let hiddenCount = 0;
-		for (let i = 0; i < result.length; i++) {
-			let resetClasses = document.getElementById(result[i].uuid);
-			resetClasses?.classList.remove('hidden');
-			if (filterResultArray.indexOf(result[i].id) > -1) {
-				console.log('found these!', result[i]);
-			} else {
-				addHiddenClassForFilter = document.getElementById(result[i].uuid);
-				addHiddenClassForFilter?.classList.add('hidden');
-				hiddenCount += 1;
-			}
-		}
-		if (hiddenCount === result.length) {
-			console.log("everything's hidden!!!");
-			filterNothingFound = true;
-		}
-	} */
-	async function filterResult(filterField, filterInputToFilter) {
-		let result = data.streamed.result;
-		console.log('Results: ', result);
-		let filterResult = result.filter((item) => {
-			let field = item[filterField];
-			return field.includes(filterInputToFilter);
-		});
-		// console.log('Raw filtered objects: ', filterResult);
-		let filterResultArray = [];
-		for (let i = 0; i < filterResult.length; i++) {
-			let filterResultArrayTemp = filterResult[i].id;
-			filterResultArray.push(filterResultArrayTemp);
-		}
-		// console.log(filterResultArray);
-		let addHiddenClassForFilter;
-		let hiddenCount = 0;
-		for (let i = 0; i < result.length; i++) {
-			let resetClasses = document.getElementById(result[i].uuid);
-			resetClasses?.classList.remove('hidden');
-			if (filterResultArray.indexOf(result[i].id) > -1) {
-				console.log('found these!', result[i]);
-			} else {
-				addHiddenClassForFilter = document.getElementById(result[i].uuid);
-				addHiddenClassForFilter?.classList.add('hidden');
-				hiddenCount += 1;
-			}
-		}
-		if (hiddenCount === result.length) {
-			console.log("everything's hidden!!!");
-			filterNothingFound = true;
-		}
-	}
-
-	async function resetFilters() {
-		await data.streamed.result;
-		for (let i = 0; i < data.streamed.result.length; i++) {
-			let resetFilterGrade = document.getElementById(data.streamed.result[i].uuid);
-			resetFilterGrade.classList.remove('hidden');
-		}
-	}
 	let newCounts = $derived.by(async () => {
 		let newCounts = {
 			a: 0,
@@ -156,10 +85,6 @@
 	});
 
 	onMount(() => {
-		//= document.getElementById('formNameData');
-		// let deptData = document.getElementById('formDeptData');
-		// let gradeData = document.getElementById('formGradeData');
-
 		let el = document.getElementById('table');
 		var sortable = new Sortable(el, {
 			animation: 300,
@@ -215,7 +140,14 @@
 					formSaveSuccessLoading = false;
 				}, 1500);
 			}
-		}, 60000);
+		}, 120000);
+
+		/* 		if (data.streamed.result) {
+			const url = $page.url;
+			if (url.searchParams.get('filter')) {
+				filterResult('name', url.searchParams.get('filter'));
+			}
+		} */
 
 		/* data.streamed.result.forEach((item) => {
 			console.log(
@@ -800,9 +732,34 @@
 								<span class="animate-scale font-extrabold">{newCounts.total}</span>
 							{/await}
 						</div>
-						<div id="filter-name" class="join me-2 flex justify-start rounded-lg">
+						<a href="/v/{data.id}" class="inline-block self-center text-lg">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="1em"
+								height="1em"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="icon icon-tabler icons-tabler-outline icon-tabler-refresh mb-1 me-2 inline"
+							>
+								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+								<path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+								<path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+							</svg>Reset
+						</a>
+						<form
+							method="POST"
+							action="?/filter"
+							id="filter-input"
+							bind:this={filterForm}
+							class="join ms-4 flex justify-start rounded-lg"
+							use:enhance
+						>
 							<label
-								class="border-1 input join-item input-bordered input-primary flex items-center border-gray-400 text-lg"
+								class="border-1 input-neutral input join-item input-bordered flex items-center border-gray-400 text-lg"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -821,49 +778,26 @@
 										d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
 									/>
 								</svg>
-								<input
-									type="text"
-									name="filter"
-									class="grow text-lg"
-									bind:value={filterInput}
-									placeholder="Filter by keywords"
-									onkeydown={(evt) => {
-										if (evt.key === 'Enter') {
-											console.log('Enter pressed');
-											filterResult('name', filterInput);
-										} else {
-											setTimeout(() => {
-												filterResult('name', filterInput);
-											}, 10);
-										}
-									}}
-									onkeyup={(evt) => {
-										if (filterInput == '') {
-											filterNothingFound = false;
-										}
-									}}
-								/>
-							</label><button class="btn btn-primary join-item text-xl font-bold text-base-100">Filter</button>
-						</div>
-						<select
-							id="filter-grade"
-							class="select select-bordered select-primary border-gray-400 text-lg"
-							onchange={() => {
-								let chosenGrade = document.getElementById('filter-grade');
-								if (chosenGrade.value === 'All') {
-									resetFilters();
-								} else {
-									filterResult('grade', chosenGrade.value);
-								}
-							}}
-						>
-							<option disabled selected>Grade</option>
-							<option>A</option>
-							<option>B</option>
-							<option>C</option>
-							<option>D</option>
-							<option>All</option>
-						</select>
+								<input type="text" name="filter" class="grow text-lg" placeholder="Filter by keywords" />
+							</label>
+							<select
+								id="filter-grade"
+								name="grade"
+								class="select-neutral join-item select select-bordered border-gray-400 text-lg"
+								bind:value={filterGradeValue}
+								onchange={() => {
+									filterForm.requestSubmit();
+								}}
+							>
+								<option disabled selected>Grade</option>
+								<option>A</option>
+								<option>B</option>
+								<option>C</option>
+								<option>D</option>
+								<option>All</option>
+							</select>
+							<button class="btn join-item btn-neutral text-xl font-bold text-base-100">Filter</button>
+						</form>
 					</div>
 				</div>
 
@@ -1140,7 +1074,6 @@
 				</div>
 			</ol>
 		</div>
-		<div class="col-span-3 px-4 pb-4 pt-4 text-center">Copyright © 2024 Zixian Chen. All rights reserved.</div>
 	</div>
 </div>
 
@@ -1249,7 +1182,7 @@
 		}
 	}
 
-	.a-icon::before {
+	/* 	.a-icon::before {
 		content: 'A';
 		font-size: 1em;
 		font-weight: 800;
@@ -1266,5 +1199,5 @@
 		background-color: #cddaea;
 		border-radius: 50%;
 		display: inline-block;
-	}
+	} */
 </style>
