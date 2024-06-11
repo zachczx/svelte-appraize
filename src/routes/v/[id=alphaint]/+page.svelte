@@ -1149,7 +1149,7 @@
 /
 ///////////////////////////////////////// 
 -->
-<dialog id="upload_modal" class="modal">
+<dialog id="upload_modal" class="view-upload-modal">
 	<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
 		<h2 class="rounded-t-lg bg-primary p-5 font-bold text-base-100">Add Multiple Officers</h2>
 		<form class="p-4">
@@ -1164,7 +1164,7 @@
 	</div>
 </dialog>
 
-<dialog id="delete_session_modal" class="modal">
+<dialog id="delete_session_modal" class="delete-session-modal">
 	<div class="rounded-lg bg-base-100">
 		<h2 class="rounded-t-lg bg-error p-5 font-bold text-base-100">Delete session</h2>
 		<p class="px-4 py-4">
@@ -1233,8 +1233,12 @@
 		cursor: move;
 	}
 
-	.modal {
-		view-transition-name: modal;
+	.delete-session-modal {
+		view-transition-name: delete-session-modal;
+		animation: none;
+	}
+	.view-upload-modal {
+		view-transition-name: view-upload-modal;
 		animation: none;
 	}
 
