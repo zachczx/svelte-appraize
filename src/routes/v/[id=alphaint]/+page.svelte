@@ -501,6 +501,66 @@
 					</form>
 				</div>
 			</div>
+
+			<!-- 
+			/////////////////////////////////////////
+			/
+			/
+			/
+			/
+			/	Upload
+			/
+			/
+			/	
+			/
+			///////////////////////////////////////// 
+			-->
+			<div class="view-upload-sidebar">
+				<h3 class="px-4 font-extrabold">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1em"
+						height="1em"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="icon icon-tabler icons-tabler-outline icon-tabler-table-plus mb-1 me-4 inline"
+						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+							d="M12.5 21h-7.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v7.5"
+						/><path d="M3 10h18" /><path d="M10 3v18" /><path d="M16 19h6" /><path d="M19 16v6" /></svg
+					>Add Multiple
+				</h3>
+				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
+					<ol class="p-4">
+						<li class="list-none">
+							<button
+								class="btn btn-ghost text-xl"
+								onclick={() => {
+									upload_modal.showModal();
+								}}
+								><svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1em"
+									height="1em"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class="icon icon-tabler icons-tabler-outline icon-tabler-upload mb-1 me-2 inline"
+									><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+										d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"
+									/><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg
+								>Upload from file (.csv)</button
+							>
+						</li>
+					</ol>
+				</div>
+			</div>
 			<!-- 
 			/////////////////////////////////////////
 			/
@@ -1076,6 +1136,33 @@
 		</div>
 	</div>
 </div>
+<!-- 
+/////////////////////////////////////////
+/
+/
+/
+/
+/	Modals
+/
+/
+/	
+/
+///////////////////////////////////////// 
+-->
+<dialog id="upload_modal" class="modal">
+	<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
+		<h2 class="rounded-t-lg bg-primary p-5 font-bold text-base-100">Add Multiple Officers</h2>
+		<form class="p-4">
+			<input type="file" class="file-input file-input-bordered file-input-primary w-full" />
+		</form>
+		<div class="modal-action flex justify-end px-4 pb-4">
+			<form method="dialog">
+				<button class="btn btn-outline text-lg">Close</button>
+			</form>
+			<button class="btn btn-primary text-lg">Upload</button>
+		</div>
+	</div>
+</dialog>
 
 <dialog id="delete_session_modal" class="modal">
 	<div class="rounded-lg bg-base-100">
@@ -1126,6 +1213,9 @@
 	}
 	.view-add-sidebar {
 		view-transition-name: view-add-sidebar;
+	}
+	.view-upload-sidebar {
+		view-transition-name: view-upload-sidebar;
 	}
 	.view-manage-sidebar {
 		view-transition-name: view-manage-sidebar;
