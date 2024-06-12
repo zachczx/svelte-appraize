@@ -18,6 +18,7 @@
 	import Home from '$lib/svg/Home.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { editFormSubmitKeyboardShortcut } from '$lib/FormSubmitKeyboardShortcut';
+
 	let { data, form } = $props();
 	let formSaveSession;
 	let formAutoSaveSession = $state();
@@ -1149,17 +1150,43 @@
 /
 ///////////////////////////////////////// 
 -->
-<dialog id="upload_modal" class="view-upload-modal">
+<dialog id="upload_modal" class="view-upload-modal modal modal-open">
 	<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
 		<h2 class="rounded-t-lg bg-primary p-5 font-bold text-base-100">Add Multiple Officers</h2>
-		<form class="p-4">
-			<input type="file" class="file-input file-input-bordered file-input-primary w-full" />
-		</form>
+
+		<div class="p-4">
+			<form id="form-fileupload" enctype="multipart/form-data" method="POST">
+				<label for="fileupload" class="text-lg">Upload your file (.csv):</label>
+				<input
+					type="file"
+					name="fileupload"
+					accept=".csv"
+					class="file-input file-input-bordered file-input-primary w-full"
+				/>
+			</form>
+			<div class="mt-8">CSV file must have these columns, for example:</div>
+			<div class="grid grid-cols-4 rounded-lg border border-gray-400 text-gray-400">
+				<div class="rounded-tl-lg border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
+					Name
+				</div>
+				<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Dept</div>
+				<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
+					Grade (A/B/C/D)
+				</div>
+				<div class="rounded-tr-lg border-b border-b-gray-400 bg-base-200 p-2 font-bold">Remarks</div>
+
+				<div class="border-r border-r-gray-400 p-2">Mary</div>
+				<div class="border-r border-r-gray-400 p-2">Sue</div>
+				<div class="border-r border-r-gray-400 p-2">B</div>
+				<div class="p-2">She was hardworking.</div>
+			</div>
+		</div>
+
 		<div class="modal-action flex justify-end px-4 pb-4">
 			<form method="dialog">
 				<button class="btn btn-outline text-lg">Close</button>
 			</form>
-			<button class="btn btn-primary text-lg">Upload</button>
+			<button form="form-fileupload" class="btn btn-primary text-lg font-bold">Upload</button>
 		</div>
 	</div>
 </dialog>
