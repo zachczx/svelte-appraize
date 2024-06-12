@@ -1150,7 +1150,7 @@
 /
 ///////////////////////////////////////// 
 -->
-<dialog id="upload_modal" class="view-upload-modal modal modal-open">
+<dialog id="upload_modal" class="view-upload-modal modal">
 	<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
 		<h2 class="rounded-t-lg bg-primary p-5 font-bold text-base-100">Add Multiple Officers</h2>
 
