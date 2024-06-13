@@ -10,6 +10,20 @@ import { z } from 'zod';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
+// R2 Bucket imports
+import { PUBLIC_S3_BUCKET_NAME } from '$env/static/public'; //it's a public key, so prefix PUBLIC_ requires fetching from public, not private
+import { R2_S3 } from '$lib/R2_S3';
+import { Upload } from '@aws-sdk/lib-storage';
+
+//For Buffer/Handling of file
+import * as fs from 'fs';
+import Papa from 'papaparse';
+
+/**
+ *
+ * @param time integer in milliseconds
+ * @returns
+ */
 let delay = (time) => {
 	return new Promise((res) => {
 		setTimeout(res, time);
@@ -18,11 +32,26 @@ let delay = (time) => {
 
 const regexRoute = /^[a-zA-Z0-9-]*$/;
 
+/**
+ *
+ * @param str get rid of weird characters in filename, from cloudflare r2 upload
+ * @returns
+ */
+const slugifyString = (str: string) => {
+	return str
+		.trim()
+		.toLowerCase()
+		.replace(/\s+/g, '-')
+		.replace(/\./g, '-')
+		.replace(/-+/g, '-')
+		.replace(/[^a-z0-9-]/g, '-');
+};
+
 export const load = (async ({ params, url }) => {
 	const sessionId = String(params.id);
 	const filterParam = url.searchParams.get('filter');
 	const filterGradeParam = url.searchParams.get('grade');
-	console.log(`Found a param, ${filterParam}`);
+	//console.log(`Found a param, ${filterParam}`);
 	let result;
 	if (!filterParam || !filterGradeParam) {
 		const sq = db.select().from(records).where(eq(records.session, sessionId)).as('sq');
@@ -66,7 +95,7 @@ export const load = (async ({ params, url }) => {
 		result = await db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence));
 	}
 
-	console.log(result);
+	//console.log(result);
 
 	return {
 		id: sessionId,
@@ -254,5 +283,89 @@ export const actions = {
 		} else {
 			return fail(400, { formRedirectFailed: true });
 		}
+	},
+
+	uploadfile: async function ({ request, params }) {
+		const formData = await request.formData();
+		const sessionId = String(params.id);
+		const file = formData.get('fileupload');
+		// console.log(file);
+		const fileBuffer = Buffer.from(await file.arrayBuffer()); //readable after upload to r2
+		const fileBuffertoString = fileBuffer.toString();
+		// console.log(fileBuffertoString);
+		const arrayFile = Papa.parse(fileBuffertoString);
+		// console.log(arrayFile.data);
+
+		const data = arrayFile.data;
+		// console.log(data.length);
+		for (let i = 0; i < data.length; i++) {
+			console.log(data[i][2]);
+			let gradePreCleaning = String(data[i][2]);
+			let gradeInLoop = gradePreCleaning.toUpperCase();
+			// console.log(gradeInLoop);
+			if (
+				data[i].length === 4 &&
+				data[i][0] != '' &&
+				data[i][1] != '' &&
+				data[i][0] != 'Name' &&
+				data[i][1] != 'Dept' &&
+				(gradeInLoop === 'A' || gradeInLoop === 'B' || gradeInLoop === 'C' || gradeInLoop != 'D')
+			) {
+				let currentLargestSequence = await db
+					.select()
+					.from(records)
+					.where(eq(records.session, sessionId))
+					.orderBy(desc(records.sequence))
+					.limit(1);
+				let sequenceToInsert;
+				if (currentLargestSequence == 0) {
+					sequenceToInsert = 1;
+				} else {
+					sequenceToInsert = currentLargestSequence[0].sequence + 1;
+				}
+
+				await db.insert(records).values({
+					name: data[i][0],
+					dept: data[i][1],
+					grade: gradeInLoop,
+					session: sessionId,
+					sequence: sequenceToInsert,
+					remarks: data[i][3],
+				});
+			}
+		}
+
+		// Upload handling
+		if (!file.name || file.name === undefined) {
+			return fail(400, { error: true, message: 'You must provide a file to upload' });
+		} else if (
+			file.type != 'text/csv' ||
+			!file.type ||
+			file.name.trim() === '' ||
+			file.type.trim() === '' ||
+			file.size > 10000
+		) {
+			console.log('Fail, not a csv file');
+			return fail(400, { error: true, message: 'You must upload a .csv file' });
+		}
+
+		const objectKey = `${slugifyString(Date.now().toString())}-${slugifyString(file.name)}.csv`;
+
+		const send = new Upload({
+			client: R2_S3,
+			params: {
+				Bucket: PUBLIC_S3_BUCKET_NAME,
+				Key: objectKey,
+				Body: fileBuffer,
+				ContentType: file.type,
+				ACL: 'public-read',
+			},
+		});
+		send.on('httpUploadProgress', (progress) => {
+			//console.log(progress);
+		});
+
+		await send.done();
+		return { formUploadSuccess: true };
 	},
 };

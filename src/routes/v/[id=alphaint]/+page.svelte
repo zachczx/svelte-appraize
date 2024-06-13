@@ -18,6 +18,7 @@
 	import Home from '$lib/svg/Home.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { editFormSubmitKeyboardShortcut } from '$lib/FormSubmitKeyboardShortcut';
+	import Papa from 'papaparse';
 
 	let { data, form } = $props();
 	let formSaveSession;
@@ -42,6 +43,11 @@
 	let filterNothingFound = $state(false);
 	let filterGradeValue = $state('Grade');
 	let filterForm;
+
+	let uploadPreview = $state(false);
+	let outsideVar = $state();
+	let formUploadButtonSpinner = $state(false);
+
 	onNavigate(() => {
 		//reset the nothing found notice when soft navigating, cos new els dont have hidden css applied
 		filterNothingFound = false;
@@ -631,7 +637,7 @@
 							<input type="hidden" name="order" value={order} />
 						</form>
 						<button
-							class="group btn btn-outline join-item btn-neutral w-full"
+							class="group btn btn-outline join-item btn-neutral w-full hover:border-red-700 hover:bg-error"
 							onclick={() => {
 								delete_session_modal.showModal();
 							}}
@@ -710,6 +716,31 @@
 			out:slide={{ duration: 300, axis: 'x', easing: circOut }}
 		>
 			<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">Error saving!</div>
+		</div>
+	{/if}
+	{#if form?.formUploadSuccess}
+		<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
+			<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="2em"
+					height="2em"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
+				>
+					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+					<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
+					<path d="M9 10h.01" />
+					<path d="M15 10h.01" />
+					<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
+					<path d="M15 19l2 2l4 -4" />
+				</svg>Uploaded successfully!
+			</div>
 		</div>
 	{/if}
 
@@ -820,7 +851,7 @@
 							use:enhance
 						>
 							<label
-								class="border-1 input-neutral input join-item input-bordered flex items-center border-gray-400 text-lg"
+								class="border-1 input join-item input-bordered input-primary flex items-center border-gray-400 text-lg"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -844,7 +875,7 @@
 							<select
 								id="filter-grade"
 								name="grade"
-								class="select-neutral join-item select select-bordered border-gray-400 text-lg"
+								class="join-item select select-bordered select-primary border-gray-400 text-lg"
 								bind:value={filterGradeValue}
 								onchange={() => {
 									filterForm.requestSubmit();
@@ -857,7 +888,7 @@
 								<option>D</option>
 								<option>All</option>
 							</select>
-							<button class="btn join-item btn-neutral text-xl font-bold text-base-100">Filter</button>
+							<button class="btn btn-primary join-item text-xl font-bold text-base-100">Filter</button>
 						</form>
 					</div>
 				</div>
@@ -1152,41 +1183,98 @@
 -->
 <dialog id="upload_modal" class="view-upload-modal modal">
 	<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
-		<h2 class="rounded-t-lg bg-primary p-5 font-bold text-base-100">Add Multiple Officers</h2>
+		<h2 class="rounded-t-lg bg-primary p-5 font-bold text-base-100">Add Via CSV File Upload</h2>
 
 		<div class="p-4">
-			<form id="form-fileupload" enctype="multipart/form-data" method="POST">
+			<form id="form-fileupload" enctype="multipart/form-data" action="?/uploadfile" method="POST" use:enhance>
 				<label for="fileupload" class="text-lg">Upload your file (.csv):</label>
 				<input
 					type="file"
 					name="fileupload"
+					id="fileupload"
 					accept=".csv"
 					class="file-input file-input-bordered file-input-primary w-full"
+					onchange={() => {
+						const file = document.getElementById('fileupload').files[0];
+						console.log(file);
+						var reader = new FileReader();
+
+						// Read file into memory as UTF-16
+						reader.readAsText(file);
+						reader.onload = (evt) => {
+							//const csv = reader.result;
+							const csv = evt.target.result;
+							outsideVar = Papa.parse(csv, { delimiter: ',', header: true, dynamicTyping: false });
+						};
+
+						uploadPreview = true;
+					}}
 				/>
 			</form>
-			<div class="mt-8">CSV file must have these columns, for example:</div>
-			<div class="grid grid-cols-4 rounded-lg border border-gray-400 text-gray-400">
-				<div class="rounded-tl-lg border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
-					Name
-				</div>
-				<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Dept</div>
-				<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
-					Grade (A/B/C/D)
-				</div>
-				<div class="rounded-tr-lg border-b border-b-gray-400 bg-base-200 p-2 font-bold">Remarks</div>
+			{#if uploadPreview}
+				{#await outsideVar}
+					<span class="loading loading-spinner loading-md text-primary"></span>
+				{:then outsideVar}
+					{#key outsideVar}
+						<h3 class="mt-8">Preview</h3>
+						<div class="grid grid-cols-4 rounded-lg border border-gray-400 text-gray-400">
+							<div
+								class="rounded-tl-lg border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold"
+							>
+								Name
+							</div>
+							<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Dept</div>
+							<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
+								Grade (A/B/C/D)
+							</div>
+							<div class="rounded-tr-lg border-b border-b-gray-400 bg-base-200 p-2 font-bold">Remarks</div>
+							{#each outsideVar.data as item}
+								{#if item.Name != '' && item.Dept != '' && item.Grade != ''}
+									<div class="border-b border-r border-b-gray-400 border-r-gray-400 p-2">{item.Name}</div>
+									<div class="border-b border-r border-b-gray-400 border-r-gray-400 p-2">{item.Dept}</div>
+									<div class="border-b border-r border-b-gray-400 border-r-gray-400 p-2">{item.Grade}</div>
+									<div class="border-b border-b-gray-400 p-2">{item.Remarks}</div>
+								{/if}
+							{/each}
+						</div>
+					{/key}
+				{/await}
+			{:else}
+				<div class="mt-8">CSV file must have these columns, for example:</div>
+				<div class="grid grid-cols-4 rounded-lg border border-gray-400 text-gray-400">
+					<div class="rounded-tl-lg border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
+						Name
+					</div>
+					<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Dept</div>
+					<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
+						Grade (A/B/C/D)
+					</div>
+					<div class="rounded-tr-lg border-b border-b-gray-400 bg-base-200 p-2 font-bold">Remarks</div>
 
-				<div class="border-r border-r-gray-400 p-2">Mary</div>
-				<div class="border-r border-r-gray-400 p-2">Sue</div>
-				<div class="border-r border-r-gray-400 p-2">B</div>
-				<div class="p-2">She was hardworking.</div>
-			</div>
+					<div class="border-r border-r-gray-400 p-2">Mary</div>
+					<div class="border-r border-r-gray-400 p-2">Sue</div>
+					<div class="border-r border-r-gray-400 p-2">B</div>
+					<div class="p-2">She was hardworking.</div>
+				</div>
+			{/if}
 		</div>
 
 		<div class="modal-action flex justify-end px-4 pb-4">
 			<form method="dialog">
 				<button class="btn btn-outline text-lg">Close</button>
 			</form>
-			<button form="form-fileupload" class="btn btn-primary text-lg font-bold">Upload</button>
+			<button
+				form="form-fileupload"
+				class="btn btn-primary min-w-32 text-lg font-bold"
+				onclick={() => {
+					formUploadButtonSpinner = true;
+					const dialogUpload = document.getElementById('upload_modal');
+					setTimeout(() => {
+						dialogUpload.close('Closed');
+					}, 1500);
+				}}
+				>{#if formUploadButtonSpinner}<span class="loading loading-spinner loading-md"></span>{:else}Upload{/if}</button
+			>
 		</div>
 	</div>
 </dialog>
