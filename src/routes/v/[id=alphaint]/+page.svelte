@@ -1181,7 +1181,7 @@
 /
 ///////////////////////////////////////// 
 -->
-<dialog id="upload_modal" class="view-upload-modal modal">
+<dialog id="upload_modal" class="view-upload-modal modal overflow-y-scroll">
 	<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
 		<h2 class="rounded-t-lg bg-primary p-5 font-bold text-base-100">Add Via CSV File Upload</h2>
 
@@ -1211,6 +1211,24 @@
 					}}
 				/>
 			</form>
+			<div class="modal-action flex justify-end pb-4">
+				<form method="dialog">
+					<button class="btn btn-outline text-lg">Close</button>
+				</form>
+				<button
+					form="form-fileupload"
+					class="btn btn-primary min-w-32 text-lg font-bold"
+					onclick={() => {
+						formUploadButtonSpinner = true;
+						const dialogUpload = document.getElementById('upload_modal');
+						setTimeout(() => {
+							dialogUpload.close('Closed');
+						}, 1500);
+					}}
+					>{#if formUploadButtonSpinner}<span class="loading loading-spinner loading-md"
+						></span>{:else}Upload{/if}</button
+				>
+			</div>
 			{#if uploadPreview}
 				{#await outsideVar}
 					<span class="loading loading-spinner loading-md text-primary"></span>
@@ -1257,24 +1275,6 @@
 					<div class="p-2">She was hardworking.</div>
 				</div>
 			{/if}
-		</div>
-
-		<div class="modal-action flex justify-end px-4 pb-4">
-			<form method="dialog">
-				<button class="btn btn-outline text-lg">Close</button>
-			</form>
-			<button
-				form="form-fileupload"
-				class="btn btn-primary min-w-32 text-lg font-bold"
-				onclick={() => {
-					formUploadButtonSpinner = true;
-					const dialogUpload = document.getElementById('upload_modal');
-					setTimeout(() => {
-						dialogUpload.close('Closed');
-					}, 1500);
-				}}
-				>{#if formUploadButtonSpinner}<span class="loading loading-spinner loading-md"></span>{:else}Upload{/if}</button
-			>
 		</div>
 	</div>
 </dialog>
