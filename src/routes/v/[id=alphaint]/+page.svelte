@@ -284,7 +284,7 @@
 					<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
 				{:then newCounts}
 					<div class="ms-7 border-l-2 border-gray-200 pe-8 ps-7">
-						<div class="grid w-full grid-cols-4 gap-2 pt-4">
+						<div class="grid w-full grid-cols-2 gap-2 pt-4 lg:grid-cols-4">
 							<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
 								<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
 									A
@@ -549,7 +549,7 @@
 					>Add Multiple
 				</h3>
 				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
-					<ol class="p-4">
+					<ol class="px-4 pb-4 pt-2">
 						<li class="list-none">
 							<button
 								class="btn btn-ghost text-xl"
@@ -1256,9 +1256,7 @@
 								Name
 							</div>
 							<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Dept</div>
-							<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
-								Grade (A/B/C+/C/C-/D)
-							</div>
+							<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Grade</div>
 							<div class="rounded-tr-lg border-b border-b-gray-400 bg-base-200 p-2 font-bold">Remarks</div>
 							{#each outsideVar.data as item}
 								{#if item.Name != '' && item.Dept != '' && item.Grade != ''}
@@ -1278,9 +1276,7 @@
 						Name
 					</div>
 					<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Dept</div>
-					<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
-						Grade (A/B/C+/C/C-/D)
-					</div>
+					<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Grade</div>
 					<div class="rounded-tr-lg border-b border-b-gray-400 bg-base-200 p-2 font-bold">Remarks</div>
 
 					<div class="border-r border-r-gray-400 p-2">Mary</div>
