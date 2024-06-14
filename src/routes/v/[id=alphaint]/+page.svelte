@@ -186,13 +186,13 @@
 	});
 </script>
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-1 lg:grid-cols-4">
 	<div class="col-span-1 border-b-2 border-r-2 border-gray-200 bg-gray-50 py-4 pe-4 ps-5 text-2xl">
 		<h1 class="view-header font-black text-primary">
 			<a href="/">Appraize</a>
 		</h1>
 	</div>
-	<div class="col-span-3 flex items-center border-b-2 border-b-gray-200 bg-gray-50 px-8">
+	<div class="col-span-3 flex items-center border-b-2 border-b-gray-200 bg-gray-50 px-2 lg:px-8">
 		<form method="POST" id="view-top-navbar-input" action="?/redirect" class="flex w-full justify-center" use:enhance>
 			<label
 				class="view-input input input-bordered relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
@@ -238,7 +238,7 @@
 		</form>
 	</div>
 	<!-- Sidebar -->
-	<div class="view-outline border-r-2 border-gray-200 bg-gray-50 py-4 pb-4 text-2xl">
+	<div class="view-outline hidden border-r-2 border-gray-200 bg-gray-50 py-4 pb-4 text-2xl lg:flex">
 		<div class="view-home-sidebar space-y-10">
 			<div>
 				<h3 class="px-4 font-extrabold">
@@ -808,7 +808,7 @@
 			<ol class="view-content space-y-4">
 				<div class="view-ranking-title space-y-2 px-4 pb-4 md:px-10">
 					<h1>Ranking: {data.id}</h1>
-					<div class="flex items-center text-2xl text-gray-500">
+					<div class="flex flex-wrap items-center space-y-4 text-2xl text-gray-500 lg:space-y-2">
 						<div class="grow">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -832,35 +832,8 @@
 								<span class="animate-scale font-extrabold">{newCounts.total}</span>
 							{/await}
 						</div>
-						<a href="/v/{data.id}" class="inline-block self-center text-lg">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-refresh mb-1 me-2 inline"
-							>
-								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-								<path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
-								<path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
-							</svg>Reset
-						</a>
-						<form
-							method="POST"
-							action="?/filter"
-							id="filter-input"
-							bind:this={filterForm}
-							class="join ms-4 flex justify-start rounded-lg"
-							use:enhance
-						>
-							<label
-								class="border-1 input join-item input-bordered input-primary flex items-center border-gray-400 text-lg"
-							>
+						<div class="flex">
+							<a href="/v/{data.id}" class="inline-block self-center text-lg">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="1em"
@@ -871,38 +844,67 @@
 									stroke-width="2"
 									stroke-linecap="round"
 									stroke-linejoin="round"
-									class="icon icon-tabler icons-tabler-outline icon-tabler-filter me-2 inline"
+									class="icon icon-tabler icons-tabler-outline icon-tabler-refresh mb-1 me-2 inline"
 								>
 									<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-									<path
-										d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
-									/>
-								</svg>
-								<input type="text" name="filter" class="grow text-lg" placeholder="Filter by keywords" />
-							</label>
-							<select
-								id="filter-grade"
-								name="grade"
-								class="join-item select select-bordered select-primary border-gray-400 text-lg"
-								bind:value={filterGradeValue}
-								onchange={() => {
-									filterForm.requestSubmit();
-								}}
+									<path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+									<path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+								</svg><span class="hidden lg:inline">Reset</span>
+							</a>
+							<form
+								method="POST"
+								action="?/filter"
+								id="filter-input"
+								bind:this={filterForm}
+								class="join flex justify-start rounded-lg lg:ms-4"
+								use:enhance
 							>
-								<option disabled selected>Grade</option>
-								<option value="A">A</option>
-								<option value="B">B</option>
-								<option value="C+">C+</option>
-								<option value="C">C</option>
-								<option value="C-">C-</option>
-								<option value="D">D</option>
-								<option value="All">All</option>
-							</select>
-							<button class="btn btn-primary join-item text-xl font-bold text-base-100">Filter</button>
-						</form>
+								<label
+									class="border-1 input join-item input-bordered input-primary flex max-w-44 items-center border-gray-400 text-lg lg:max-w-full"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="1em"
+										height="1em"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="icon icon-tabler icons-tabler-outline icon-tabler-filter me-2 inline"
+									>
+										<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+										<path
+											d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
+										/>
+									</svg>
+									<input type="text" name="filter" class="text-lg lg:grow" placeholder="Filter by keywords" />
+								</label>
+								<select
+									id="filter-grade"
+									name="grade"
+									class="join-item select select-bordered select-primary border-gray-400 text-lg"
+									bind:value={filterGradeValue}
+									onchange={() => {
+										filterForm.requestSubmit();
+									}}
+								>
+									<option disabled selected>Grade</option>
+									<option value="A">A</option>
+									<option value="B">B</option>
+									<option value="C+">C+</option>
+									<option value="C">C</option>
+									<option value="C-">C-</option>
+									<option value="D">D</option>
+									<option value="All">All</option>
+								</select>
+								<button class="btn btn-primary join-item text-xl font-bold text-base-100">Filter</button>
+							</form>
+						</div>
 					</div>
 				</div>
-				<div class="mx-2 grid grid-cols-12 rounded-lg pt-10 text-xl font-extrabold text-gray-500 md:mx-10">
+				<div class="mx-2 hidden grid-cols-12 rounded-lg pt-10 text-xl font-extrabold text-gray-500 md:mx-10 lg:grid">
 					<div class="col-span-1"></div>
 					<div class="col-span-1">Grade</div>
 					<div class="col-span-4">Name</div>
@@ -1072,8 +1074,8 @@
 											</div>
 										</div>
 									{:else}
-										<div class="col-span-8 self-center" id="div__{person.uuid}">
-											<div class="grid grid-cols-8 items-center py-2">
+										<div class="col-span-12 self-center lg:col-span-8" id="div__{person.uuid}">
+											<div class="grid grid-cols-8 items-center px-2 py-2">
 												<div class="col-span-4 text-2xl font-bold">{person.name}</div>
 												<div class="col-span-4 text-2xl text-gray-500">{person.dept}</div>
 												{#if person.remarks}
@@ -1115,7 +1117,7 @@
 									/
 									///////////////////////////////////////// 
 									-->
-									<div class="col-span-2 flex justify-end p-2">
+									<div class="col-span-12 flex justify-end p-2 lg:col-span-2">
 										<div class="join self-center">
 											<button
 												class="btn join-item text-lg {person.edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
