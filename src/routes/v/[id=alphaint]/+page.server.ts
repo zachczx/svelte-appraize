@@ -178,7 +178,14 @@ export const actions = {
 		const editGradeName = String(editGradeData.get('edit-grade-target-name'));
 		const editGradeId = editGradeData.get('edit-grade-target');
 		console.log(editGradeName, editGradeGrade, editGradeId);
-		if (editGradeGrade === 'A' || editGradeGrade === 'B' || editGradeGrade === 'C' || editGradeGrade === 'D') {
+		if (
+			editGradeGrade === 'A' ||
+			editGradeGrade === 'B' ||
+			editGradeGrade === 'C+' ||
+			editGradeGrade === 'C' ||
+			editGradeGrade === 'C-' ||
+			editGradeGrade === 'D'
+		) {
 			await db.update(records).set({ grade: editGradeGrade }).where(eq(records.id, editGradeId));
 			console.log('Edit grade success!');
 			return { editEditGradeSuccess: true };
@@ -253,7 +260,9 @@ export const actions = {
 		if (
 			rawFormInput.get('grade') === 'A' ||
 			rawFormInput.get('grade') === 'B' ||
+			rawFormInput.get('grade') === 'C+' ||
 			rawFormInput.get('grade') === 'C' ||
+			rawFormInput.get('grade') === 'C-' ||
 			rawFormInput.get('grade') === 'D'
 		) {
 			filterFormGradeInput = 'grade=' + String(rawFormInput.get('grade'));
@@ -309,7 +318,12 @@ export const actions = {
 				data[i][1] != '' &&
 				data[i][0] != 'Name' &&
 				data[i][1] != 'Dept' &&
-				(gradeInLoop === 'A' || gradeInLoop === 'B' || gradeInLoop === 'C' || gradeInLoop != 'D')
+				(gradeInLoop === 'A' ||
+					gradeInLoop === 'B' ||
+					gradeInLoop === 'C+' ||
+					gradeInLoop === 'C' ||
+					gradeInLoop === 'C-' ||
+					gradeInLoop != 'D')
 			) {
 				let currentLargestSequence = await db
 					.select()

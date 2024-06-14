@@ -57,7 +57,10 @@
 		let newCounts = {
 			a: 0,
 			b: 0,
+			cPlus: 0,
 			c: 0,
+			cMinus: 0,
+			cTotal: 0,
 			d: 0,
 			total: 0,
 			percentageA: 0,
@@ -72,20 +75,25 @@
 				newCounts.a += 1;
 			} else if (tempResult[i].grade === 'B') {
 				newCounts.b += 1;
+			} else if (tempResult[i].grade === 'C+') {
+				newCounts.cPlus += 1;
 			} else if (tempResult[i].grade === 'C') {
 				newCounts.c += 1;
+			} else if (tempResult[i].grade === 'C-') {
+				newCounts.cMinus += 1;
 			} else if (tempResult[i].grade === 'D') {
 				newCounts.d += 1;
 			}
 		}
-		newCounts.total = newCounts.a + newCounts.b + newCounts.c + newCounts.d;
+		newCounts.cTotal = newCounts.cPlus + newCounts.c + newCounts.cMinus;
+		newCounts.total = newCounts.a + newCounts.b + newCounts.cTotal + newCounts.d;
 		// console.log(newCounts);
 		if (newCounts.total == 0 || !newCounts.total) {
-			newCounts.percentageA = newCounts.percentageB = newCounts.percentageC = newCounts.percentageD = 0;
+			newCounts.percentageA = newCounts.percentageB = newCounts.cTotal = newCounts.percentageD = 0;
 		} else {
 			newCounts.percentageA = Math.round((newCounts.a / newCounts.total) * 100);
 			newCounts.percentageB = Math.round((newCounts.b / newCounts.total) * 100);
-			newCounts.percentageC = Math.round((newCounts.c / newCounts.total) * 100);
+			newCounts.percentageC = Math.round((newCounts.cTotal / newCounts.total) * 100);
 			newCounts.percentageD = Math.round((newCounts.d / newCounts.total) * 100);
 		}
 		return newCounts;
@@ -300,7 +308,7 @@
 									C
 								</div>
 								<div class="animate-scale text-4xl font-black">
-									{newCounts.c}
+									{newCounts.cTotal}
 								</div>
 								<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageC}%</div>
 							</div>
@@ -386,8 +394,8 @@
 							/>
 						</label>
 						{#if form?.insertGradeMissing}<span class="text-lg text-error">Please select a grade:</span>{/if}
-						<div class="grid grid-cols-4 items-center justify-items-start text-lg">
-							<label class="label cursor-pointer space-x-1">
+						<div class="flex flex-wrap items-center justify-between text-lg">
+							<label class="label me-2 cursor-pointer space-x-1">
 								<span class="label-text text-lg font-medium">A</span>
 								<input
 									type="radio"
@@ -397,7 +405,7 @@
 									bind:group={gradeData}
 								/>
 							</label>
-							<label class="label cursor-pointer space-x-1">
+							<label class="label me-2 cursor-pointer space-x-1">
 								<span class="label-text text-lg font-medium">B</span>
 								<input
 									type="radio"
@@ -407,7 +415,17 @@
 									bind:group={gradeData}
 								/>
 							</label>
-							<label class="label cursor-pointer space-x-1">
+							<label class="label me-2 cursor-pointer space-x-1">
+								<span class="label-text text-lg font-medium">C+</span>
+								<input
+									type="radio"
+									name="grade"
+									value="C+"
+									class="radio border-gray-400 bg-base-100 checked:bg-primary"
+									bind:group={gradeData}
+								/>
+							</label>
+							<label class="label me-2 cursor-pointer space-x-1">
 								<span class="label-text text-lg font-medium">C</span>
 								<input
 									type="radio"
@@ -417,7 +435,17 @@
 									bind:group={gradeData}
 								/>
 							</label>
-							<label class="label cursor-pointer space-x-1">
+							<label class="label me-2 cursor-pointer space-x-1">
+								<span class="label-text text-lg font-medium">C-</span>
+								<input
+									type="radio"
+									name="grade"
+									value="C-"
+									class="radio border-gray-400 bg-base-100 checked:bg-primary"
+									bind:group={gradeData}
+								/>
+							</label>
+							<label class="label me-2 cursor-pointer space-x-1">
 								<span class="label-text text-lg font-medium">D</span>
 								<input
 									type="radio"
@@ -484,26 +512,6 @@
 								<path d="M13 18l6 -6" />
 								<path d="M13 6l6 6" />
 							</svg>
-
-							<!-- {#if buttonClickedStars}
-					<div transition:fade={{ duration: 200, delay: 500 }} class="absolute -right-2 -top-2 block">
-						<IconoirStar
-							class="h-[1.5em] w-[1.5em] overflow-visible stroke-orange-200 text-orange-300"
-						/>
-					</div>
-					<IconoirStar
-						class="absolute -bottom-4 -left-1 h-[2em] w-[2em] overflow-visible stroke-gray-300 text-yellow-200 transition delay-100"
-					/>
-					<IconoirStar
-						class="absolute -right-2 top-5 h-[1em] w-[1em] overflow-visible stroke-gray-300 text-yellow-200 transition delay-150 duration-500 ease-out"
-					/>
-					<IconoirStar
-						class="absolute -bottom-1 right-4 h-[1.5em] w-[1.5em] overflow-visible stroke-teal-300 text-lime-300 transition delay-200 duration-500 ease-out"
-					/>
-					<IconoirStar
-						class="absolute -left-4 -top-1 h-[1.5em] w-[1.5em] overflow-visible stroke-pink-300 text-error transition delay-300 duration-500 ease-out"
-					/>
-				{/if} -->
 						</button>
 					</form>
 				</div>
@@ -778,7 +786,7 @@
 	{:else if form?.editInsertFailedGrade}
 		<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
 			<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">
-				Failed to edit! Grade should be a single alphabet (A, B, C, D)
+				Failed to edit! Grade should be a single alphabet (A, B, C+, C, C-, D)
 			</div>
 		</div>
 	{/if}
@@ -882,11 +890,13 @@
 								}}
 							>
 								<option disabled selected>Grade</option>
-								<option>A</option>
-								<option>B</option>
-								<option>C</option>
-								<option>D</option>
-								<option>All</option>
+								<option value="A">A</option>
+								<option value="B">B</option>
+								<option value="C+">C+</option>
+								<option value="C">C</option>
+								<option value="C-">C-</option>
+								<option value="D">D</option>
+								<option value="All">All</option>
 							</select>
 							<button class="btn btn-primary join-item text-xl font-bold text-base-100">Filter</button>
 						</form>
@@ -947,7 +957,9 @@
 											>
 												<option value="A">A</option>
 												<option value="B">B</option>
+												<option value="C+">C+</option>
 												<option value="C">C</option>
+												<option value="C-">C-</option>
 												<option value="D">D</option>
 											</select>
 										</form>
@@ -1243,7 +1255,7 @@
 							</div>
 							<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Dept</div>
 							<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
-								Grade (A/B/C/D)
+								Grade (A/B/C+/C/C-/D)
 							</div>
 							<div class="rounded-tr-lg border-b border-b-gray-400 bg-base-200 p-2 font-bold">Remarks</div>
 							{#each outsideVar.data as item}
@@ -1265,7 +1277,7 @@
 					</div>
 					<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Dept</div>
 					<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
-						Grade (A/B/C/D)
+						Grade (A/B/C+/C/C-/D)
 					</div>
 					<div class="rounded-tr-lg border-b border-b-gray-400 bg-base-200 p-2 font-bold">Remarks</div>
 
