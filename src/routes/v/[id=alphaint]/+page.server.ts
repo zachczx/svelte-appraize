@@ -305,6 +305,13 @@ export const actions = {
 		const arrayFile = Papa.parse(fileBuffertoString);
 		// console.log(arrayFile.data);
 
+		/**
+		 * @param {Object[]} data - Data object output from Papaparse
+		 * @param {string} data[][0] - Name
+		 * @param {string} data[][1] - Dept
+		 * @param {string} data[][2] - Grade A/B/C+/C/C-/D
+		 * @param {string} data[][3] - Remarks (optional)
+		 */
 		const data = arrayFile.data;
 		// console.log(data.length);
 		for (let i = 0; i < data.length; i++) {
@@ -318,6 +325,7 @@ export const actions = {
 				data[i][1] != '' &&
 				data[i][0] != 'Name' &&
 				data[i][1] != 'Dept' &&
+				data[i][2].includes('Grade') === false &&
 				(gradeInLoop === 'A' ||
 					gradeInLoop === 'B' ||
 					gradeInLoop === 'C+' ||
@@ -349,7 +357,7 @@ export const actions = {
 			}
 		}
 
-		// Upload handling
+		// Upload to Cloudflare R2
 		if (!file.name || file.name === undefined) {
 			return fail(400, { error: true, message: 'You must provide a file to upload' });
 		} else if (

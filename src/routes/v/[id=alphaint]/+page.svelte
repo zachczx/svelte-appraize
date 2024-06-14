@@ -380,7 +380,7 @@
 						</label>
 						{#if form?.insertDeptMissing}<span class="text-lg text-error">Please enter a dept:</span>{/if}
 						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
-							<Home class="me-2 flex-none" />
+							<Home class="me-2 flex-none stroke-neutral" />
 							<input
 								type="text"
 								name="dept"
@@ -394,7 +394,7 @@
 							/>
 						</label>
 						{#if form?.insertGradeMissing}<span class="text-lg text-error">Please select a grade:</span>{/if}
-						<div class="flex flex-wrap items-center justify-between text-lg">
+						<div class="flex flex-wrap items-center justify-start text-lg">
 							<label class="label me-2 cursor-pointer space-x-1">
 								<span class="label-text text-lg font-medium">A</span>
 								<input
@@ -640,7 +640,7 @@
 										<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
 										<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
 										<path d="M14 4l0 4l-6 0l0 -4" />
-									</svg><span class="text-xl">Save</span>{/if}</button
+									</svg><span class="hidden text-xl 2xl:contents">Save</span>{/if}</button
 							>
 							<input type="hidden" name="order" value={order} />
 						</form>
@@ -651,7 +651,7 @@
 							}}
 						>
 							<Trash class="inline h-[2em] w-[2em] stroke-neutral group-hover:stroke-base-100" /><span
-								class="ms-0 hidden text-xl font-bold lg:contents">Delete</span
+								class="ms-0 hidden text-xl font-bold 2xl:contents">Delete</span
 							>
 						</button>
 					</div>
