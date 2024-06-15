@@ -551,9 +551,7 @@
 				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
 					<ol class="px-4 pb-4 pt-2">
 						<li class="list-none">
-							<button
-								class="btn btn-ghost text-xl"
-								onclick={() => {
+							<button class="btn btn-ghost text-xl" onclick={() => {
 									upload_modal.showModal();
 								}}
 								><svg
@@ -1270,7 +1268,7 @@
 					{/key}
 				{/await}
 			{:else}
-				<div class="mt-8">CSV file must have these columns, for example:</div>
+				<div class="mt-8">CSV file must only have 4 columns: Name, Dept, Grade, Remarks. For example:</div>
 				<div class="grid grid-cols-4 rounded-lg border border-gray-400 text-gray-400">
 					<div class="rounded-tl-lg border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
 						Name
