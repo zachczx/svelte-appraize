@@ -938,7 +938,7 @@
 								>
 									<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
 										<div
-											class="flex h-full grow items-center rounded-t-lg bg-neutral p-2 lg:grow-0 lg:rounded-l-lg lg:rounded-tl-lg"
+											class="flex h-full grow items-center rounded-t-lg bg-neutral p-2 lg:grow-0 lg:rounded-l-lg lg:rounded-r-none lg:rounded-tl-lg"
 										>
 											<GripVertical class="stroke-base-100" />
 										</div>
