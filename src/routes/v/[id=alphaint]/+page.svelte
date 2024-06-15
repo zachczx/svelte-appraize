@@ -238,7 +238,7 @@
 		</form>
 	</div>
 	<!-- Sidebar -->
-	<div class="view-outline hidden border-r-2 border-gray-200 bg-gray-50 py-4 pb-4 text-2xl lg:flex">
+	<div class="view-outline hidden border-r-2 border-gray-200 bg-gray-50 py-4 pb-4 text-2xl lg:block">
 		<div class="view-home-sidebar space-y-10">
 			<div>
 				<h3 class="px-4 font-extrabold">
