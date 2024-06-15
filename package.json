@@ -1,6 +1,9 @@
 {
 	"name": "svelte-appraize",
 	"version": "0.0.1",
+	"engines": {
+		"node": "22.3"
+	},
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
