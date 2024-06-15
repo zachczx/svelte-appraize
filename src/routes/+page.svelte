@@ -48,6 +48,7 @@
 							class="view-input-button w-full"
 							onkeydown={(evt) => {
 								editFormSubmitKeyboardShortcut(evt, 'landing-input');
+								if (evt.key === "Enter") { submittedSpinner = true;}
 							}}
 							required
 						/>
@@ -58,9 +59,14 @@
 							onsubmit={() => {
 								submittedSpinner = true;
 							}}
+							onclick={() => {
+								submittedSpinner = true;
+							}}
 						>
 							{#if submittedSpinner}
-								<span class="loading loading loading-spinner"></span>
+								<div class="dot me-1 mt-1 flex items-center justify-center">
+									<span class="loading loading-spinner loading-md self-center text-base-100"></span>
+								</div>
 							{:else}
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -126,5 +132,12 @@
 			#773594,
 			#5d3891
 		);
+	}
+
+	.dot {
+		height: 2em;
+  width: 2em;
+  background-color: #640D6B;
+  border-radius: 50%;
 	}
 </style>
