@@ -551,7 +551,9 @@
 				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
 					<ol class="px-4 pb-4 pt-2">
 						<li class="list-none">
-							<button class="btn btn-ghost text-xl" onclick={() => {
+							<button
+								class="btn btn-ghost text-xl"
+								onclick={() => {
 									upload_modal.showModal();
 								}}
 								><svg
@@ -934,12 +936,14 @@
 									id={person.uuid}
 									data-sortable-id={person.uuid}
 								>
-									<div class="sortable-handle col-span-1 flex items-center">
-										<div class="flex h-full items-center rounded-l-lg bg-neutral p-2">
+									<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
+										<div
+											class="flex h-full grow items-center rounded-t-lg bg-neutral p-2 lg:grow-0 lg:rounded-l-lg lg:rounded-tl-lg"
+										>
 											<GripVertical class="stroke-base-100" />
 										</div>
 									</div>
-									<div class="sortable-handle col-span-1 flex items-center">
+									<div class="sortable-handle col-span-12 flex items-center justify-center lg:col-span-1">
 										<!-- form="edit-form-{person.uuid}" name="grade__{person.uuid}"-->
 										<form id="edit-grade-form-{person.uuid}" method="POST" action="?/editgrade" use:enhance>
 											<input type="hidden" name="edit-grade-target" value={person.id} />

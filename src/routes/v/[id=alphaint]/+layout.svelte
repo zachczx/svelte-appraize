@@ -4,8 +4,10 @@
 
 <slot />
 <div class="grid grid-cols-4">
-	<div class="col-span-1 border-b-2 border-r-2 border-gray-200 bg-gray-50 py-4 pe-4 ps-5 text-2xl"></div>
-	<div class="view-footer col-span-3 flex w-full items-center justify-center">
+	<div
+		class="col-span-1 hidden border-b-2 border-r-2 border-gray-200 bg-gray-50 py-4 pe-4 ps-5 text-2xl lg:block"
+	></div>
+	<div class="view-footer col-span-4 flex w-full items-center justify-center lg:col-span-3">
 		Copyright © 2024 Zixian Chen. All rights reserved.
 	</div>
 </div>
