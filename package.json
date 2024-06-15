@@ -2,7 +2,7 @@
 	"name": "svelte-appraize",
 	"version": "0.0.1",
 	"engines": {
-		"node": "22.3"
+		"node": "22"
 	},
 	"private": true,
 	"scripts": {
