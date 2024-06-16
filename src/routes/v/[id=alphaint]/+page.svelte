@@ -201,7 +201,7 @@
 	>
 		<form method="POST" id="view-top-navbar-input" action="?/redirect" class="flex w-full justify-center" use:enhance>
 			<label
-				class="view-input input input-bordered relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
+				class="view-input input input-bordered input-primary relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
 				for="session"
 			>
 				<input
