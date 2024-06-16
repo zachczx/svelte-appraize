@@ -19,9 +19,10 @@
 	import { onNavigate } from '$app/navigation';
 	import { editFormSubmitKeyboardShortcut } from '$lib/FormSubmitKeyboardShortcut';
 	import Papa from 'papaparse';
+	import SmallScreenHamburger from '$lib/SmallScreenHamburger.svelte';
 
 	let { data, form } = $props();
-	let formSaveSession;
+	let formSaveSession = $state();
 	let formAutoSaveSession = $state();
 	let formSaveSuccessLoading = $state(false);
 	let autoSave = $state(true);
@@ -186,13 +187,18 @@
 	});
 </script>
 
-<div class="grid grid-cols-1 lg:grid-cols-4">
-	<div class="col-span-1 border-b-2 border-r-2 border-gray-200 bg-gray-50 py-4 pe-4 ps-5 text-2xl">
-		<h1 class="view-header font-black text-primary">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+	<div
+		class="col-span-1 flex items-center border-b-2 border-gray-200 bg-gray-50 py-4 text-2xl lg:border-r-2 lg:pe-4 lg:ps-5"
+	>
+		<SmallScreenHamburger propFormSaveSession={formSaveSession} propOrder={order} />
+		<h1 class="view-header text-6xl font-black text-primary">
 			<a href="/">Appraize</a>
 		</h1>
 	</div>
-	<div class="col-span-3 flex items-center border-b-2 border-b-gray-200 bg-gray-50 px-2 lg:px-8">
+	<div
+		class="col-span-1 hidden items-center border-b-2 border-b-gray-200 bg-gray-50 px-2 pe-10 md:flex lg:col-span-3 lg:px-8"
+	>
 		<form method="POST" id="view-top-navbar-input" action="?/redirect" class="flex w-full justify-center" use:enhance>
 			<label
 				class="view-input input input-bordered relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
@@ -803,7 +809,7 @@
 	/
 	///////////////////////////////////////// 
 	-->
-	<div class="col-span-3 min-h-dvh space-y-12 pb-4 pt-4">
+	<div class="col-span-3 min-h-dvh space-y-12 pb-4 pt-8 lg:pt-4">
 		<div>
 			<ol class="view-content space-y-4">
 				<div class="view-ranking-title space-y-2 px-4 pb-4 md:px-10">
@@ -1150,7 +1156,10 @@
 														<path d="M6 9l6 6l6 -6" />
 													</svg>
 												</div>
-												<ul tabindex="0" class="menu dropdown-content z-[1] m-0 w-52 rounded-lg bg-base-100 p-0 shadow">
+												<ul
+													tabindex="-1"
+													class="menu dropdown-content z-[1] m-0 w-52 rounded-lg bg-base-100 p-0 shadow"
+												>
 													<li class="">
 														<form
 															method="POST"
