@@ -17,9 +17,6 @@ jobs:
             npm --help
             cd svelte-appraize
             git pull
-            npm install
-            npm run generate
-            npm run migrate
-            npm run push 
+            npm ci --omit dev
             npm run build
             pm2 restart 0
