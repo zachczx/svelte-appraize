@@ -1,6 +1,5 @@
 <script>
-	export let propFormSaveSession;
-	export let propOrder;
+	let { propFormSaveSession, propOrder } = $props();
 	import { enhance } from '$app/forms';
 </script>
 

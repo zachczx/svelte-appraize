@@ -4,9 +4,7 @@
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import Trash from '$lib/svg/Trash.svelte';
-	import Stars from '$lib/svg/Stars.svelte';
-	import IconoirStar from '$lib/svg/IconoirStar.svelte';
-	import { slide, fly } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import { circOut } from 'svelte/easing';
 	import UndrawEmpty from '$lib/svg/UndrawEmpty.svelte';
@@ -21,7 +19,7 @@
 	import Papa from 'papaparse';
 	import SmallScreenHamburger from '$lib/SmallScreenHamburger.svelte';
 
-	let { data, form } = $props();
+	let { data, form, propFormSaveSession, propOrder } = $props();
 	let formSaveSession = $state();
 	let formAutoSaveSession = $state();
 	let formSaveSuccessLoading = $state(false);
@@ -32,15 +30,11 @@
 	let gradeData = $state();
 	let remarksData = $state();
 
-	let buttonClickedStars = $state(false);
-	let selectForm = $state();
-
 	let deleteSessionButtonClickedSpinner = $state(false);
 	let order = $state();
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
 
-	let filterInput = $state('');
 	let filterNothingFound = $state(false);
 	let filterGradeValue = $state('Grade');
 	let filterForm;
@@ -157,33 +151,6 @@
 				}, 1500);
 			}
 		}, 120000);
-
-		/* 		if (data.streamed.result) {
-			const url = $page.url;
-			if (url.searchParams.get('filter')) {
-				filterResult('name', url.searchParams.get('filter'));
-			}
-		} */
-
-		/* data.streamed.result.forEach((item) => {
-			console.log(
-				'ID: ',
-				item.id,
-				'\n',
-				'UUID: ',
-				item.uuid,
-				'\n',
-				'Name: ',
-				item.name,
-				'\n',
-				'Dept: ',
-				item.dept,
-				'\n',
-				'Grade: ',
-				item.grade,
-				'\n',
-			);
-		}); */
 	});
 </script>
 

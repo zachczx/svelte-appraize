@@ -23,7 +23,7 @@
 </svelte:head>
 <!-- <SuperDebug data={$form} /> -->
 <!---->
-<div class="max-w-dvw background flex min-h-dvh flex-wrap content-center justify-center">
+<div class="max-w-dvw background flex min-h-dvh flex-wrap content-center justify-center px-2">
 	<div
 		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border border-gray-300 bg-base-100 p-3 pt-4 shadow-lg shadow-neutral lg:p-10"
 	>
@@ -43,12 +43,14 @@
 						<input
 							type="text"
 							name="session"
-							placeholder="Create or continue a ranking session (e.g. cssranking2024)"
+							placeholder="Create or continue session (eg. cs24)"
 							bind:value={$form.session}
 							class="view-input-button w-full"
 							onkeydown={(evt) => {
 								editFormSubmitKeyboardShortcut(evt, 'landing-input');
-								if (evt.key === "Enter") { submittedSpinner = true;}
+								if (evt.key === 'Enter') {
+									submittedSpinner = true;
+								}
 							}}
 							required
 						/>
@@ -116,13 +118,27 @@
 		view-transition-name: view-outline;
 	}
 	.background {
-		/* https://colorhunt.co/palette/610c9f940b92da0c81e95793 */
+		@media screen and (min-width: 768px) {
+			/* https://colorhunt.co/palette/610c9f940b92da0c81e95793 */
+			background-image: linear-gradient(
+				to top right,
+				#f5f5f5,
+				#e2d6f1,
+				#d9b5e5,
+				#d891d2,
+				#da68b5,
+				#d154a7,
+				#c83d9a,
+				#be1f8c,
+				#a72991,
+				#903094,
+				#773594,
+				#5d3891
+			);
+		}
+
 		background-image: linear-gradient(
-			to right,
-			#f5f5f5,
-			#e2d6f1,
-			#d9b5e5,
-			#d891d2,
+			to top right,
 			#da68b5,
 			#d154a7,
 			#c83d9a,
@@ -136,8 +152,8 @@
 
 	.dot {
 		height: 2em;
-  width: 2em;
-  background-color: #640D6B;
-  border-radius: 50%;
+		width: 2em;
+		background-color: #640d6b;
+		border-radius: 50%;
 	}
 </style>
