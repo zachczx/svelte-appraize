@@ -48,7 +48,7 @@
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.592.0",
 		"@aws-sdk/lib-storage": "^3.596.0",
-		"@libsql/client": "^0.6.2",
+		"@libsql/client": "^0.7.0",
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@sveltejs/adapter-cloudflare": "^4.4.1",
 		"@sveltejs/enhanced-img": "^0.3.0",
