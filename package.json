@@ -19,7 +19,6 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/adapter-node": "^5.0.1",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^8.56.0",
@@ -47,6 +46,7 @@
 	"type": "module",
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.592.0",
+		"@sveltejs/adapter-node": "^5.0.1",
 		"@aws-sdk/lib-storage": "^3.596.0",
 		"@libsql/client": "^0.7.0",
 		"@paralleldrive/cuid2": "^2.2.2",
