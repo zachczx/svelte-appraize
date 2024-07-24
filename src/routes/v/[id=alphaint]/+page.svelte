@@ -20,6 +20,7 @@
 	import SmallScreenHamburger from '$lib/SmallScreenHamburger.svelte';
 
 	let { data, form, propFormSaveSession, propOrder } = $props();
+	$inspect(data.streamed.result);
 	let formSaveSession = $state();
 	let formAutoSaveSession = $state();
 	let formSaveSuccessLoading = $state(false);
@@ -29,6 +30,8 @@
 	let deptData = $state();
 	let gradeData = $state();
 	let remarksData = $state();
+
+	let edit = $state(false);
 
 	let deleteSessionButtonClickedSpinner = $state(false);
 	let order = $state();
@@ -460,14 +463,7 @@
 								}}
 							/>
 						</label>
-						<button
-							class="btn btn-primary relative w-full text-xl font-bold text-base-100"
-							onclick={() => {
-								// buttonClickedStars = !buttonClickedStars;
-								// setTimeout(() => {
-								// 	buttonClickedStars = !buttonClickedStars;
-								// }, 2000);
-							}}
+						<button class="btn btn-primary relative w-full text-xl font-bold text-base-100"
 							>Add<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="1.2em"
@@ -941,7 +937,8 @@
 											</select>
 										</form>
 									</div>
-									{#if person.edit}
+
+									{#if edit === true}
 										<div
 											class="col-span-8 grid grid-cols-8 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2"
 											id="div__{person.uuid}"
@@ -1095,14 +1092,10 @@
 									<div class="col-span-12 flex justify-end p-2 lg:col-span-2">
 										<div class="join self-center">
 											<button
-												class="btn join-item text-lg {person.edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
+												class="btn join-item text-lg {edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
 												onclick={() => {
-													if (!person.edit) {
-														person.edit = true;
-													} else if (person.edit == true || person.edit == false) {
-														person.edit = !person.edit;
-													}
-													console.log(person.edit);
+													// person.edit = !person.edit;
+													edit = !edit;
 												}}
 												><TablerEdit class="inline h-[1.5em] w-[1.5em]" />
 											</button>
