@@ -20,7 +20,6 @@
 	import SmallScreenHamburger from '$lib/SmallScreenHamburger.svelte';
 
 	let { data, form, propFormSaveSession, propOrder } = $props();
-	$inspect(data.streamed.result);
 	let formSaveSession = $state();
 	let formAutoSaveSession = $state();
 	let formSaveSuccessLoading = $state(false);
