@@ -1,5 +1,4 @@
 <script>
-	//import InsertNew from '$lib/InsertNew.svelte';
 	import Sortable from 'sortablejs';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
@@ -30,7 +29,16 @@
 	let gradeData = $state();
 	let remarksData = $state();
 
-	let edit = $state(false);
+	/**
+	 * @typedef {Object} edit - stores the uuid and a boolean value that is then switched upon clicking of edit button. Needs $state for reactivity, simple assignment didn't work after next170
+	 * @property {string} uuid - entry's uuid from db
+	 * @property {boolean} editStatus - switch to determine if edit form should be displayed
+	 */
+	let edit = $state({});
+	for (let i = 0; i < data.streamed.result.length; i++) {
+		const key = data.streamed.result[i].uuid;
+		edit[key] = false;
+	}
 
 	let deleteSessionButtonClickedSpinner = $state(false);
 	let order = $state();
@@ -39,6 +47,10 @@
 
 	let filterNothingFound = $state(false);
 	let filterGradeValue = $state('Grade');
+
+	/**
+	 * @type {HTMLFormElement} filterform - form element for filter bar
+	 */
 	let filterForm;
 
 	let uploadPreview = $state(false);
@@ -937,7 +949,7 @@
 										</form>
 									</div>
 
-									{#if edit === true}
+									{#if person.uuid && edit[person.uuid] === true}
 										<div
 											class="col-span-8 grid grid-cols-8 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2"
 											id="div__{person.uuid}"
@@ -1039,7 +1051,13 @@
 												</label>
 											</div>
 											<div class="col-span-6 bg-base-300 md:col-span-6">
-												<button class="btn join-item btn-neutral text-lg" form="edit-form-{person.uuid}">
+												<button
+													class="btn join-item btn-neutral text-lg"
+													form="edit-form-{person.uuid}"
+													onclick={() => {
+														edit[person.uuid] = false;
+													}}
+												>
 													<TablerEdit class="inline h-[1em] w-[1em]" />Save
 												</button>
 											</div>
@@ -1075,6 +1093,7 @@
 											</div>
 										</div>
 									{/if}
+
 									<!-- 
 									/////////////////////////////////////////
 									/
@@ -1093,8 +1112,7 @@
 											<button
 												class="btn join-item text-lg {edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
 												onclick={() => {
-													// person.edit = !person.edit;
-													edit = !edit;
+													edit[person.uuid] = !edit[person.uuid];
 												}}
 												><TablerEdit class="inline h-[1.5em] w-[1.5em]" />
 											</button>
