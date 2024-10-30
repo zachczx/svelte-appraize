@@ -41,7 +41,7 @@
 	}
 
 	let deleteSessionButtonClickedSpinner = $state(false);
-	let order = $state();
+
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
 
@@ -107,10 +107,10 @@
 		}
 		return newCounts;
 	});
-
-	onMount(() => {
-		let el = document.getElementById('table');
-		var sortable = new Sortable(el, {
+	let sortableEl = $state();
+	let order = $state();
+	$effect(() => {
+		var sortable = new Sortable(sortableEl, {
 			animation: 300,
 			ghostClass: '.sortable-ghost', // Class name for the drop placeholder
 			chosenClass: '.sortable-chosen', // Class name for the chosen item
@@ -152,9 +152,7 @@
 			order = sortable.toArray();
 		}
 		initArray();
-	});
 
-	$effect(() => {
 		setInterval(() => {
 			if (order && autoSave) {
 				formAutoSaveSession.requestSubmit();
@@ -167,7 +165,7 @@
 		}, 120000);
 	});
 
-	$inspect(data);
+	$inspect(order);
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
@@ -627,7 +625,7 @@
 										<path d="M14 4l0 4l-6 0l0 -4" />
 									</svg><span class="hidden text-xl 2xl:contents">Save</span>{/if}</button
 							>
-							<input type="hidden" name="order" value={order} />
+							<input type="hidden" name="order" bind:value={order} />
 						</form>
 						<button
 							class="group btn btn-outline join-item btn-neutral w-full hover:border-red-700 hover:bg-error"
@@ -896,7 +894,7 @@
 					<div class="col-span-4">Dept</div>
 					<div class="col-span-2"></div>
 				</div>
-				<div id="table" class="relative grid space-y-4 px-2 md:px-10">
+				<div id="table" bind:this={sortableEl} class="relative grid space-y-4 px-2 md:px-10">
 					{#if filterNothingFound}
 						<div class="space-y-4 p-2 lg:px-10 lg:py-28">
 							<div class="flex justify-center"><UndrawNoData /></div>

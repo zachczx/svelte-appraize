@@ -50,6 +50,7 @@
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.682.0",
 		"@aws-sdk/lib-storage": "^3.682.0",
+		"@fontsource-variable/nunito-sans": "^5.1.0",
 		"@libsql/client": "^0.14.0",
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@sveltejs/adapter-cloudflare": "^4.7.4",

@@ -46,7 +46,7 @@ const slugifyString = (str: string) => {
 		.replace(/-+/g, '-')
 		.replace(/[^a-z0-9-]/g, '-');
 };
-
+//todo - bug: adding > save > reload > newest entry would disappear > comes back after a refresh. Only in production
 export const load = (async ({ params, url }) => {
 	const sessionId = String(params.id);
 	const filterParam = url.searchParams.get('filter');
