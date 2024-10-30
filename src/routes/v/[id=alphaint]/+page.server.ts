@@ -99,9 +99,7 @@ export const load = (async ({ params, url }) => {
 
 	return {
 		id: sessionId,
-		streamed: {
-			result,
-		},
+		result,
 	};
 }) satisfies PageServerLoad;
 

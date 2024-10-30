@@ -35,8 +35,8 @@
 	 * @property {boolean} editStatus - switch to determine if edit form should be displayed
 	 */
 	let edit = $state({});
-	for (let i = 0; i < data.streamed.result.length; i++) {
-		const key = data.streamed.result[i].uuid;
+	for (let i = 0; i < data.result.length; i++) {
+		const key = data.result[i].uuid;
 		edit[key] = false;
 	}
 
@@ -77,7 +77,7 @@
 			percentageC: 0,
 			percentageD: 0,
 		};
-		let tempResult = await data.streamed.result;
+		let tempResult = await data.result;
 
 		for (let i = 0; i < tempResult.length; i++) {
 			if (tempResult[i].grade === 'A') {
@@ -148,7 +148,7 @@
 		});
 
 		async function initArray() {
-			await data.streamed.result;
+			await data.result;
 			order = sortable.toArray();
 		}
 		initArray();
@@ -199,7 +199,7 @@
 				/>
 				<button class="view-input-button group absolute -top-0 right-1">
 					{#if submittedSpinner}
-						<span class="loading loading loading-spinner"></span>
+						<span class="loading loading-spinner"></span>
 					{:else}
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -223,7 +223,9 @@
 						<div class="alert flex justify-center bg-error font-bold text-base-100">
 							No special characters, symbols, spaces!
 						</div>
-					</div>{/if}{/key}
+					</div>
+				{/if}
+			{/key}
 		</form>
 	</div>
 	<!-- Sidebar -->
@@ -382,7 +384,8 @@
 								required
 							/>
 						</label>
-						{#if form?.insertGradeMissing}<span class="text-lg text-error">Please select a grade:</span>{/if}
+						{#if form?.insertGradeMissing}
+							<span class="text-lg text-error">Please select a grade:</span>{/if}
 						<div class="flex flex-wrap items-center justify-start text-lg">
 							<label class="label me-2 cursor-pointer space-x-1">
 								<span class="label-text text-lg font-medium">A</span>
@@ -901,8 +904,8 @@
 						</div>
 					{/if}
 
-					{#key data.streamed.result}
-						{#await data.streamed.result}
+					{#key data.result}
+						{#await data.result}
 							<span
 								class="ignore-elements loading loading-spinner loading-lg justify-self-center py-5 text-primary md:py-10"
 							></span>
