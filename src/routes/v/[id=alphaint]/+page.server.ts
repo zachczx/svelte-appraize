@@ -1,6 +1,6 @@
 import { db } from '$lib/drizzle/db';
 import { records } from '$lib/drizzle/schema';
-import { desc, asc, eq, and, or, as, ilike } from 'drizzle-orm';
+import { desc, asc, eq, and, or, ilike } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 
@@ -67,18 +67,6 @@ export const load = (async ({ params, url }) => {
 				),
 			)
 			.orderBy(asc(sq.sequence));
-
-		/*result = await db
-			.select()
-			.from(records)
-			.where(
-				and(
-					eq(records.session, sessionId),
-					filterParam ? ilike(records.name, `%${filterParam}%`) : undefined,
-					filterGradeParam ? eq(records.grade, filterGradeParam) : undefined,
-				),
-			)
-			.orderBy(asc(records.sequence)); */
 	} else if (filterParam && filterGradeParam) {
 		result = await db
 			.select()
@@ -95,7 +83,7 @@ export const load = (async ({ params, url }) => {
 		result = await db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence));
 	}
 
-	//console.log(result);
+	console.log(result);
 
 	return {
 		id: sessionId,
@@ -137,7 +125,7 @@ export const actions = {
 		const grade = String(submittedData.get('grade'));
 		const remarks = String(submittedData.get('remarks'));
 		console.log(name, dept, grade, remarks);
-		await db.insert(records).values({
+		const res = await db.insert(records).values({
 			name: name,
 			dept: dept,
 			grade: grade,
@@ -145,6 +133,7 @@ export const actions = {
 			sequence: sequenceToInsert,
 			remarks: remarks,
 		});
+		console.log(res);
 		return { formInsertSuccess: true };
 	},
 
