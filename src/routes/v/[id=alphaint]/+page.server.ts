@@ -101,7 +101,6 @@ export const load = (async ({ params, url }) => {
 		id: sessionId,
 		streamed: {
 			result,
-			//delay: await delay(5000),
 		},
 	};
 }) satisfies PageServerLoad;
@@ -224,6 +223,7 @@ export const actions = {
 			// Delay for the spinner icon/toast
 			await delay(1000);
 			console.log('Order saved successfully');
+
 			return { formSaveSuccess: true };
 		} catch (error) {
 			console.log("There's an error:");
