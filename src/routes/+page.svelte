@@ -48,7 +48,7 @@
 							class="view-input-button w-full"
 							onkeydown={(evt) => {
 								editFormSubmitKeyboardShortcut(evt, 'landing-input');
-								if (evt.key === 'Enter') {
+								if (evt.key === 'Enter' && $form.session.length > 0) {
 									submittedSpinner = true;
 								}
 							}}
@@ -59,10 +59,14 @@
 							class="view-input-button group absolute -top-0 right-1"
 							id="goButton"
 							onsubmit={() => {
-								submittedSpinner = true;
+								if ($form.session.length > 0) {
+									submittedSpinner = true;
+								}
 							}}
 							onclick={() => {
-								submittedSpinner = true;
+								if ($form.session.length > 0) {
+									submittedSpinner = true;
+								}
 							}}
 						>
 							{#if submittedSpinner}

@@ -1,6 +1,6 @@
 <script>
 	import Sortable from 'sortablejs';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { enhance } from '$app/forms';
 	import Trash from '$lib/svg/Trash.svelte';
 	import { slide } from 'svelte/transition';
@@ -19,7 +19,9 @@
 	import SmallScreenHamburger from '$lib/SmallScreenHamburger.svelte';
 
 	let { data, form, propFormSaveSession, propOrder } = $props();
-	$inspect(data.result);
+
+	let searchInput = $state();
+
 	let formSaveSession = $state();
 	let formAutoSaveSession = $state();
 	let formSaveSuccessLoading = $state(false);
@@ -36,8 +38,8 @@
 	 * @property {boolean} editStatus - switch to determine if edit form should be displayed
 	 */
 	let edit = $state({});
-	for (let i = 0; i < data.result.length; i++) {
-		const key = data.result[i].uuid;
+	for (let i = 0; i < data.streamed.result.length; i++) {
+		const key = data.streamed.result[i].uuid;
 		edit[key] = false;
 	}
 
@@ -78,7 +80,7 @@
 			percentageC: 0,
 			percentageD: 0,
 		};
-		let tempResult = await data.result;
+		let tempResult = await data.streamed.result;
 
 		for (let i = 0; i < tempResult.length; i++) {
 			if (tempResult[i].grade === 'A') {
@@ -108,10 +110,29 @@
 		}
 		return newCounts;
 	});
-	let sortableEl = $state();
-	let order = $state();
+
+	let sortableEl;
+	let formSave;
+
+	let initOrder = () => {
+		for (let i = 0; i < data.streamed.result.length; i++) {
+			if (i === 0) {
+				initOrder = String(data.streamed.result[i].uuid);
+			} else {
+				initOrder = initOrder + ',' + data.streamed.result[i].uuid;
+			}
+		}
+
+		initOrder.slice(initOrder.length - 1);
+		return initOrder;
+	};
+	let order = $state(initOrder());
+
+	onMount(async () => {});
+
+	$inspect(order);
 	$effect(() => {
-		var sortable = new Sortable(sortableEl, {
+		let sortable = new Sortable(sortableEl, {
 			animation: 300,
 			ghostClass: '.sortable-ghost', // Class name for the drop placeholder
 			chosenClass: '.sortable-chosen', // Class name for the chosen item
@@ -120,39 +141,36 @@
 			handle: '.sortable-handle',
 			filter: '.ignore-elements',
 			// auto scroll plugin
-			scroll: true,
+			scroll: false,
 			forceAutoScrollFallback: false,
 			scrollSensitivity: 70,
 			scrollSpeed: 1,
 			bubbleScroll: true,
 
-			setData: function () {
-				order = sortable.toArray();
-			},
+			// setData: function () {
+			// 	order = sortable.toArray();
+			// 	console.log('Init order');
+			// },
 
 			onChoose: function (evt) {
+				// order = sortable.toArray();
 				evt.item.classList.add(...dragShadowClassesStart);
 			},
 			onStart: function (evt) {
-				order = sortable.toArray();
+				// order = sortable.toArray();
 				evt.item.classList.add(...dragShadowClassesMoving);
 			},
 
 			onUnchoose: function (evt) {
-				order = sortable.toArray();
+				// order = sortable.toArray();
 				evt.item.classList.remove(...dragShadowClassesMoving);
 			},
-			onEnd: function (evt) {
-				order = sortable.toArray();
+			onEnd: async function (evt) {
+				order = sortable.toArray().toString();
 				evt.item.classList.remove(...dragShadowClassesMoving);
+				console.log('Changed order');
 			},
 		});
-
-		async function initArray() {
-			await data.result;
-			order = sortable.toArray();
-		}
-		initArray();
 
 		setInterval(() => {
 			if (order && autoSave) {
@@ -187,6 +205,7 @@
 				<input
 					type="text"
 					name="session"
+					bind:value={searchInput}
 					placeholder="Jump to another session"
 					class="w-full"
 					onkeydown={(evt) => {
@@ -195,7 +214,7 @@
 					required
 				/>
 				<button class="view-input-button group absolute -top-0 right-1">
-					{#if submittedSpinner}
+					{#if submittedSpinner && searchInput.length > 0}
 						<span class="loading loading-spinner"></span>
 					{:else}
 						<svg
@@ -594,7 +613,14 @@
 				</h3>
 				<div class="ms-7 w-auto space-y-4 border-l-2 border-gray-200 pe-4 pt-4">
 					<div class="join grid grid-cols-2 pe-4 ps-8">
-						<form method="POST" action="?/save" bind:this={formSaveSession} use:enhance>
+						<form
+							method="POST"
+							action="?/save"
+							bind:this={formSaveSession}
+							use:enhance={() => {
+								return;
+							}}
+						>
 							<button
 								class="btn btn-primary join-item w-full font-bold text-base-100"
 								onclick={() => {
@@ -624,7 +650,10 @@
 										<path d="M14 4l0 4l-6 0l0 -4" />
 									</svg><span class="hidden text-xl 2xl:contents">Save</span>{/if}</button
 							>
-							<input type="hidden" name="order" bind:value={order} />
+							{#key order}
+								<input type="hidden" name="order" value={order} />
+							{/key}
+							<input type="hidden" name="test" value="test" />
 						</form>
 						<button
 							class="group btn btn-outline join-item btn-neutral w-full hover:border-red-700 hover:bg-error"
@@ -901,178 +930,126 @@
 						</div>
 					{/if}
 
-					{#key data.result}
-						<!-- {#await data.result}
+					{#key data.streamed.result}
+						{#await data.streamed.result}
 							<span
 								class="ignore-elements loading loading-spinner loading-lg justify-self-center py-5 text-primary md:py-10"
 							></span>
-						{:then result} -->
-						{#if !data.result || data.result.length === 0}
-							<div class="p-2 lg:px-10 lg:py-28">
-								<div class="flex justify-center"><UndrawEmpty /></div>
-								<h2 class="text-center">There's nothing here!</h2>
-							</div>
-						{:else}
-							{#each data.result as person}
-								<div
-									class="grid grid-cols-12 rounded-lg border border-gray-400 transition duration-700 ease-out hover:border-primary"
-									id={person.uuid}
-									data-sortable-id={person.uuid}
-								>
-									<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
-										<div
-											class="flex h-full grow items-center rounded-t-lg bg-neutral p-2 lg:grow-0 lg:rounded-l-lg lg:rounded-r-none lg:rounded-tl-lg"
-										>
-											<GripVertical class="stroke-base-100" />
-										</div>
-									</div>
-									<div class="sortable-handle col-span-12 flex items-center justify-center lg:col-span-1">
-										<!-- form="edit-form-{person.uuid}" name="grade__{person.uuid}"-->
-										<form id="edit-grade-form-{person.uuid}" method="POST" action="?/editgrade" use:enhance>
-											<input type="hidden" name="edit-grade-target" value={person.id} />
-											<input type="hidden" name="edit-grade-target-name" value={person.name} />
-											<select
-												bind:value={person.grade}
-												name="grade"
-												id="grade__{person.uuid}"
-												class="grade-selection select select-primary select-sm border-0 text-2xl font-extrabold"
-												onchange={() => {
-													const currentForm = document.getElementById(`edit-grade-form-${person.uuid}`);
-													currentForm.requestSubmit ? currentForm.requestSubmit() : currentForm.submit();
-													console.log('Form submitted!');
-												}}
+						{:then result}
+							{#if !data.streamed.result || data.streamed.result.length === 0}
+								<div class="p-2 lg:px-10 lg:py-28">
+									<div class="flex justify-center"><UndrawEmpty /></div>
+									<h2 class="text-center">There's nothing here!</h2>
+								</div>
+							{:else}
+								{#each data.streamed.result as person}
+									<div
+										class="grid grid-cols-12 rounded-lg border border-gray-400 transition duration-700 ease-out hover:border-primary"
+										id={person.uuid}
+										data-sortable-id={person.uuid}
+									>
+										<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
+											<div
+												class="flex h-full grow items-center rounded-t-lg bg-neutral p-2 lg:grow-0 lg:rounded-l-lg lg:rounded-r-none lg:rounded-tl-lg"
 											>
-												<option value="A">A</option>
-												<option value="B">B</option>
-												<option value="C+">C+</option>
-												<option value="C">C</option>
-												<option value="C-">C-</option>
-												<option value="D">D</option>
-											</select>
-										</form>
-									</div>
-
-									{#if person.uuid && edit[person.uuid] === true}
-										<div
-											class="col-span-8 grid grid-cols-8 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2"
-											id="div__{person.uuid}"
-											in:slide={{ duration: 500, axis: 'y', easing: circOut }}
-											out:slide={{ duration: 10, axis: 'y', easing: circOut }}
-										>
-											<div class="col-span-8">
-												<form method="POST" id="edit-form-{person.uuid}" action="?/edit" use:enhance>
-													<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
-												</form>
+												<GripVertical class="stroke-base-100" />
 											</div>
-											<div class="col-span-4">
-												<label
-													class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
-													for="edit-person-name-{person.uuid}"
-													><svg
-														xmlns="http://www.w3.org/2000/svg"
-														width="1em"
-														height="1em"
-														viewBox="0 0 24 24"
-														fill="none"
-														stroke="currentColor"
-														stroke-width="2"
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														class="icon icon-tabler icons-tabler-outline icon-tabler-user me-2 inline"
-														><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-															d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"
-														/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg
-													>
-													<EditFields
-														name="edit-person-name"
-														id="edit-person-name-{person.uuid}"
-														form="edit-form-{person.uuid}"
-														class="grow"
-														value={person.name}
-														placeholder="Name"
-														onkeydown={(evt) => {
-															editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
-														}}
-													/></label
-												>
-											</div>
-
-											<div class="col-span-4">
-												<label
-													class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
-													for="edit-person-dept-{person.uuid}"
-												>
-													<Home class="me-2 flex-none" />
-													<EditFields
-														name="edit-person-dept"
-														class="grow"
-														form="edit-form-{person.uuid}"
-														value={person.dept}
-														id="edit-person-dept-{person.uuid}"
-														placeholder="Dept"
-														onkeydown={(evt) => {
-															editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
-														}}
-													/>
-												</label>
-											</div>
-											<div class="col-span-8">
-												<label
-													class="textarea textarea-bordered flex h-24 w-full items-center items-center gap-2 border-gray-400 text-lg md:h-56"
-													for="edit-person-remarks-{person.uuid}"
-													><svg
-														xmlns="http://www.w3.org/2000/svg"
-														width="1.5em"
-														height="1.5em"
-														viewBox="0 0 24 24"
-														fill="none"
-														stroke="currentColor"
-														stroke-width="2"
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
-													>
-														<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-														<path d="M8 9h8" />
-														<path d="M8 13h6" />
-														<path
-															d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
-														/>
-													</svg>
-													<textarea
-														form="edit-form-{person.uuid}"
-														name="edit-person-remarks"
-														id="edit-person-remarks-{person.uuid}"
-														class="h-full w-full focus:outline-none"
-														maxlength="999"
-														placeholder="Remarks"
-														value={person.remarks}
-														onkeydown={(evt) => {
-															editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
-														}}
-													></textarea>
-												</label>
-											</div>
-											<div class="col-span-6 bg-base-300 md:col-span-6">
-												<button
-													class="btn join-item btn-neutral text-lg"
-													form="edit-form-{person.uuid}"
-													onclick={() => {
-														edit[person.uuid] = false;
+										</div>
+										<div class="sortable-handle col-span-12 flex items-center justify-center lg:col-span-1">
+											<!-- form="edit-form-{person.uuid}" name="grade__{person.uuid}"-->
+											<form id="edit-grade-form-{person.uuid}" method="POST" action="?/editgrade" use:enhance>
+												<input type="hidden" name="edit-grade-target" value={person.id} />
+												<input type="hidden" name="edit-grade-target-name" value={person.name} />
+												<select
+													bind:value={person.grade}
+													name="grade"
+													id="grade__{person.uuid}"
+													class="grade-selection select select-primary select-sm border-0 text-2xl font-extrabold"
+													onchange={() => {
+														const currentForm = document.getElementById(`edit-grade-form-${person.uuid}`);
+														currentForm.requestSubmit ? currentForm.requestSubmit() : currentForm.submit();
+														console.log('Form submitted!');
 													}}
 												>
-													<TablerEdit class="inline h-[1em] w-[1em]" />Save
-												</button>
-											</div>
+													<option value="A">A</option>
+													<option value="B">B</option>
+													<option value="C+">C+</option>
+													<option value="C">C</option>
+													<option value="C-">C-</option>
+													<option value="D">D</option>
+												</select>
+											</form>
 										</div>
-									{:else}
-										<div class="col-span-12 self-center lg:col-span-8" id="div__{person.uuid}">
-											<div class="grid grid-cols-8 items-center px-2 py-2">
-												<div class="col-span-4 text-2xl font-bold">{person.name}</div>
-												<div class="col-span-4 text-2xl text-gray-500">{person.dept}</div>
-												{#if person.remarks}
-													<div class="col-span-8 mt-4 rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-500">
-														<svg
+
+										{#if person.uuid && edit[person.uuid] === true}
+											<div
+												class="col-span-8 grid grid-cols-8 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2"
+												id="div__{person.uuid}"
+												in:slide={{ duration: 500, axis: 'y', easing: circOut }}
+												out:slide={{ duration: 10, axis: 'y', easing: circOut }}
+											>
+												<div class="col-span-8">
+													<form method="POST" id="edit-form-{person.uuid}" action="?/edit" use:enhance>
+														<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
+													</form>
+												</div>
+												<div class="col-span-4">
+													<label
+														class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
+														for="edit-person-name-{person.uuid}"
+														><svg
+															xmlns="http://www.w3.org/2000/svg"
+															width="1em"
+															height="1em"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															stroke-width="2"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															class="icon icon-tabler icons-tabler-outline icon-tabler-user me-2 inline"
+															><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+																d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"
+															/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg
+														>
+														<EditFields
+															name="edit-person-name"
+															id="edit-person-name-{person.uuid}"
+															form="edit-form-{person.uuid}"
+															class="grow"
+															value={person.name}
+															placeholder="Name"
+															onkeydown={(evt) => {
+																editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
+															}}
+														/></label
+													>
+												</div>
+
+												<div class="col-span-4">
+													<label
+														class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
+														for="edit-person-dept-{person.uuid}"
+													>
+														<Home class="me-2 flex-none" />
+														<EditFields
+															name="edit-person-dept"
+															class="grow"
+															form="edit-form-{person.uuid}"
+															value={person.dept}
+															id="edit-person-dept-{person.uuid}"
+															placeholder="Dept"
+															onkeydown={(evt) => {
+																editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
+															}}
+														/>
+													</label>
+												</div>
+												<div class="col-span-8">
+													<label
+														class="textarea textarea-bordered flex h-24 w-full items-center items-center gap-2 border-gray-400 text-lg md:h-56"
+														for="edit-person-remarks-{person.uuid}"
+														><svg
 															xmlns="http://www.w3.org/2000/svg"
 															width="1.5em"
 															height="1.5em"
@@ -1082,7 +1059,7 @@
 															stroke-width="2"
 															stroke-linecap="round"
 															stroke-linejoin="round"
-															class="icon icon-tabler icons-tabler-outline icon-tabler-message mb-1 me-2 inline"
+															class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
 														>
 															<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 															<path d="M8 9h8" />
@@ -1090,14 +1067,66 @@
 															<path
 																d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
 															/>
-														</svg>{person.remarks}
-													</div>
-												{/if}
+														</svg>
+														<textarea
+															form="edit-form-{person.uuid}"
+															name="edit-person-remarks"
+															id="edit-person-remarks-{person.uuid}"
+															class="h-full w-full focus:outline-none"
+															maxlength="999"
+															placeholder="Remarks"
+															value={person.remarks}
+															onkeydown={(evt) => {
+																editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
+															}}
+														></textarea>
+													</label>
+												</div>
+												<div class="col-span-6 bg-base-300 md:col-span-6">
+													<button
+														class="btn join-item btn-neutral text-lg"
+														form="edit-form-{person.uuid}"
+														onclick={() => {
+															edit[person.uuid] = false;
+														}}
+													>
+														<TablerEdit class="inline h-[1em] w-[1em]" />Save
+													</button>
+												</div>
 											</div>
-										</div>
-									{/if}
+										{:else}
+											<div class="col-span-12 self-center lg:col-span-8" id="div__{person.uuid}">
+												<div class="grid grid-cols-8 items-center px-2 py-2">
+													<div class="col-span-4 text-2xl font-bold">{person.name}</div>
+													<div class="col-span-4 text-2xl text-gray-500">{person.dept}</div>
+													{#if person.remarks}
+														<div class="col-span-8 mt-4 rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-500">
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																width="1.5em"
+																height="1.5em"
+																viewBox="0 0 24 24"
+																fill="none"
+																stroke="currentColor"
+																stroke-width="2"
+																stroke-linecap="round"
+																stroke-linejoin="round"
+																class="icon icon-tabler icons-tabler-outline icon-tabler-message mb-1 me-2 inline"
+															>
+																<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+																<path d="M8 9h8" />
+																<path d="M8 13h6" />
+																<path
+																	d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
+																/>
+															</svg>{person.remarks}
+														</div>
+													{/if}
+												</div>
+											</div>
+										{/if}
 
-									<!-- 
+										<!-- 
 									/////////////////////////////////////////
 									/
 									/
@@ -1110,67 +1139,90 @@
 									/
 									///////////////////////////////////////// 
 									-->
-									<div class="col-span-12 flex justify-end p-2 lg:col-span-2">
-										<div class="join self-center">
-											<button
-												class="btn join-item text-lg {edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
-												onclick={() => {
-													edit[person.uuid] = !edit[person.uuid];
-												}}
-												><TablerEdit class="inline h-[1.5em] w-[1.5em]" />
-											</button>
-											<div class="btn dropdown dropdown-end btn-outline join-item btn-neutral">
-												<div tabindex="0" role="button" class="m-0 flex h-full items-center text-xl">
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														width="1.2em"
-														height="1.2em"
-														viewBox="0 0 24 24"
-														fill="none"
-														stroke="currentColor"
-														stroke-width="2"
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"
-														><path stroke="none" d="M0 0h24v24H0z" fill="none" />
-														<path d="M6 9l6 6l6 -6" />
-													</svg>
+										<div class="col-span-12 flex justify-end p-2 lg:col-span-2">
+											<div class="join self-center">
+												<button
+													class="btn join-item text-lg {edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
+													onclick={() => {
+														edit[person.uuid] = !edit[person.uuid];
+													}}
+													><TablerEdit class="inline h-[1.5em] w-[1.5em]" />
+												</button>
+												<div class="btn dropdown dropdown-end btn-outline join-item btn-neutral">
+													<div tabindex="0" role="button" class="m-0 flex h-full items-center text-xl">
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															width="1.2em"
+															height="1.2em"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															stroke-width="2"
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"
+															><path stroke="none" d="M0 0h24v24H0z" fill="none" />
+															<path d="M6 9l6 6l6 -6" />
+														</svg>
+													</div>
+													<ul
+														tabindex="-1"
+														class="menu dropdown-content z-[1] m-0 w-52 rounded-lg bg-base-100 p-0 shadow"
+													>
+														<li class="">
+															<form
+																method="POST"
+																class="group m-0 w-full justify-center self-center rounded-lg border-2 border-error stroke-error p-0 hover:border-red-700 hover:bg-error hover:stroke-base-100"
+																action="?/delete"
+																use:enhance
+															>
+																<input type="hidden" name="delete-target" value={person.id} />
+																<button
+																	class="px-1 py-2 text-lg font-bold text-error group-hover:text-base-100"
+																	onclick={() => {
+																		let elDelete = document.getElementById(person.uuid);
+																		console.log(elDelete);
+																		let cssTextFieldClasses = ['bg-base-300', 'translate-x-10', 'opacity-0'];
+																		elDelete?.classList.add(...cssTextFieldClasses);
+																	}}
+																	><Trash class="mb-1 inline h-[1.5em] w-[1.5em]" /> Delete this entry
+																</button>
+															</form>
+														</li>
+													</ul>
 												</div>
-												<ul
-													tabindex="-1"
-													class="menu dropdown-content z-[1] m-0 w-52 rounded-lg bg-base-100 p-0 shadow"
-												>
-													<li class="">
-														<form
-															method="POST"
-															class="group m-0 w-full justify-center self-center rounded-lg border-2 border-error stroke-error p-0 hover:border-red-700 hover:bg-error hover:stroke-base-100"
-															action="?/delete"
-															use:enhance
-														>
-															<input type="hidden" name="delete-target" value={person.id} />
-															<button
-																class="px-1 py-2 text-lg font-bold text-error group-hover:text-base-100"
-																onclick={() => {
-																	let elDelete = document.getElementById(person.uuid);
-																	console.log(elDelete);
-																	let cssTextFieldClasses = ['bg-base-300', 'translate-x-10', 'opacity-0'];
-																	elDelete?.classList.add(...cssTextFieldClasses);
-																}}
-																><Trash class="mb-1 inline h-[1.5em] w-[1.5em]" /> Delete this entry
-															</button>
-														</form>
-													</li>
-												</ul>
 											</div>
 										</div>
 									</div>
-								</div>
-							{/each}
-						{/if}
-						<!-- {/await} -->
+								{/each}
+							{/if}
+						{/await}
 					{/key}
 				</div>
 			</ol>
+			<form method="POST" action="?/save" class="mx-10 mt-10 flex justify-end">
+				<input type="hidden" name="order" bind:value={order} />
+
+				<input type="hidden" name="test" value="test" />
+				<button class="btn btn-primary w-1/3 min-w-24 max-w-96 text-xl font-bold"
+					><svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1.5em"
+						height="1.5em"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle me-1 stroke-base-100"
+					>
+						<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+						<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+						<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+						<path d="M14 4l0 4l-6 0l0 -4" />
+					</svg><span class="hidden text-2xl 2xl:contents">Save</span></button
+				>
+			</form>
 		</div>
 	</div>
 </div>

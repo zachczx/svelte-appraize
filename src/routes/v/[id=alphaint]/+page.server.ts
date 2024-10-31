@@ -83,11 +83,11 @@ export const load = (async ({ params, url }) => {
 		result = await db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence));
 	}
 
-	console.log(result);
+	console.log('Load function', result);
 
 	return {
 		id: sessionId,
-		result,
+		streamed: { result },
 	};
 }) satisfies PageServerLoad;
 
@@ -193,10 +193,15 @@ export const actions = {
 		try {
 			const sessionId = String(params.id);
 			const saveData = await request.formData();
+			console.log(saveData);
 
 			// Grab the sortable order
 			const orderInput = saveData.get('order');
 			const orderArray = orderInput.split(',');
+			if (saveData.get('test')) {
+				console.log('Submitted from form successfully');
+			}
+			console.log('Form submitted formdata:', orderArray);
 
 			for (let i = 0; i < orderArray.length; i++) {
 				let individualOrder = i + 1;
