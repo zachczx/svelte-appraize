@@ -4,6 +4,17 @@ export default {
 	theme: {
 		extend: {
 			keyframes: {
+				'shine-pulse': {
+					'0%': {
+						'background-position': '0% 0%',
+					},
+					'50%': {
+						'background-position': '100% 100%',
+					},
+					to: {
+						'background-position': '0% 0%',
+					},
+				},
 				wiggle: {
 					'0%': {
 						transform: 'skewX(12deg)',
@@ -39,6 +50,11 @@ export default {
 						transform: 'skewX(3deg)',
 					},
 				},
+				'border-beam': {
+					'100%': {
+						'offset-distance': '100%',
+					},
+				},
 				scale: {
 					'0%': { scale: '100%', color: 'currentColor' },
 					'50%': { scale: '120%', color: '#610C9F', fontWeight: '900' },
@@ -46,6 +62,9 @@ export default {
 				},
 			},
 			animation: { wiggle: 'wiggle 2s ease-out infinite' },
+			animation: {
+				'border-beam': 'border-beam calc(var(--duration)*1s) infinite linear',
+			},
 			animation: { wiggleOne: 'wiggle 2s ease-out' },
 			animation: { scale: 'scale 1s ease-out' },
 		},

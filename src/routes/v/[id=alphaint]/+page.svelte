@@ -1,69 +1,42 @@
 <script>
-	import Sortable from 'sortablejs';
-	import { onMount, tick } from 'svelte';
 	import { enhance } from '$app/forms';
 	import Trash from '$lib/svg/Trash.svelte';
 	import { slide } from 'svelte/transition';
-	import { page } from '$app/stores';
 	import { circOut } from 'svelte/easing';
-	import UndrawEmpty from '$lib/svg/UndrawEmpty.svelte';
-	import UndrawNoData from '$lib/svg/UndrawNoData.svelte';
-	import TablerEdit from '$lib/svg/TablerEdit.svelte';
-	import EditFields from '$lib/EditFields.svelte';
-	import GripVertical from '$lib/svg/GripVertical.svelte';
-	import User from '$lib/svg/User.svelte';
 	import Home from '$lib/svg/Home.svelte';
-	import { onNavigate } from '$app/navigation';
 	import { editFormSubmitKeyboardShortcut } from '$lib/FormSubmitKeyboardShortcut';
 	import Papa from 'papaparse';
-	import SmallScreenHamburger from '$lib/SmallScreenHamburger.svelte';
 
-	let { data, form, propFormSaveSession, propOrder } = $props();
+	import DragDrop from '$lib/DragDrop.svelte';
+	import { onMount } from 'svelte';
+	import { onNavigate } from '$app/navigation';
 
-	let searchInput = $state();
+	let { data, form } = $props();
 
 	let formSaveSession = $state();
 	let formAutoSaveSession = $state();
 	let formSaveSuccessLoading = $state(false);
 	let autoSave = $state(true);
-	let submittedSpinner = $state(false);
 	let nameData = $state();
 	let deptData = $state();
 	let gradeData = $state();
 	let remarksData = $state();
 
-	/**
-	 * @typedef {Object} edit - stores the uuid and a boolean value that is then switched upon clicking of edit button. Needs $state for reactivity, simple assignment didn't work after next170
-	 * @property {string} uuid - entry's uuid from db
-	 * @property {boolean} editStatus - switch to determine if edit form should be displayed
-	 */
-	let edit = $state({});
-	for (let i = 0; i < data.streamed.result.length; i++) {
-		const key = data.streamed.result[i].uuid;
-		edit[key] = false;
-	}
-
 	let deleteSessionButtonClickedSpinner = $state(false);
-
-	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
-	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
-
-	let filterNothingFound = $state(false);
-	let filterGradeValue = $state('Grade');
 
 	/**
 	 * @type {HTMLFormElement} filterform - form element for filter bar
 	 */
 	let filterForm;
+	let filterInput = $state();
+	let filterGradeValue = $state('Grade');
+
+	let order = $state();
+	order = data.streamed.sequence;
 
 	let uploadPreview = $state(false);
 	let outsideVar = $state();
 	let formUploadButtonSpinner = $state(false);
-
-	onNavigate(() => {
-		//reset the nothing found notice when soft navigating, cos new els dont have hidden css applied
-		filterNothingFound = false;
-	});
 
 	let newCounts = $derived.by(async () => {
 		let newCounts = {
@@ -111,69 +84,9 @@
 		return newCounts;
 	});
 
-	let sortableEl;
-	let formSave;
-
-	let initOrder = () => {
-		for (let i = 0; i < data.streamed.result.length; i++) {
-			if (i === 0) {
-				initOrder = String(data.streamed.result[i].uuid);
-			} else {
-				initOrder = initOrder + ',' + data.streamed.result[i].uuid;
-			}
-		}
-
-		initOrder.slice(initOrder.length - 1);
-		return initOrder;
-	};
-	let order = $state(initOrder());
-
-	onMount(async () => {});
-
-	$inspect(order);
 	$effect(() => {
-		let sortable = new Sortable(sortableEl, {
-			animation: 300,
-			ghostClass: '.sortable-ghost', // Class name for the drop placeholder
-			chosenClass: '.sortable-chosen', // Class name for the chosen item
-			dragClass: '.sortable-drag', // Class name for the dragging item
-			dataIdAttr: 'data-sortable-id',
-			handle: '.sortable-handle',
-			filter: '.ignore-elements',
-			// auto scroll plugin
-			scroll: false,
-			forceAutoScrollFallback: false,
-			scrollSensitivity: 70,
-			scrollSpeed: 1,
-			bubbleScroll: true,
-
-			// setData: function () {
-			// 	order = sortable.toArray();
-			// 	console.log('Init order');
-			// },
-
-			onChoose: function (evt) {
-				// order = sortable.toArray();
-				evt.item.classList.add(...dragShadowClassesStart);
-			},
-			onStart: function (evt) {
-				// order = sortable.toArray();
-				evt.item.classList.add(...dragShadowClassesMoving);
-			},
-
-			onUnchoose: function (evt) {
-				// order = sortable.toArray();
-				evt.item.classList.remove(...dragShadowClassesMoving);
-			},
-			onEnd: async function (evt) {
-				order = sortable.toArray().toString();
-				evt.item.classList.remove(...dragShadowClassesMoving);
-				console.log('Changed order');
-			},
-		});
-
 		setInterval(() => {
-			if (order && autoSave) {
+			if (autoSave) {
 				formAutoSaveSession.requestSubmit();
 				console.log('Auto saved successfully');
 				formSaveSuccessLoading = true;
@@ -181,344 +94,285 @@
 					formSaveSuccessLoading = false;
 				}, 1500);
 			}
-		}, 120000);
+		}, 180000);
 	});
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-	<div
-		class="col-span-1 flex items-center border-b-2 border-gray-200 bg-gray-50 py-4 text-2xl lg:border-r-2 lg:pe-4 lg:ps-5"
-	>
-		<SmallScreenHamburger propFormSaveSession={formSaveSession} propOrder={order} />
-		<h1 class="view-header text-6xl font-black text-primary">
-			<a href="/">Appraize</a>
-		</h1>
-	</div>
-	<div
-		class="col-span-1 hidden items-center border-b-2 border-b-gray-200 bg-gray-50 px-2 pe-10 md:flex lg:col-span-3 lg:px-8"
-	>
-		<form method="POST" id="view-top-navbar-input" action="?/redirect" class="flex w-full justify-center" use:enhance>
-			<label
-				class="view-input input input-bordered input-primary relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
-				for="session"
-			>
-				<input
-					type="text"
-					name="session"
-					bind:value={searchInput}
-					placeholder="Jump to another session"
-					class="w-full"
-					onkeydown={(evt) => {
-						editFormSubmitKeyboardShortcut(evt, 'view-top-navbar-input');
-					}}
-					required
-				/>
-				<button class="view-input-button group absolute -top-0 right-1">
-					{#if submittedSpinner && searchInput.length > 0}
-						<span class="loading loading-spinner"></span>
-					{:else}
+<!-- Sidebar -->
+<div class="view-outline hidden border-r-2 border-gray-200 bg-gray-50 py-4 pb-4 text-2xl lg:block">
+	<div class="view-home-sidebar space-y-10">
+		<div>
+			<h3 class="px-4 font-extrabold">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1em"
+					height="1em"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="icon icon-tabler icons-tabler-outline icon-tabler-home mb-1 me-4 inline"
+				>
+					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+					<path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+					<path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+					<path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+				</svg><a href="/">Home</a>
+			</h3>
+		</div>
+
+		<div class="view-summary-sidebar grid">
+			<h3 class="px-4 font-extrabold">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1em"
+					height="1em"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="icon icon-tabler icons-tabler-outline icon-tabler-file-analytics mb-1 me-4 inline"
+					><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path
+						d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"
+					/><path d="M9 17l0 -5" /><path d="M12 17l0 -1" /><path d="M15 17l0 -3" /></svg
+				>Grade Distribution
+			</h3>
+			{#await newCounts}
+				<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
+			{:then newCounts}
+				<div class="ms-7 border-l-2 border-gray-200 pe-8 ps-7">
+					<div class="grid w-full grid-cols-2 gap-2 pt-4 lg:grid-cols-4">
+						<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+							<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
+								A
+							</div>
+							<div class="animate-scale text-4xl font-black">
+								{newCounts.a}
+							</div>
+							<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageA}%</div>
+						</div>
+						<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+							<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
+								B
+							</div>
+							<div class="animate-scale text-4xl font-black">
+								{newCounts.b}
+							</div>
+							<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageB}%</div>
+						</div>
+						<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+							<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
+								C
+							</div>
+							<div class="animate-scale text-4xl font-black">
+								{newCounts.cTotal}
+							</div>
+							<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageC}%</div>
+						</div>
+						<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+							<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
+								D
+							</div>
+							<div class="animate-scale text-4xl font-black">
+								{newCounts.d}
+							</div>
+							<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageD}%</div>
+						</div>
+					</div>
+				</div>
+			{/await}
+		</div>
+
+		<div class="view-add-sidebar">
+			<h3 class="px-4 font-extrabold">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1em"
+					height="1em"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="icon icon-tabler icons-tabler-outline icon-tabler-square-rounded-plus mb-1 me-4 inline"
+					><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+						d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"
+					/><path d="M15 12h-6" /><path d="M12 9v6" /></svg
+				>Add Officer
+			</h3>
+			<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
+				<form method="POST" id="insert-form" action="?/insert" class="ms-4 space-y-1 rounded-lg p-4" use:enhance>
+					{#if form?.insertNameMissing}<span class="text-lg text-error">Please enter a name:</span>{/if}
+					<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							width="2.5em"
-							height="2.5em"
+							width="1em"
+							height="1em"
 							viewBox="0 0 24 24"
-							class="icon icon-tabler icons-tabler-filled icon-tabler-circle-arrow-right inline fill-primary group-hover:saturate-50"
-							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-								d="M12 2l.324 .005a10 10 0 1 1 -.648 0l.324 -.005zm.613 5.21a1 1 0 0 0 -1.32 1.497l2.291 2.293h-5.584l-.117 .007a1 1 0 0 0 .117 1.993h5.584l-2.291 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l4 -4l.073 -.082l.064 -.089l.062 -.113l.044 -.11l.03 -.112l.017 -.126l.003 -.075l-.007 -.118l-.029 -.148l-.035 -.105l-.054 -.113l-.071 -.111a1.008 1.008 0 0 0 -.097 -.112l-4 -4z"
-							/></svg
-						>{/if}
-				</button>
-			</label>
-			{#key form}
-				{#if form?.formRedirectFailed}
-					<div
-						class="fade-in fade-out toast toast-end transition duration-75 ease-out"
-						in:slide={{ duration: 150, axis: 'x', easing: circOut }}
-						out:slide={{ duration: 300, axis: 'x', easing: circOut }}
-					>
-						<div class="alert flex justify-center bg-error font-bold text-base-100">
-							No special characters, symbols, spaces!
-						</div>
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus me-2 flex-none"
+						>
+							<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+							<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+							<path d="M16 19h6" />
+							<path d="M19 16v6" />
+							<path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
+						</svg>
+						<input
+							type="text"
+							name="name"
+							bind:value={nameData}
+							class="shrink text-lg"
+							placeholder="Name"
+							onkeydown={(evt) => {
+								editFormSubmitKeyboardShortcut(evt, 'insert-form');
+							}}
+							required
+						/>
+					</label>
+					{#if form?.insertDeptMissing}<span class="text-lg text-error">Please enter a dept:</span>{/if}
+					<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
+						<Home class="me-2 flex-none stroke-neutral" />
+						<input
+							type="text"
+							name="dept"
+							bind:value={deptData}
+							class="grow text-lg"
+							placeholder="Dept"
+							onkeydown={(evt) => {
+								editFormSubmitKeyboardShortcut(evt, 'insert-form');
+							}}
+							required
+						/>
+					</label>
+					{#if form?.insertGradeMissing}
+						<span class="text-lg text-error">Please select a grade:</span>{/if}
+					<div class="flex flex-wrap items-center justify-start text-lg">
+						<label class="label me-2 cursor-pointer space-x-1">
+							<span class="label-text text-lg font-medium">A</span>
+							<input
+								type="radio"
+								name="grade"
+								value="A"
+								class="radio border-gray-400 bg-base-100 checked:bg-primary"
+								bind:group={gradeData}
+							/>
+						</label>
+						<label class="label me-2 cursor-pointer space-x-1">
+							<span class="label-text text-lg font-medium">B</span>
+							<input
+								type="radio"
+								name="grade"
+								class="radio border-gray-400 bg-base-100 checked:bg-primary"
+								value="B"
+								bind:group={gradeData}
+							/>
+						</label>
+						<label class="label me-2 cursor-pointer space-x-1">
+							<span class="label-text text-lg font-medium">C+</span>
+							<input
+								type="radio"
+								name="grade"
+								value="C+"
+								class="radio border-gray-400 bg-base-100 checked:bg-primary"
+								bind:group={gradeData}
+							/>
+						</label>
+						<label class="label me-2 cursor-pointer space-x-1">
+							<span class="label-text text-lg font-medium">C</span>
+							<input
+								type="radio"
+								name="grade"
+								value="C"
+								class="radio border-gray-400 bg-base-100 checked:bg-primary"
+								bind:group={gradeData}
+							/>
+						</label>
+						<label class="label me-2 cursor-pointer space-x-1">
+							<span class="label-text text-lg font-medium">C-</span>
+							<input
+								type="radio"
+								name="grade"
+								value="C-"
+								class="radio border-gray-400 bg-base-100 checked:bg-primary"
+								bind:group={gradeData}
+							/>
+						</label>
+						<label class="label me-2 cursor-pointer space-x-1">
+							<span class="label-text text-lg font-medium">D</span>
+							<input
+								type="radio"
+								value="D"
+								name="grade"
+								class="radio border-gray-400 bg-base-100 checked:bg-primary"
+								bind:group={gradeData}
+							/>
+						</label>
 					</div>
-				{/if}
-			{/key}
-		</form>
-	</div>
-	<!-- Sidebar -->
-	<div class="view-outline hidden border-r-2 border-gray-200 bg-gray-50 py-4 pb-4 text-2xl lg:block">
-		<div class="view-home-sidebar space-y-10">
-			<div>
-				<h3 class="px-4 font-extrabold">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="1em"
-						height="1em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-home mb-1 me-4 inline"
-					>
-						<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-						<path d="M5 12l-2 0l9 -9l9 9l-2 0" />
-						<path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-						<path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-					</svg><a href="/">Home</a>
-				</h3>
+
+					<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1em"
+							height="1em"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
+						>
+							<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+							<path d="M8 9h8" />
+							<path d="M8 13h6" />
+							<path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+						</svg>
+
+						<input
+							type="text"
+							name="remarks"
+							bind:value={remarksData}
+							class="grow text-lg"
+							placeholder="Remarks (Optional)"
+							onkeydown={(evt) => {
+								editFormSubmitKeyboardShortcut(evt, 'insert-form');
+							}}
+						/>
+					</label>
+					<button class="btn btn-primary relative w-full text-xl font-bold text-base-100"
+						>Add<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1.2em"
+							height="1.2em"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right inline"
+						>
+							<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+							<path d="M5 12l14 0" />
+							<path d="M13 18l6 -6" />
+							<path d="M13 6l6 6" />
+						</svg>
+					</button>
+				</form>
 			</div>
+		</div>
 
-			<div class="view-summary-sidebar grid">
-				<h3 class="px-4 font-extrabold">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="1em"
-						height="1em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-file-analytics mb-1 me-4 inline"
-						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path
-							d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"
-						/><path d="M9 17l0 -5" /><path d="M12 17l0 -1" /><path d="M15 17l0 -3" /></svg
-					>Grade Distribution
-				</h3>
-				{#await newCounts}
-					<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
-				{:then newCounts}
-					<div class="ms-7 border-l-2 border-gray-200 pe-8 ps-7">
-						<div class="grid w-full grid-cols-2 gap-2 pt-4 lg:grid-cols-4">
-							<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
-								<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
-									A
-								</div>
-								<div class="animate-scale text-4xl font-black">
-									{newCounts.a}
-								</div>
-								<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageA}%</div>
-							</div>
-							<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
-								<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
-									B
-								</div>
-								<div class="animate-scale text-4xl font-black">
-									{newCounts.b}
-								</div>
-								<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageB}%</div>
-							</div>
-							<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
-								<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
-									C
-								</div>
-								<div class="animate-scale text-4xl font-black">
-									{newCounts.cTotal}
-								</div>
-								<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageC}%</div>
-							</div>
-							<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
-								<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral px-2 text-start text-base-100">
-									D
-								</div>
-								<div class="animate-scale text-4xl font-black">
-									{newCounts.d}
-								</div>
-								<div class="animate-scale text-lg font-bold text-gray-500">{newCounts.percentageD}%</div>
-							</div>
-						</div>
-					</div>
-				{/await}
-			</div>
-
-			<div class="view-add-sidebar">
-				<h3 class="px-4 font-extrabold">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="1em"
-						height="1em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-square-rounded-plus mb-1 me-4 inline"
-						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-							d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"
-						/><path d="M15 12h-6" /><path d="M12 9v6" /></svg
-					>Add Officer
-				</h3>
-				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
-					<form method="POST" id="insert-form" action="?/insert" class="ms-4 space-y-1 rounded-lg p-4" use:enhance>
-						{#if form?.insertNameMissing}<span class="text-lg text-error">Please enter a name:</span>{/if}
-						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus me-2 flex-none"
-							>
-								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-								<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-								<path d="M16 19h6" />
-								<path d="M19 16v6" />
-								<path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
-							</svg>
-							<input
-								type="text"
-								name="name"
-								bind:value={nameData}
-								class="shrink text-lg"
-								placeholder="Name"
-								onkeydown={(evt) => {
-									editFormSubmitKeyboardShortcut(evt, 'insert-form');
-								}}
-								required
-							/>
-						</label>
-						{#if form?.insertDeptMissing}<span class="text-lg text-error">Please enter a dept:</span>{/if}
-						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
-							<Home class="me-2 flex-none stroke-neutral" />
-							<input
-								type="text"
-								name="dept"
-								bind:value={deptData}
-								class="grow text-lg"
-								placeholder="Dept"
-								onkeydown={(evt) => {
-									editFormSubmitKeyboardShortcut(evt, 'insert-form');
-								}}
-								required
-							/>
-						</label>
-						{#if form?.insertGradeMissing}
-							<span class="text-lg text-error">Please select a grade:</span>{/if}
-						<div class="flex flex-wrap items-center justify-start text-lg">
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium">A</span>
-								<input
-									type="radio"
-									name="grade"
-									value="A"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									bind:group={gradeData}
-								/>
-							</label>
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium">B</span>
-								<input
-									type="radio"
-									name="grade"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									value="B"
-									bind:group={gradeData}
-								/>
-							</label>
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium">C+</span>
-								<input
-									type="radio"
-									name="grade"
-									value="C+"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									bind:group={gradeData}
-								/>
-							</label>
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium">C</span>
-								<input
-									type="radio"
-									name="grade"
-									value="C"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									bind:group={gradeData}
-								/>
-							</label>
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium">C-</span>
-								<input
-									type="radio"
-									name="grade"
-									value="C-"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									bind:group={gradeData}
-								/>
-							</label>
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium">D</span>
-								<input
-									type="radio"
-									value="D"
-									name="grade"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									bind:group={gradeData}
-								/>
-							</label>
-						</div>
-
-						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
-							>
-								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-								<path d="M8 9h8" />
-								<path d="M8 13h6" />
-								<path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-							</svg>
-
-							<input
-								type="text"
-								name="remarks"
-								bind:value={remarksData}
-								class="grow text-lg"
-								placeholder="Remarks (Optional)"
-								onkeydown={(evt) => {
-									editFormSubmitKeyboardShortcut(evt, 'insert-form');
-								}}
-							/>
-						</label>
-						<button class="btn btn-primary relative w-full text-xl font-bold text-base-100"
-							>Add<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1.2em"
-								height="1.2em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right inline"
-							>
-								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-								<path d="M5 12l14 0" />
-								<path d="M13 18l6 -6" />
-								<path d="M13 6l6 6" />
-							</svg>
-						</button>
-					</form>
-				</div>
-			</div>
-
-			<!-- 
+		<!-- 
 			/////////////////////////////////////////
 			/
 			/
@@ -531,53 +385,53 @@
 			/
 			///////////////////////////////////////// 
 			-->
-			<div class="view-upload-sidebar">
-				<h3 class="px-4 font-extrabold">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="1em"
-						height="1em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-table-plus mb-1 me-4 inline"
-						><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-							d="M12.5 21h-7.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v7.5"
-						/><path d="M3 10h18" /><path d="M10 3v18" /><path d="M16 19h6" /><path d="M19 16v6" /></svg
-					>Add Multiple
-				</h3>
-				<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
-					<ol class="px-4 pb-4 pt-2">
-						<li class="list-none">
-							<button
-								class="btn btn-ghost text-xl"
-								onclick={() => {
-									upload_modal.showModal();
-								}}
-								><svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="1em"
-									height="1em"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class="icon icon-tabler icons-tabler-outline icon-tabler-upload mb-1 me-2 inline"
-									><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-										d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"
-									/><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg
-								>Upload from file (.csv)</button
-							>
-						</li>
-					</ol>
-				</div>
+		<div class="view-upload-sidebar">
+			<h3 class="px-4 font-extrabold">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1em"
+					height="1em"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="icon icon-tabler icons-tabler-outline icon-tabler-table-plus mb-1 me-4 inline"
+					><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+						d="M12.5 21h-7.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v7.5"
+					/><path d="M3 10h18" /><path d="M10 3v18" /><path d="M16 19h6" /><path d="M19 16v6" /></svg
+				>Add Multiple
+			</h3>
+			<div class="me-4 ms-7 w-auto border-l-2 border-gray-200">
+				<ol class="px-4 pb-4 pt-2">
+					<li class="list-none">
+						<button
+							class="btn btn-ghost text-xl"
+							onclick={() => {
+								upload_modal.showModal();
+							}}
+							><svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="1em"
+								height="1em"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="icon icon-tabler icons-tabler-outline icon-tabler-upload mb-1 me-2 inline"
+								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+									d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"
+								/><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg
+							>Upload from file (.csv)</button
+						>
+					</li>
+				</ol>
 			</div>
-			<!-- 
+		</div>
+		<!-- 
 			/////////////////////////////////////////
 			/
 			/
@@ -590,106 +444,98 @@
 			/
 			///////////////////////////////////////// 
 			-->
-			<div class="view-manage-sidebar">
-				<h3 class="px-4 font-extrabold">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="1em"
-						height="1em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-settings mb-1 me-4 inline"
-					>
-						<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-						<path
-							d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"
-						/>
-						<path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-					</svg>Manage Session
-				</h3>
-				<div class="ms-7 w-auto space-y-4 border-l-2 border-gray-200 pe-4 pt-4">
-					<div class="join grid grid-cols-2 pe-4 ps-8">
-						<form
-							method="POST"
-							action="?/save"
-							bind:this={formSaveSession}
-							use:enhance={() => {
-								return;
-							}}
-						>
-							<button
-								class="btn btn-primary join-item w-full font-bold text-base-100"
-								onclick={() => {
-									formSaveSuccessLoading = true;
-									setTimeout(() => {
-										formSaveSuccessLoading = false;
-									}, 1500);
-								}}
-							>
-								{#if formSaveSuccessLoading}
-									<span class="loading loading-spinner text-base-100"></span>
-								{:else}
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="2em"
-										height="2em"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle stroke-base-100"
-									>
-										<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-										<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-										<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-										<path d="M14 4l0 4l-6 0l0 -4" />
-									</svg><span class="hidden text-xl 2xl:contents">Save</span>{/if}</button
-							>
-							{#key order}
-								<input type="hidden" name="order" value={order} />
-							{/key}
-							<input type="hidden" name="test" value="test" />
-						</form>
+		<div class="view-manage-sidebar">
+			<h3 class="px-4 font-extrabold">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1em"
+					height="1em"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="icon icon-tabler icons-tabler-outline icon-tabler-settings mb-1 me-4 inline"
+				>
+					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+					<path
+						d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"
+					/>
+					<path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+				</svg>Manage Session
+			</h3>
+			<div class="ms-7 w-auto space-y-4 border-l-2 border-gray-200 pe-4 pt-4">
+				<div class="join grid grid-cols-2 pe-4 ps-8">
+					<form method="POST" action="?/save" bind:this={formSaveSession}>
 						<button
-							class="group btn btn-outline join-item btn-neutral w-full hover:border-red-700 hover:bg-error"
+							class="btn btn-primary join-item w-full font-bold text-base-100"
 							onclick={() => {
-								delete_session_modal.showModal();
+								formSaveSuccessLoading = true;
+								setTimeout(() => {
+									formSaveSuccessLoading = false;
+								}, 1500);
 							}}
 						>
-							<Trash class="inline h-[2em] w-[2em] stroke-neutral group-hover:stroke-base-100" /><span
-								class="ms-0 hidden text-xl font-bold 2xl:contents">Delete</span
-							>
+							{#if formSaveSuccessLoading}
+								<span class="loading loading-spinner text-base-100"></span>
+							{:else}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="2em"
+									height="2em"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle stroke-base-100"
+								>
+									<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+									<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+									<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+									<path d="M14 4l0 4l-6 0l0 -4" />
+								</svg><span class="hidden text-xl 2xl:contents">Save</span>
+							{/if}
 						</button>
-					</div>
-					<div class="flex items-center pe-4 ps-8">
-						<input
-							type="checkbox"
-							id="auto-save-checkbox"
-							class="checkbox-primary checkbox me-2"
-							bind:checked={autoSave}
-						/>
-						<label for="auto-save-checkbox" class="text-lg font-medium">Auto save progress</label>
 
-						{#if formSaveSuccessLoading}
-							<span class="loading loading-dots loading-sm ms-2 self-end text-primary"></span>
-						{/if}
+						<input type="hidden" name="order" bind:value={order} />
+					</form>
+					<button
+						class="group btn btn-outline join-item btn-neutral w-full hover:border-red-700 hover:bg-error"
+						onclick={() => {
+							delete_session_modal.showModal();
+						}}
+					>
+						<Trash class="inline h-[2em] w-[2em] stroke-neutral group-hover:stroke-base-100" /><span
+							class="ms-0 hidden text-xl font-bold 2xl:contents">Delete</span
+						>
+					</button>
+				</div>
+				<div class="flex items-center pe-4 ps-8">
+					<input
+						type="checkbox"
+						id="auto-save-checkbox"
+						class="checkbox-primary checkbox me-2"
+						bind:checked={autoSave}
+					/>
+					<label for="auto-save-checkbox" class="text-lg font-medium">Auto save every 3 mins</label>
 
-						<form method="POST" action="?/save" bind:this={formAutoSaveSession} use:enhance>
-							<!-- <button class="hidden"></button> -->
-							<input type="hidden" name="order" value={order} />
-						</form>
-					</div>
+					{#if formSaveSuccessLoading}
+						<span class="loading loading-dots loading-sm ms-2 self-end text-primary"></span>
+					{/if}
+
+					<form method="POST" action="?/save" bind:this={formAutoSaveSession} use:enhance>
+						<!-- <button class="hidden"></button> -->
+						<input type="hidden" name="order" bind:value={order} />
+					</form>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<!-- 
+<!-- 
 	/////////////////////////////////////////
 	/
 	/
@@ -703,105 +549,105 @@
 	///////////////////////////////////////// 
 	-->
 
-	{#if form?.formSaveSuccess}
-		<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
-			<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="2em"
-					height="2em"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
-				>
-					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-					<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
-					<path d="M9 10h.01" />
-					<path d="M15 10h.01" />
-					<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
-					<path d="M15 19l2 2l4 -4" />
-				</svg>Saved successfully!
-			</div>
+{#if form?.formSaveSuccess}
+	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
+		<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="2em"
+				height="2em"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
+			>
+				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+				<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
+				<path d="M9 10h.01" />
+				<path d="M15 10h.01" />
+				<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
+				<path d="M15 19l2 2l4 -4" />
+			</svg>Saved successfully!
 		</div>
-	{/if}
-	{#if form?.formSaveFail}
-		<div
-			class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out"
-			in:slide={{ duration: 150, axis: 'x', easing: circOut }}
-			out:slide={{ duration: 300, axis: 'x', easing: circOut }}
-		>
-			<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">Error saving!</div>
+	</div>
+{/if}
+{#if form?.formSaveFail}
+	<div
+		class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out"
+		in:slide={{ duration: 150, axis: 'x', easing: circOut }}
+		out:slide={{ duration: 300, axis: 'x', easing: circOut }}
+	>
+		<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">Error saving!</div>
+	</div>
+{/if}
+{#if form?.formUploadSuccess}
+	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
+		<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="2em"
+				height="2em"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
+			>
+				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+				<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
+				<path d="M9 10h.01" />
+				<path d="M15 10h.01" />
+				<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
+				<path d="M15 19l2 2l4 -4" />
+			</svg>Uploaded successfully!
 		</div>
-	{/if}
-	{#if form?.formUploadSuccess}
-		<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
-			<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="2em"
-					height="2em"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
-				>
-					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-					<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
-					<path d="M9 10h.01" />
-					<path d="M15 10h.01" />
-					<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
-					<path d="M15 19l2 2l4 -4" />
-				</svg>Uploaded successfully!
-			</div>
-		</div>
-	{/if}
+	</div>
+{/if}
 
-	<!-- {#if form?.fail}
+<!-- {#if form?.fail}
 	<div class="fade-in fade-out toast toast-end transition duration-75 ease-out">
 	<div class="alert flex justify-center bg-error font-bold text-base-100">
 	Failed to save, please try again later.
 	</div>
 	</div>
 	{/if}  -->
-	{#if form?.editInsertSuccess}
-		<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
-			<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="2em"
-					height="2em"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
-				>
-					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-					<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
-					<path d="M9 10h.01" />
-					<path d="M15 10h.01" />
-					<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
-					<path d="M15 19l2 2l4 -4" />
-				</svg>Edited successfully!
-			</div>
+{#if form?.editInsertSuccess}
+	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
+		<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="2em"
+				height="2em"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
+			>
+				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+				<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
+				<path d="M9 10h.01" />
+				<path d="M15 10h.01" />
+				<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
+				<path d="M15 19l2 2l4 -4" />
+			</svg>Edited successfully!
 		</div>
-	{:else if form?.editInsertFailedGrade}
-		<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
-			<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">
-				Failed to edit! Grade should be a single alphabet (A, B, C+, C, C-, D)
-			</div>
+	</div>
+{:else if form?.editInsertFailedGrade}
+	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
+		<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">
+			Failed to edit! Grade should be a single alphabet (A, B, C+, C, C-, D)
 		</div>
-	{/if}
-	<!-- 
+	</div>
+{/if}
+<!-- 
 	/////////////////////////////////////////
 	/
 	/
@@ -814,13 +660,43 @@
 	/
 	///////////////////////////////////////// 
 	-->
-	<div class="col-span-3 min-h-dvh space-y-12 pb-4 pt-8 lg:pt-4">
-		<div>
-			<ol class="view-content space-y-4">
-				<div class="view-ranking-title space-y-2 px-4 pb-4 md:px-10">
-					<h1>Ranking: {data.id}</h1>
-					<div class="flex flex-wrap items-center space-y-4 text-2xl text-gray-500 lg:space-y-2">
-						<div class="grow">
+<div class="col-span-3 min-h-dvh space-y-12 pb-4 pt-8 lg:pt-4">
+	<div>
+		<ol class="view-content space-y-4">
+			<div class="view-ranking-title space-y-2 px-4 pb-4 md:px-10">
+				<h1>Ranking: {data.id}</h1>
+				<div class="flex flex-wrap items-center space-y-4 text-2xl text-gray-500 lg:space-y-2">
+					<div class="grow">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1em"
+							height="1em"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="icon icon-tabler icons-tabler-outline icon-tabler-users mb-1 me-2 inline"
+							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+								d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
+							/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path
+								d="M21 21v-2a4 4 0 0 0 -3 -3.85"
+							/></svg
+						>{#await newCounts}
+							<span class="loading loading-spinner loading-sm text-primary"></span>
+						{:then newCounts}
+							<span class="animate-scale font-extrabold">{newCounts.total}</span>
+						{/await}
+					</div>
+					<div class="flex">
+						<button
+							class="inline-block self-center text-lg"
+							onclick={() => {
+								filterInput = '';
+								filterGradeValue = 'Grade';
+							}}
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="1em"
@@ -831,20 +707,24 @@
 								stroke-width="2"
 								stroke-linecap="round"
 								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-users mb-1 me-2 inline"
-								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-									d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
-								/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path
-									d="M21 21v-2a4 4 0 0 0 -3 -3.85"
-								/></svg
-							>{#await newCounts}
-								<span class="loading loading-spinner loading-sm text-primary"></span>
-							{:then newCounts}
-								<span class="animate-scale font-extrabold">{newCounts.total}</span>
-							{/await}
-						</div>
-						<div class="flex">
-							<a href="/v/{data.id}" class="inline-block self-center text-lg">
+								class="icon icon-tabler icons-tabler-outline icon-tabler-refresh mb-1 me-2 inline"
+							>
+								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+								<path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+								<path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+							</svg><span class="hidden lg:inline">Reset</span>
+						</button>
+						<form
+							method="POST"
+							action="?/filter"
+							id="filter-input"
+							bind:this={filterForm}
+							class="join flex justify-start rounded-lg lg:ms-4"
+							use:enhance
+						>
+							<label
+								class="border-1 input join-item input-bordered input-primary flex max-w-44 items-center border-gray-400 text-lg lg:max-w-full"
+							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="1em"
@@ -855,377 +735,49 @@
 									stroke-width="2"
 									stroke-linecap="round"
 									stroke-linejoin="round"
-									class="icon icon-tabler icons-tabler-outline icon-tabler-refresh mb-1 me-2 inline"
+									class="icon icon-tabler icons-tabler-outline icon-tabler-filter me-2 inline"
 								>
 									<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-									<path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
-									<path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
-								</svg><span class="hidden lg:inline">Reset</span>
-							</a>
-							<form
-								method="POST"
-								action="?/filter"
-								id="filter-input"
-								bind:this={filterForm}
-								class="join flex justify-start rounded-lg lg:ms-4"
-								use:enhance
+									<path
+										d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
+									/>
+								</svg>
+								<input
+									type="text"
+									bind:value={filterInput}
+									name="filter"
+									class="text-lg lg:grow"
+									placeholder="Keywords"
+								/>
+							</label>
+							<select
+								id="filter-grade"
+								name="grade"
+								class="join-item select select-bordered select-primary border-gray-400 text-lg"
+								bind:value={filterGradeValue}
+								onchange={() => {
+									filterForm.requestSubmit();
+								}}
 							>
-								<label
-									class="border-1 input join-item input-bordered input-primary flex max-w-44 items-center border-gray-400 text-lg lg:max-w-full"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="1em"
-										height="1em"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="icon icon-tabler icons-tabler-outline icon-tabler-filter me-2 inline"
-									>
-										<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-										<path
-											d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
-										/>
-									</svg>
-									<input type="text" name="filter" class="text-lg lg:grow" placeholder="Keywords" />
-								</label>
-								<select
-									id="filter-grade"
-									name="grade"
-									class="join-item select select-bordered select-primary border-gray-400 text-lg"
-									bind:value={filterGradeValue}
-									onchange={() => {
-										filterForm.requestSubmit();
-									}}
-								>
-									<option disabled selected>Grade</option>
-									<option value="A">A</option>
-									<option value="B">B</option>
-									<option value="C+">C+</option>
-									<option value="C">C</option>
-									<option value="C-">C-</option>
-									<option value="D">D</option>
-									<option value="All">All</option>
-								</select>
-								<button class="btn btn-primary join-item text-xl font-bold text-base-100">Filter</button>
-							</form>
-						</div>
+								<option disabled selected>Grade</option>
+								<option value="A">A</option>
+								<option value="B">B</option>
+								<option value="C+">C+</option>
+								<option value="C">C</option>
+								<option value="C-">C-</option>
+								<option value="D">D</option>
+								<option value="All">All</option>
+							</select>
+							<button class="btn join-item btn-neutral text-xl font-bold text-base-100">Filter</button>
+						</form>
 					</div>
 				</div>
-				<div class="mx-2 hidden grid-cols-12 rounded-lg pt-10 text-xl font-extrabold text-gray-500 md:mx-10 lg:grid">
-					<div class="col-span-1"></div>
-					<div class="col-span-1">Grade</div>
-					<div class="col-span-4">Name</div>
-					<div class="col-span-4">Dept</div>
-					<div class="col-span-2"></div>
-				</div>
-				<div id="table" bind:this={sortableEl} class="relative grid space-y-4 px-2 md:px-10">
-					{#if filterNothingFound}
-						<div class="space-y-4 p-2 lg:px-10 lg:py-28">
-							<div class="flex justify-center"><UndrawNoData /></div>
-							<h2 class="text-center">Couldn't find anything that matches your filter!</h2>
-						</div>
-					{/if}
-
-					{#key data.streamed.result}
-						{#await data.streamed.result}
-							<span
-								class="ignore-elements loading loading-spinner loading-lg justify-self-center py-5 text-primary md:py-10"
-							></span>
-						{:then result}
-							{#if !data.streamed.result || data.streamed.result.length === 0}
-								<div class="p-2 lg:px-10 lg:py-28">
-									<div class="flex justify-center"><UndrawEmpty /></div>
-									<h2 class="text-center">There's nothing here!</h2>
-								</div>
-							{:else}
-								{#each data.streamed.result as person}
-									<div
-										class="grid grid-cols-12 rounded-lg border border-gray-400 transition duration-700 ease-out hover:border-primary"
-										id={person.uuid}
-										data-sortable-id={person.uuid}
-									>
-										<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
-											<div
-												class="flex h-full grow items-center rounded-t-lg bg-neutral p-2 lg:grow-0 lg:rounded-l-lg lg:rounded-r-none lg:rounded-tl-lg"
-											>
-												<GripVertical class="stroke-base-100" />
-											</div>
-										</div>
-										<div class="sortable-handle col-span-12 flex items-center justify-center lg:col-span-1">
-											<!-- form="edit-form-{person.uuid}" name="grade__{person.uuid}"-->
-											<form id="edit-grade-form-{person.uuid}" method="POST" action="?/editgrade" use:enhance>
-												<input type="hidden" name="edit-grade-target" value={person.id} />
-												<input type="hidden" name="edit-grade-target-name" value={person.name} />
-												<select
-													bind:value={person.grade}
-													name="grade"
-													id="grade__{person.uuid}"
-													class="grade-selection select select-primary select-sm border-0 text-2xl font-extrabold"
-													onchange={() => {
-														const currentForm = document.getElementById(`edit-grade-form-${person.uuid}`);
-														currentForm.requestSubmit ? currentForm.requestSubmit() : currentForm.submit();
-														console.log('Form submitted!');
-													}}
-												>
-													<option value="A">A</option>
-													<option value="B">B</option>
-													<option value="C+">C+</option>
-													<option value="C">C</option>
-													<option value="C-">C-</option>
-													<option value="D">D</option>
-												</select>
-											</form>
-										</div>
-
-										{#if person.uuid && edit[person.uuid] === true}
-											<div
-												class="col-span-8 grid grid-cols-8 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2"
-												id="div__{person.uuid}"
-												in:slide={{ duration: 500, axis: 'y', easing: circOut }}
-												out:slide={{ duration: 10, axis: 'y', easing: circOut }}
-											>
-												<div class="col-span-8">
-													<form method="POST" id="edit-form-{person.uuid}" action="?/edit" use:enhance>
-														<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
-													</form>
-												</div>
-												<div class="col-span-4">
-													<label
-														class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
-														for="edit-person-name-{person.uuid}"
-														><svg
-															xmlns="http://www.w3.org/2000/svg"
-															width="1em"
-															height="1em"
-															viewBox="0 0 24 24"
-															fill="none"
-															stroke="currentColor"
-															stroke-width="2"
-															stroke-linecap="round"
-															stroke-linejoin="round"
-															class="icon icon-tabler icons-tabler-outline icon-tabler-user me-2 inline"
-															><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-																d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"
-															/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg
-														>
-														<EditFields
-															name="edit-person-name"
-															id="edit-person-name-{person.uuid}"
-															form="edit-form-{person.uuid}"
-															class="grow"
-															value={person.name}
-															placeholder="Name"
-															onkeydown={(evt) => {
-																editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
-															}}
-														/></label
-													>
-												</div>
-
-												<div class="col-span-4">
-													<label
-														class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
-														for="edit-person-dept-{person.uuid}"
-													>
-														<Home class="me-2 flex-none" />
-														<EditFields
-															name="edit-person-dept"
-															class="grow"
-															form="edit-form-{person.uuid}"
-															value={person.dept}
-															id="edit-person-dept-{person.uuid}"
-															placeholder="Dept"
-															onkeydown={(evt) => {
-																editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
-															}}
-														/>
-													</label>
-												</div>
-												<div class="col-span-8">
-													<label
-														class="textarea textarea-bordered flex h-24 w-full items-center items-center gap-2 border-gray-400 text-lg md:h-56"
-														for="edit-person-remarks-{person.uuid}"
-														><svg
-															xmlns="http://www.w3.org/2000/svg"
-															width="1.5em"
-															height="1.5em"
-															viewBox="0 0 24 24"
-															fill="none"
-															stroke="currentColor"
-															stroke-width="2"
-															stroke-linecap="round"
-															stroke-linejoin="round"
-															class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
-														>
-															<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-															<path d="M8 9h8" />
-															<path d="M8 13h6" />
-															<path
-																d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
-															/>
-														</svg>
-														<textarea
-															form="edit-form-{person.uuid}"
-															name="edit-person-remarks"
-															id="edit-person-remarks-{person.uuid}"
-															class="h-full w-full focus:outline-none"
-															maxlength="999"
-															placeholder="Remarks"
-															value={person.remarks}
-															onkeydown={(evt) => {
-																editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
-															}}
-														></textarea>
-													</label>
-												</div>
-												<div class="col-span-6 bg-base-300 md:col-span-6">
-													<button
-														class="btn join-item btn-neutral text-lg"
-														form="edit-form-{person.uuid}"
-														onclick={() => {
-															edit[person.uuid] = false;
-														}}
-													>
-														<TablerEdit class="inline h-[1em] w-[1em]" />Save
-													</button>
-												</div>
-											</div>
-										{:else}
-											<div class="col-span-12 self-center lg:col-span-8" id="div__{person.uuid}">
-												<div class="grid grid-cols-8 items-center px-2 py-2">
-													<div class="col-span-4 text-2xl font-bold">{person.name}</div>
-													<div class="col-span-4 text-2xl text-gray-500">{person.dept}</div>
-													{#if person.remarks}
-														<div class="col-span-8 mt-4 rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-500">
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																width="1.5em"
-																height="1.5em"
-																viewBox="0 0 24 24"
-																fill="none"
-																stroke="currentColor"
-																stroke-width="2"
-																stroke-linecap="round"
-																stroke-linejoin="round"
-																class="icon icon-tabler icons-tabler-outline icon-tabler-message mb-1 me-2 inline"
-															>
-																<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-																<path d="M8 9h8" />
-																<path d="M8 13h6" />
-																<path
-																	d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
-																/>
-															</svg>{person.remarks}
-														</div>
-													{/if}
-												</div>
-											</div>
-										{/if}
-
-										<!-- 
-									/////////////////////////////////////////
-									/
-									/
-									/
-									/
-									/	Edit/Save/Del panel
-									/
-									/
-									/	
-									/
-									///////////////////////////////////////// 
-									-->
-										<div class="col-span-12 flex justify-end p-2 lg:col-span-2">
-											<div class="join self-center">
-												<button
-													class="btn join-item text-lg {edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
-													onclick={() => {
-														edit[person.uuid] = !edit[person.uuid];
-													}}
-													><TablerEdit class="inline h-[1.5em] w-[1.5em]" />
-												</button>
-												<div class="btn dropdown dropdown-end btn-outline join-item btn-neutral">
-													<div tabindex="0" role="button" class="m-0 flex h-full items-center text-xl">
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															width="1.2em"
-															height="1.2em"
-															viewBox="0 0 24 24"
-															fill="none"
-															stroke="currentColor"
-															stroke-width="2"
-															stroke-linecap="round"
-															stroke-linejoin="round"
-															class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"
-															><path stroke="none" d="M0 0h24v24H0z" fill="none" />
-															<path d="M6 9l6 6l6 -6" />
-														</svg>
-													</div>
-													<ul
-														tabindex="-1"
-														class="menu dropdown-content z-[1] m-0 w-52 rounded-lg bg-base-100 p-0 shadow"
-													>
-														<li class="">
-															<form
-																method="POST"
-																class="group m-0 w-full justify-center self-center rounded-lg border-2 border-error stroke-error p-0 hover:border-red-700 hover:bg-error hover:stroke-base-100"
-																action="?/delete"
-																use:enhance
-															>
-																<input type="hidden" name="delete-target" value={person.id} />
-																<button
-																	class="px-1 py-2 text-lg font-bold text-error group-hover:text-base-100"
-																	onclick={() => {
-																		let elDelete = document.getElementById(person.uuid);
-																		console.log(elDelete);
-																		let cssTextFieldClasses = ['bg-base-300', 'translate-x-10', 'opacity-0'];
-																		elDelete?.classList.add(...cssTextFieldClasses);
-																	}}
-																	><Trash class="mb-1 inline h-[1.5em] w-[1.5em]" /> Delete this entry
-																</button>
-															</form>
-														</li>
-													</ul>
-												</div>
-											</div>
-										</div>
-									</div>
-								{/each}
-							{/if}
-						{/await}
-					{/key}
-				</div>
-			</ol>
-			<form method="POST" action="?/save" class="mx-10 mt-10 flex justify-end">
-				<input type="hidden" name="order" bind:value={order} />
-
-				<input type="hidden" name="test" value="test" />
-				<button class="btn btn-primary w-1/3 min-w-24 max-w-96 text-xl font-bold"
-					><svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="1.5em"
-						height="1.5em"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle me-1 stroke-base-100"
-					>
-						<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-						<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-						<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-						<path d="M14 4l0 4l-6 0l0 -4" />
-					</svg><span class="hidden text-2xl 2xl:contents">Save</span></button
-				>
-			</form>
-		</div>
+			</div>
+			<DragDrop streamedResult={data.streamed.result} bind:value={order} />
+		</ol>
 	</div>
 </div>
+
 <!-- 
 /////////////////////////////////////////
 /
@@ -1364,10 +916,21 @@
 	</div>
 </dialog>
 
+{#key form}
+	{#if form?.formRedirectFailed}
+		<div
+			class="fade-in fade-out toast toast-end transition duration-75 ease-out"
+			in:slide={{ duration: 150, axis: 'x', easing: circOut }}
+			out:slide={{ duration: 300, axis: 'x', easing: circOut }}
+		>
+			<div class="alert flex justify-center bg-error font-bold text-base-100">
+				No special characters, symbols, spaces!
+			</div>
+		</div>
+	{/if}
+{/key}
+
 <style>
-	.view-header {
-		view-transition-name: view-header;
-	}
 	.view-outline {
 		view-transition-name: view-outline;
 	}
@@ -1389,17 +952,8 @@
 	.view-manage-sidebar {
 		view-transition-name: view-manage-sidebar;
 	}
-	.view-input {
-		view-transition-name: view-input;
-	}
-
 	.view-content {
 		view-transition-name: view-content;
-	}
-
-	.sortable-handle {
-		/* cursor: url('/hand-grab.svg'), auto; */
-		cursor: move;
 	}
 
 	.delete-session-modal {

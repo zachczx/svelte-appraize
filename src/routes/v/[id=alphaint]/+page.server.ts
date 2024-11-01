@@ -19,6 +19,8 @@ import { Upload } from '@aws-sdk/lib-storage';
 import * as fs from 'fs';
 import Papa from 'papaparse';
 
+const regexRoute = /^[a-zA-Z0-9-]*$/;
+
 /**
  *
  * @param time integer in milliseconds
@@ -29,8 +31,6 @@ let delay = (time) => {
 		setTimeout(res, time);
 	});
 };
-
-const regexRoute = /^[a-zA-Z0-9-]*$/;
 
 /**
  *
@@ -53,6 +53,7 @@ export const load = (async ({ params, url }) => {
 	const filterGradeParam = url.searchParams.get('grade');
 	//console.log(`Found a param, ${filterParam}`);
 	let result;
+
 	if (!filterParam || !filterGradeParam) {
 		const sq = db.select().from(records).where(eq(records.session, sessionId)).as('sq');
 		result = await db
@@ -83,11 +84,11 @@ export const load = (async ({ params, url }) => {
 		result = await db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence));
 	}
 
-	console.log('Load function', result);
+	let sequence = getInitSequence(result);
 
 	return {
 		id: sessionId,
-		streamed: { result },
+		streamed: { result, sequence },
 	};
 }) satisfies PageServerLoad;
 
@@ -193,14 +194,10 @@ export const actions = {
 		try {
 			const sessionId = String(params.id);
 			const saveData = await request.formData();
-			console.log(saveData);
 
 			// Grab the sortable order
 			const orderInput = saveData.get('order');
 			const orderArray = orderInput.split(',');
-			if (saveData.get('test')) {
-				console.log('Submitted from form successfully');
-			}
 			console.log('Form submitted formdata:', orderArray);
 
 			for (let i = 0; i < orderArray.length; i++) {
@@ -275,10 +272,13 @@ export const actions = {
 		redirect(307, `/v/${sessionId}/?${finalUrlString}`);
 	},
 
-	redirect: async function ({ request }) {
+	redirect: async ({ request }) => {
 		const inputData = await request.formData();
-		const inputSession = inputData.get('session');
-		const inputSessionTrimmed = inputSession.trim();
+		const inputSession = String(inputData.get('session'));
+		let inputSessionTrimmed = '';
+		if (inputSession) {
+			inputSessionTrimmed = inputSession.trim();
+		}
 		if (regexRoute.test(inputSessionTrimmed)) {
 			redirect(307, `/v/${inputSessionTrimmed}`);
 		} else {
@@ -383,3 +383,19 @@ export const actions = {
 		return { formUploadSuccess: true };
 	},
 };
+
+function getInitSequence(result) {
+	let sequence = '';
+	let sequenceCutLastChar = sequence.length - 1;
+
+	for (let i = 0; i < result.length; i++) {
+		if (i === 0) {
+			sequence = String(result[i].uuid);
+		} else {
+			sequence = sequence + ',' + result[i].uuid;
+		}
+	}
+
+	sequence.slice(sequenceCutLastChar);
+	return sequence;
+}

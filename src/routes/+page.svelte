@@ -8,6 +8,9 @@
 
 	//superforms imports
 	import { superForm } from 'sveltekit-superforms';
+	import MagicCard from '$lib/ui-components/MagicCard.svelte';
+	import ShineBorder from '$lib/ui-components/ShineBorder.svelte';
+	import BorderBeam from '$lib/ui-components/BorderBeam.svelte';
 	//import SuperDebug from 'sveltekit-superforms';
 	let { data } = $props();
 
@@ -23,9 +26,10 @@
 </svelte:head>
 <!-- <SuperDebug data={$form} /> -->
 <!---->
+
 <div class="max-w-dvw background flex min-h-dvh flex-wrap content-center justify-center px-2">
 	<div
-		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border border-gray-300 bg-base-100 p-3 pt-4 shadow-lg shadow-neutral lg:p-10"
+		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary/70 bg-base-100/80 p-3 pt-4 backdrop-blur-2xl lg:p-10"
 	>
 		<div>
 			<div class="view-header text-7xl font-black text-primary">

@@ -37,8 +37,9 @@
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.2.7",
 		"prettier-plugin-tailwindcss": "^0.6.8",
-		"svelte": "5.1.4",
+		"svelte": "5.1.9",
 		"svelte-check": "^4.0.5",
+		"svelte-motion": "^0.12.2",
 		"sveltekit-superforms": "^2.20.0",
 		"tailwindcss": "^3.4.14",
 		"tsx": "^4.19.2",
@@ -55,8 +56,10 @@
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@sveltejs/adapter-cloudflare": "^4.7.4",
 		"@sveltejs/enhanced-img": "^0.3.10",
+		"clsx": "^2.1.1",
 		"papaparse": "^5.4.1",
 		"postgres": "^3.4.5",
-		"sortablejs": "^1.15.3"
+		"sortablejs": "^1.15.3",
+		"tailwind-merge": "^2.5.4"
 	}
 }
