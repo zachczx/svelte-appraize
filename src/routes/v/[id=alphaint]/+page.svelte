@@ -99,9 +99,11 @@
 
 <!-- Sidebar -->
 <div
-	class="view-outline hidden grid-cols-[auto_1fr] border-r-2 border-gray-200 bg-base-200 text-2xl text-base-content/70 lg:grid"
+	class="view-outline hidden grid-cols-[auto_1fr] border-r-2 border-base-300 bg-base-200 text-2xl text-base-content/70 lg:grid"
 >
-	<div class="grid w-16 content-start justify-items-center gap-4 border-r-2 border-gray-200 py-4 text-base-content/70">
+	<div
+		class="grid w-16 content-start justify-items-center gap-4 border-r-2 border-base-300 bg-base-300 py-4 text-base-content/70"
+	>
 		<a
 			href="/"
 			aria-label="Home"
@@ -172,7 +174,7 @@
 			>
 		</a>
 	</div>
-	<div class="view-home-sidebar grid content-start gap-y-12 px-4 py-4">
+	<div class="view-home-sidebar grid content-start gap-y-12 px-8 py-4">
 		<div class="view-summary-sidebar grid gap-y-4">
 			<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
 				<svg
@@ -192,7 +194,7 @@
 				<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
 			{:then newCounts}
 				<div class="grid w-full grid-cols-2 gap-2 lg:grid-cols-4">
-					<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+					<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-100 shadow">
 						<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral/70 px-2 text-start text-base-100">
 							A
 						</div>
@@ -201,7 +203,7 @@
 						</div>
 						<div class="animate-scale text-lg font-medium text-base-content/50">{newCounts.percentageA}%</div>
 					</div>
-					<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+					<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-100 shadow">
 						<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral/70 px-2 text-start text-base-100">
 							B
 						</div>
@@ -210,7 +212,7 @@
 						</div>
 						<div class="animate-scale text-lg font-medium text-base-content/50">{newCounts.percentageB}%</div>
 					</div>
-					<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+					<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-100 shadow">
 						<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral/70 px-2 text-start text-base-100">
 							C
 						</div>
@@ -219,7 +221,7 @@
 						</div>
 						<div class="animate-scale text-lg font-medium text-base-content/50">{newCounts.percentageC}%</div>
 					</div>
-					<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-200 shadow">
+					<div class="grid place-items-center rounded-lg border border-gray-400 bg-base-100 shadow">
 						<div class="justify-self-start rounded-br-lg rounded-tl-lg bg-neutral/70 px-2 text-start text-base-100">
 							D
 						</div>

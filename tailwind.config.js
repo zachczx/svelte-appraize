@@ -60,7 +60,7 @@ export default {
 				},
 				scale: {
 					'0%': { scale: '100%', color: 'currentColor' },
-					'50%': { scale: '120%', color: '#610C9F', fontWeight: '900' },
+					'50%': { scale: '120%', color: '#A94A4A', fontWeight: '900' },
 					'100%': { scale: '100%', color: 'currentColor' },
 				},
 			},
