@@ -1,7 +1,6 @@
 {
 	"name": "svelte-appraize",
 	"version": "0.0.1",
-	"packageManager": "pnpm@10.2.0",
 	"engines": {
 		"node": "22"
 	},
