@@ -1,4 +1,7 @@
+import daisyui from 'daisyui';
+import themes from 'daisyui/src/theming/themes';
 /** @type {import('tailwindcss').Config} */
+
 export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
@@ -69,25 +72,24 @@ export default {
 			animation: { scale: 'scale 1s ease-out' },
 		},
 	},
-	plugins: [require('daisyui')],
+	plugins: [daisyui],
 	daisyui: {
 		themes: [
 			{
 				light: {
-					...require('daisyui/src/theming/themes')['light'],
+					...themes.light,
 
-					//primary in theme is #491eff
-					// secondary: '#DA0C81',
-					// info: '#940B92',
-					// accent: '#E95793',
-					// //'base-200': '#F8F4EC',
-					//primary: '#610C9F',
-					primary: '#640D6B',
+					//https://colorhunt.co/palette/a94a4af4d793fff6da889e73
+					primary: '#A94A4A',
 					secondary: '#B51B75',
 					'primary-content': 'white',
 					'secondary-content': 'white',
 					warning: '#E65C19',
-					info: '#F8D082',
+					info: '#889E73',
+					'base-200': '#FFF6DA',
+					'base-300': '#F4D793',
+					error: '#DC2626',
+					'error-content': '#fdfdfd',
 				},
 			},
 		],

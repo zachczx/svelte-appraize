@@ -9,16 +9,14 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 	<div
-		class="col-span-1 flex items-center border-b-2 border-gray-200 bg-gray-50 py-4 text-2xl lg:border-r-2 lg:pe-4 lg:ps-5"
+		class="col-span-1 flex items-center border-b-2 border-gray-200 bg-base-200 py-4 text-2xl lg:border-r-2 lg:pe-4 lg:ps-5"
 	>
 		<SmallScreenHamburger />
 		<h1 class="view-header text-6xl font-black text-primary">
 			<a href="/">Appraize</a>
 		</h1>
 	</div>
-	<div
-		class="col-span-1 hidden items-center border-b-2 border-b-gray-200 bg-gray-50 px-2 pe-10 md:flex lg:col-span-3 lg:px-8"
-	>
+	<div class="col-span-1 hidden items-center border-b-2 border-b-gray-200 px-2 pe-10 md:flex lg:col-span-3 lg:px-8">
 		<form method="POST" id="view-top-navbar-input" action="?/redirect" class="flex w-full justify-center" use:enhance>
 			<label
 				class="view-top-navbar-input input input-bordered input-primary relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
@@ -54,14 +52,6 @@
 		</form>
 	</div>
 	<slot />
-</div>
-<div class="grid grid-cols-4">
-	<div
-		class="col-span-1 hidden border-b-2 border-r-2 border-gray-200 bg-gray-50 py-4 pe-4 ps-5 text-2xl lg:block"
-	></div>
-	<div class="view-footer col-span-4 flex w-full items-center justify-center pb-4 pt-8 lg:col-span-3 lg:pt-12">
-		Copyright © 2024 Zixian Chen. All rights reserved.
-	</div>
 </div>
 
 <style>

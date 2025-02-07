@@ -131,9 +131,9 @@
 					>
 						<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
 							<div
-								class="flex h-full grow items-center rounded-t-lg bg-neutral p-2 lg:grow-0 lg:rounded-l-lg lg:rounded-r-none lg:rounded-tl-lg"
+								class="flex h-full grow items-center rounded-t-lg bg-base-300 p-2 lg:grow-0 lg:rounded-l-lg lg:rounded-r-none lg:rounded-tl-lg"
 							>
-								<GripVertical class="stroke-base-100" />
+								<GripVertical class="stroke-base-content" />
 							</div>
 						</div>
 						<div class="sortable-handle col-span-12 flex items-center justify-center lg:col-span-1">
@@ -265,7 +265,7 @@
 								</div>
 								<div class="col-span-6 bg-base-300 md:col-span-6">
 									<button
-										class="btn join-item btn-neutral text-lg"
+										class="btn btn-primary join-item text-lg"
 										form="edit-form-{person.uuid}"
 										onclick={() => {
 											edit[person.uuid] = false;
@@ -323,13 +323,13 @@
 						<div class="col-span-12 flex justify-end p-2 lg:col-span-2">
 							<div class="join self-center">
 								<button
-									class="btn join-item text-lg {edit ? 'btn-neutral' : 'btn-outline btn-neutral'}"
+									class="btn join-item btn-sm text-lg {edit ? 'btn-outline btn-primary' : 'btn-outline btn-primary'}"
 									onclick={() => {
 										edit[person.uuid] = !edit[person.uuid];
 									}}
-									><TablerEdit class="inline h-[1.5em] w-[1.5em]" />
+									><TablerEdit class="inline h-[1.3em] w-[1.3em]" />
 								</button>
-								<div class="btn dropdown dropdown-end btn-outline join-item btn-neutral">
+								<div class="btn dropdown dropdown-end btn-outline btn-primary join-item btn-sm">
 									<div tabindex="0" role="button" class="m-0 flex h-full items-center text-xl">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -380,23 +380,25 @@
 {#if !nothingFound}
 	<form method="POST" action="?/save" class="ignore-from-sorting mx-10 mt-10 flex justify-center lg:justify-end">
 		<input type="hidden" name="order" bind:value={order} />
-		<button class="btn btn-primary btn-lg w-full text-xl font-bold lg:w-1/3 lg:min-w-24 lg:max-w-96"
+		<button
+			class="btn btn-primary btn-lg flex w-full items-center gap-4 text-xl font-bold text-primary-content lg:w-1/3 lg:min-w-24 lg:max-w-96"
 			><svg
 				xmlns="http://www.w3.org/2000/svg"
-				width="1.5em"
-				height="1.5em"
+				width="1.3em"
+				height="1.3em"
 				viewBox="0 0 24 24"
 				fill="none"
+				stroke="currentColor"
 				stroke-width="2"
 				stroke-linecap="round"
 				stroke-linejoin="round"
-				class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle me-1 stroke-base-100"
+				class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle"
 			>
 				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 				<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
 				<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
 				<path d="M14 4l0 4l-6 0l0 -4" />
-			</svg><span class="hidden text-2xl 2xl:contents">Save</span></button
+			</svg><span class="hidden text-2xl 2xl:contents">Save Sequence</span></button
 		>
 	</form>
 {/if}

@@ -1,20 +1,16 @@
 import { db } from '$lib/drizzle/db';
 import { records } from '$lib/drizzle/schema';
 import { desc, asc, eq, and, or, ilike } from 'drizzle-orm';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
-
 //superforms
 import { z } from 'zod';
-
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-
 // R2 Bucket imports
 import { PUBLIC_S3_BUCKET_NAME } from '$env/static/public'; //it's a public key, so prefix PUBLIC_ requires fetching from public, not private
 import { R2_S3 } from '$lib/R2_S3';
 import { Upload } from '@aws-sdk/lib-storage';
-
 //For Buffer/Handling of file
 import * as fs from 'fs';
 import Papa from 'papaparse';
@@ -26,7 +22,7 @@ const regexRoute = /^[a-zA-Z0-9-]*$/;
  * @param time integer in milliseconds
  * @returns
  */
-let delay = (time) => {
+let delay = (time: number) => {
 	return new Promise((res) => {
 		setTimeout(res, time);
 	});
@@ -48,10 +44,11 @@ const slugifyString = (str: string) => {
 };
 //todo - bug: adding > save > reload > newest entry would disappear > comes back after a refresh. Only in production
 export const load = (async ({ params, url }) => {
+	console.log('Load triggered');
 	const sessionId = String(params.id);
+	console.log('Session ID: ', sessionId);
 	const filterParam = url.searchParams.get('filter');
 	const filterGradeParam = url.searchParams.get('grade');
-	//console.log(`Found a param, ${filterParam}`);
 	let result;
 
 	if (!filterParam || !filterGradeParam) {
@@ -85,6 +82,7 @@ export const load = (async ({ params, url }) => {
 	}
 
 	let sequence = getInitSequence(result);
+	console.log('Result: ', result.length);
 
 	return {
 		id: sessionId,
@@ -96,19 +94,18 @@ export const actions = {
 	insert: async function ({ request, params }) {
 		const sessionId = String(params.id);
 		let currentLargestSequence = await db
-			.select()
+			.select({
+				sequence: records.sequence,
+			})
 			.from(records)
 			.where(eq(records.session, sessionId))
 			.orderBy(desc(records.sequence))
 			.limit(1);
-		let sequenceToInsert;
-		console.log(typeof currentLargestSequence);
-		if (currentLargestSequence == 0) {
-			sequenceToInsert = 1;
-			console.log('if', sequenceToInsert);
-		} else {
-			sequenceToInsert = currentLargestSequence[0].sequence + 1;
-			console.log('else', sequenceToInsert);
+		let sequenceToInsert = 1;
+		if (currentLargestSequence.length > 0) {
+			if (currentLargestSequence[0].sequence) {
+				sequenceToInsert = currentLargestSequence[0].sequence + 1;
+			}
 		}
 
 		const submittedData = await request.formData();
@@ -134,8 +131,6 @@ export const actions = {
 			sequence: sequenceToInsert,
 			remarks: remarks,
 		});
-		console.log(res);
-		return { formInsertSuccess: true };
 	},
 
 	edit: async ({ request }) => {
@@ -382,7 +377,7 @@ export const actions = {
 		await send.done();
 		return { formUploadSuccess: true };
 	},
-};
+} satisfies Actions;
 
 function getInitSequence(result) {
 	let sequence = '';

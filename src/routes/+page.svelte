@@ -27,7 +27,7 @@
 <!-- <SuperDebug data={$form} /> -->
 <!---->
 
-<div class="max-w-dvw background flex min-h-dvh flex-wrap content-center justify-center px-2">
+<div class="max-w-dvw flex min-h-dvh flex-wrap content-center justify-center bg-primary px-2">
 	<div
 		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary/70 bg-base-100/80 p-3 pt-4 backdrop-blur-2xl lg:p-10"
 	>
@@ -124,38 +124,6 @@
 	}
 	.view-outline {
 		view-transition-name: view-outline;
-	}
-	.background {
-		@media screen and (min-width: 768px) {
-			/* https://colorhunt.co/palette/610c9f940b92da0c81e95793 */
-			background-image: linear-gradient(
-				to top right,
-				#f5f5f5,
-				#e2d6f1,
-				#d9b5e5,
-				#d891d2,
-				#da68b5,
-				#d154a7,
-				#c83d9a,
-				#be1f8c,
-				#a72991,
-				#903094,
-				#773594,
-				#5d3891
-			);
-		}
-
-		background-image: linear-gradient(
-			to top right,
-			#da68b5,
-			#d154a7,
-			#c83d9a,
-			#be1f8c,
-			#a72991,
-			#903094,
-			#773594,
-			#5d3891
-		);
 	}
 
 	.dot {
