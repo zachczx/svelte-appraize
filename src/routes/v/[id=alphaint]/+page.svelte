@@ -593,9 +593,59 @@
 		<ol class="view-content space-y-4">
 			<div class="view-ranking-title px-4 pb-4 md:px-10">
 				<h1>Ranking: {data.id}</h1>
-				<div class="flex pt-8">
+				<div class="flex gap-4 pt-8">
+					<form
+						method="POST"
+						action="?/filter"
+						id="filter-input"
+						bind:this={filterForm}
+						class="join flex rounded-lg"
+						use:enhance
+					>
+						<label
+							class="input input-sm join-item input-bordered input-primary flex max-w-44 items-center border-gray-400 lg:max-w-full"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="1em"
+								height="1em"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="icon icon-tabler icons-tabler-outline icon-tabler-filter me-2 inline text-base-content/60"
+							>
+								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+								<path
+									d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
+								/>
+							</svg>
+							<input type="text" bind:value={filterInput} name="filter" class="lg:grow" placeholder="Keywords" />
+						</label>
+						<select
+							id="filter-grade"
+							name="grade"
+							class="join-item select select-bordered select-primary select-sm border-gray-400"
+							bind:value={filterGradeValue}
+							onchange={() => {
+								filterForm.requestSubmit();
+							}}
+						>
+							<option disabled selected>Grade</option>
+							<option value="A">A</option>
+							<option value="B">B</option>
+							<option value="C+">C+</option>
+							<option value="C">C</option>
+							<option value="C-">C-</option>
+							<option value="D">D</option>
+							<option value="All">All</option>
+						</select>
+						<button class="btn btn-primary join-item btn-sm font-bold text-base-100">Filter</button>
+					</form>
 					<button
-						class="inline-block self-center text-lg"
+						class="inline-block self-center"
 						onclick={() => {
 							filterInput = '';
 							filterGradeValue = 'Grade';
@@ -618,62 +668,6 @@
 							<path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
 						</svg><span class="hidden lg:inline">Reset</span>
 					</button>
-					<form
-						method="POST"
-						action="?/filter"
-						id="filter-input"
-						bind:this={filterForm}
-						class="join flex justify-start rounded-lg lg:ms-4"
-						use:enhance
-					>
-						<label
-							class="border-1 input join-item input-bordered input-primary flex max-w-44 items-center border-gray-400 text-lg lg:max-w-full"
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-filter me-2 inline"
-							>
-								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-								<path
-									d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
-								/>
-							</svg>
-							<input
-								type="text"
-								bind:value={filterInput}
-								name="filter"
-								class="text-lg lg:grow"
-								placeholder="Keywords"
-							/>
-						</label>
-						<select
-							id="filter-grade"
-							name="grade"
-							class="join-item select select-bordered select-primary border-gray-400 text-lg"
-							bind:value={filterGradeValue}
-							onchange={() => {
-								filterForm.requestSubmit();
-							}}
-						>
-							<option disabled selected>Grade</option>
-							<option value="A">A</option>
-							<option value="B">B</option>
-							<option value="C+">C+</option>
-							<option value="C">C</option>
-							<option value="C-">C-</option>
-							<option value="D">D</option>
-							<option value="All">All</option>
-						</select>
-						<button class="btn btn-primary join-item text-xl font-bold text-base-100">Filter</button>
-					</form>
 				</div>
 			</div>
 			{#key data.streamed.result}
@@ -681,19 +675,20 @@
 			{/key}
 		</ol>
 	</div>
-	<div class="mt-2 pt-60">
-		<div
-			class="view-summary-sidebar mx-4 grid content-start justify-items-center gap-y-4 rounded-3xl border-2 border-base-300 bg-base-200 px-8 pt-8"
-		>
+
+	<div class="mx-8 pt-[11.9rem] xl:me-8 xl:ms-0">
+		<div class="view-summary-sidebar grid content-start justify-items-center gap-y-4 rounded-2xl bg-base-200 px-8 pt-8">
 			{#await newCounts}
-				<span class="loading loading-spinner loading-sm text-primary"></span>
+				<span class="loading loading-spinner text-primary"></span>
 			{:then newCounts}
 				<h3 class="justify-self-start text-3xl font-extrabold text-base-content/85">Grade Distribution</h3>
 				{#await newCounts}
 					<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
 				{:then newCounts}
-					<div class="flex gap-2 pt-8">
-						<div class="animate-scale p-4 text-7xl font-black text-base-content/80">
+					<div class="grid grid-cols-3 gap-2 pt-8 min-[1921px]:grid-cols-5">
+						<div
+							class="row-span-2 animate-scale content-center p-4 text-5xl font-black text-base-content/80 min-[1921px]:row-span-1"
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="1em"
@@ -713,27 +708,27 @@
 							>{newCounts.total}
 						</div>
 
-						<div class="grid content-center justify-items-center rounded-lg bg-[#FED049] px-8 py-2">
+						<div class="grid content-center justify-items-center rounded-xl bg-[#FED049] px-4 py-2">
 							<div class="text-lg font-medium">A</div>
-							<div class="flex animate-scale items-center justify-center text-5xl font-black text-base-content/80">
+							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
 								{newCounts.a}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center rounded-lg bg-[#808836]/60 px-8 py-2">
+						<div class="grid content-center justify-items-center rounded-xl bg-[#808836]/60 px-4 py-2">
 							<div class="text-lg font-medium">B</div>
-							<div class="flex animate-scale items-center justify-center text-5xl font-black text-base-content/80">
+							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
 								{newCounts.b}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center rounded-lg bg-[#FF9A00] px-8 py-2">
+						<div class="grid content-center justify-items-center rounded-xl bg-[#FF9A00] px-4 py-2">
 							<div class="text-lg font-medium">C</div>
-							<div class="flex animate-scale items-center justify-center text-5xl font-black text-base-content/80">
+							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
 								{newCounts.c}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center rounded-lg bg-[#D10363]/60 px-8 py-2">
+						<div class="grid content-center justify-items-center rounded-xl bg-[#D10363]/60 px-4 py-2">
 							<div class="text-lg font-medium">D</div>
-							<div class="flex animate-scale items-center justify-center text-5xl font-black text-base-content/80">
+							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
 								{newCounts.d}
 							</div>
 						</div>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Sortable from 'sortablejs';
 	import { onMount, tick } from 'svelte';
 	import { enhance } from '$app/forms';
@@ -93,9 +93,12 @@
 			},
 		});
 	});
+
+	const isVisible: boolean[] = $state([]);
+	$inspect(isVisible);
 </script>
 
-{#if !nothingFound}
+<!-- {#if !nothingFound}
 	<div class="mx-2 hidden grid-cols-12 rounded-lg pt-10 text-xl font-extrabold text-gray-500 md:mx-10 lg:grid">
 		<div class="col-span-1"></div>
 		<div class="col-span-1">Grade</div>
@@ -103,7 +106,7 @@
 		<div class="col-span-4">Dept</div>
 		<div class="col-span-2"></div>
 	</div>
-{/if}
+{/if} -->
 <div id="table" bind:this={sortableEl} class="relative grid space-y-4 px-2 md:px-10">
 	<!-- {#if nothingFound}
 		<div class="space-y-4 p-2 lg:px-10 lg:py-28">
@@ -123,7 +126,7 @@
 					<h2 class="text-center lg:text-4xl">There's nothing here!</h2>
 				</div>
 			{:else}
-				{#each streamedResult as person}
+				{#each streamedResult as person, i}
 					<div
 						class="grid grid-cols-12 rounded-lg border border-gray-400 transition duration-700 ease-out hover:border-primary"
 						id={person.uuid}
@@ -164,7 +167,7 @@
 
 						{#if person.uuid && edit[person.uuid] === true}
 							<div
-								class="col-span-8 grid grid-cols-8 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2"
+								class="col-span-9 grid grid-cols-8 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2"
 								id="div__{person.uuid}"
 								in:slide={{ duration: 500, axis: 'y', easing: circOut }}
 								out:slide={{ duration: 10, axis: 'y', easing: circOut }}
@@ -176,7 +179,7 @@
 								</div>
 								<div class="col-span-4">
 									<label
-										class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
+										class="input input-bordered flex w-full items-center gap-2 border-gray-400 text-lg"
 										for="edit-person-name-{person.uuid}"
 										><svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -276,11 +279,43 @@
 								</div>
 							</div>
 						{:else}
-							<div class="col-span-12 self-center lg:col-span-8" id="div__{person.uuid}">
+							<div class="col-span-12 self-center lg:col-span-9" id="div__{person.uuid}">
 								<div class="grid grid-cols-8 items-center px-2 py-2">
-									<div class="col-span-4 text-2xl font-bold">{person.name}</div>
-									<div class="col-span-4 text-2xl text-gray-500">{person.dept}</div>
-									{#if person.remarks}
+									<div class="col-span-4 flex items-center gap-4 text-lg font-bold">
+										{person.name}
+										{#if person.remarks}
+											<button
+												aria-label="remarks"
+												onclick={() => {
+													console.log(i);
+													if (isVisible[i]) {
+														isVisible[i] = !isVisible[i];
+														console.log(isVisible[i]);
+														return;
+													}
+													isVisible[i] = true;
+													console.log(isVisible[i]);
+												}}
+												><svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="1em"
+													height="1em"
+													class="tabler:message-circle-exclamation"
+													viewBox="0 0 24 24"
+													><path
+														fill="none"
+														stroke="currentColor"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M15.02 19.52c-2.34.736-5 .606-7.32-.52L3 20l1.3-3.9C1.976 12.663 2.874 8.228 6.4 5.726c3.526-2.501 8.59-2.296 11.845.48c1.96 1.671 2.898 3.963 2.755 6.227M19 16v3m0 3v.01"
+													/></svg
+												>
+											</button>
+										{/if}
+									</div>
+									<div class="col-span-4 text-lg text-gray-500">{person.dept}</div>
+									{#if person.remarks && isVisible[i]}
 										<div class="col-span-8 mt-4 rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-500">
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -320,55 +355,75 @@
                     /
                     ///////////////////////////////////////// 
                     -->
-						<div class="col-span-12 flex justify-end p-2 lg:col-span-2">
-							<div class="join self-center">
-								<button
-									class="btn join-item btn-sm text-lg {edit ? 'btn-outline btn-primary' : 'btn-outline btn-primary'}"
-									onclick={() => {
-										edit[person.uuid] = !edit[person.uuid];
-									}}
-									><TablerEdit class="inline h-[1.3em] w-[1.3em]" />
-								</button>
-								<div class="btn dropdown dropdown-end btn-outline btn-primary join-item btn-sm">
-									<div tabindex="0" role="button" class="m-0 flex h-full items-center text-xl">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="1.2em"
-											height="1.2em"
-											viewBox="0 0 24 24"
+						<div class="col-span-12 flex items-center justify-end p-2 lg:col-span-1">
+							<div class="dropdown dropdown-end">
+								<div tabindex="0" role="button" class="hover:text-primary">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="1em"
+										height="1em"
+										class="tabler:dots"
+										viewBox="0 0 24 24"
+										><path
 											fill="none"
 											stroke="currentColor"
-											stroke-width="2"
 											stroke-linecap="round"
 											stroke-linejoin="round"
-											class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"
-											><path stroke="none" d="M0 0h24v24H0z" fill="none" />
-											<path d="M6 9l6 6l6 -6" />
-										</svg>
-									</div>
-									<ul tabindex="-1" class="menu dropdown-content z-[1] m-0 w-52 rounded-lg bg-base-100 p-0 shadow">
-										<li class="">
-											<form
-												method="POST"
-												class="group m-0 w-full justify-center self-center rounded-lg border-2 border-error stroke-error p-0 hover:border-red-700 hover:bg-error hover:stroke-base-100"
-												action="?/delete"
-												use:enhance
-											>
-												<input type="hidden" name="delete-target" value={person.id} />
-												<button
-													class="px-1 py-2 text-lg font-bold text-error group-hover:text-base-100"
-													onclick={() => {
-														let elDelete = document.getElementById(person.uuid);
-														console.log(elDelete);
-														let cssTextFieldClasses = ['bg-base-300', 'translate-x-10', 'opacity-0'];
-														elDelete?.classList.add(...cssTextFieldClasses);
-													}}
-													><Trash class="mb-1 inline h-[1.5em] w-[1.5em]" /> Delete this entry
-												</button>
-											</form>
-										</li>
-									</ul>
+											stroke-width="2"
+											d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"
+										/></svg
+									>
 								</div>
+								<ul tabindex="-1" class="menu dropdown-content z-[1] m-0 w-52 rounded-lg bg-base-100 p-0 shadow-lg">
+									<li class="">
+										<button
+											class="flex items-center gap-2"
+											onclick={() => {
+												edit[person.uuid] = !edit[person.uuid];
+											}}
+											><svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="1.3em"
+												height="1.3em"
+												class="tabler:edit"
+												viewBox="0 0 24 24"
+												><g
+													fill="none"
+													stroke="currentColor"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													><path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" /><path
+														d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"
+													/></g
+												></svg
+											>
+											Edit
+										</button>
+									</li>
+									<li class="">
+										<form method="POST" class="" action="?/delete" use:enhance>
+											<input type="hidden" name="delete-target" value={person.id} />
+											<button class="flex items-center gap-2"
+												><svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="1.3em"
+													height="1.3em"
+													class="tabler:trash"
+													viewBox="0 0 24 24"
+													><path
+														fill="none"
+														stroke="currentColor"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M4 7h16m-10 4v6m4-6v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"
+													/></svg
+												>Delete
+											</button>
+										</form>
+									</li>
+								</ul>
 							</div>
 						</div>
 					</div>
@@ -380,26 +435,7 @@
 {#if !nothingFound}
 	<form method="POST" action="?/save" class="ignore-from-sorting mx-10 mt-10 flex justify-center lg:justify-end">
 		<input type="hidden" name="order" bind:value={order} />
-		<button
-			class="btn btn-primary btn-lg flex w-full items-center gap-4 text-xl font-bold text-primary-content lg:w-1/3 lg:min-w-24 lg:max-w-96"
-			><svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="1.3em"
-				height="1.3em"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle"
-			>
-				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-				<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-				<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-				<path d="M14 4l0 4l-6 0l0 -4" />
-			</svg><span class="hidden text-2xl 2xl:contents">Save Sequence</span></button
-		>
+		<button class="btn btn-success flex items-center gap-2 font-bold lg:min-w-24">Save Changes</button>
 	</form>
 {/if}
 
