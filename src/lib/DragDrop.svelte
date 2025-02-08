@@ -95,7 +95,6 @@
 	});
 
 	const isVisible: boolean[] = $state([]);
-	$inspect(isVisible);
 </script>
 
 <!-- {#if !nothingFound}
