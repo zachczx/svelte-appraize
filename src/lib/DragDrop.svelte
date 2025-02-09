@@ -315,7 +315,10 @@
 									</div>
 									<div class="col-span-4 text-lg text-gray-500">{person.dept}</div>
 									{#if person.remarks && isVisible[i]}
-										<div class="col-span-8 mt-4 rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-500">
+										<div
+											class="col-span-8 mt-4 rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-500"
+											transition:slide={{ duration: 300, easing: circOut }}
+										>
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												width="1.5em"
@@ -398,6 +401,25 @@
 												></svg
 											>
 											Edit
+										</button>
+									</li>
+									<li>
+										<button class="flex items-center gap-2">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="1.3em"
+												height="1.3em"
+												class="tabler:message-circle-plus"
+												viewBox="0 0 24 24"
+												><path
+													fill="none"
+													stroke="currentColor"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M12.007 19.98A9.9 9.9 0 0 1 7.7 19L3 20l1.3-3.9C1.976 12.663 2.874 8.228 6.4 5.726c3.526-2.501 8.59-2.296 11.845.48c1.992 1.7 2.93 4.04 2.747 6.34M16 19h6m-3-3v6"
+												/></svg
+											>Add Comment
 										</button>
 									</li>
 									<li class="">

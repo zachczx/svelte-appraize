@@ -34,6 +34,7 @@
 			series: [figures.percentageA, figures.percentageB, figures.percentageC, figures.percentageD],
 			float_precision: 2,
 			labels: ['A', 'B', 'C', 'D'],
+			legend: { show: false },
 			colors: ['#FED049', '#808836', '#FF9A00', '#D10363'],
 			plotOptions: {
 				pie: {

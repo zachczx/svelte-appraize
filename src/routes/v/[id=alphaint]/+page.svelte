@@ -14,7 +14,7 @@
 	let { data, form } = $props();
 
 	let formSaveSession = $state();
-	let formAutoSaveSession = $state();
+	let formAutoSaveSession: HTMLFormElement = $state();
 	let formSaveSuccessLoading = $state(false);
 	let autoSave = $state(true);
 	let nameData = $state();
@@ -27,7 +27,7 @@
 	/**
 	 * @type {HTMLFormElement} filterform - form element for filter bar
 	 */
-	let filterForm;
+	let filterForm: HTMLFormElement;
 	let filterInput = $state();
 	let filterGradeValue = $state('Grade');
 
@@ -51,7 +51,6 @@
 			percentageB: 0,
 			percentageC: 0,
 			percentageD: 0,
-			percentageAA: 0,
 		};
 		let tempResult = await data.streamed.result;
 
@@ -81,26 +80,28 @@
 			newCounts.percentageC = Math.round((newCounts.cTotal / newCounts.total) * 100);
 			newCounts.percentageD = Math.round((newCounts.d / newCounts.total) * 100);
 		}
-		console.log(newCounts.percentageAA);
 		return newCounts;
 	});
 
 	$effect(() => {
 		setInterval(() => {
-			if (autoSave) {
-				formAutoSaveSession.requestSubmit();
-				console.log('Auto saved successfully');
-				formSaveSuccessLoading = true;
-				setTimeout(() => {
-					formSaveSuccessLoading = false;
-				}, 1500);
+			if (formAutoSaveSession) {
+				if (autoSave) {
+					formAutoSaveSession.requestSubmit();
+					console.log('Auto saved successfully');
+					formSaveSuccessLoading = true;
+					setTimeout(() => {
+						formSaveSuccessLoading = false;
+					}, 1500);
+				}
 			}
 		}, 180000);
 	});
 
 	let deleteSessionModal: HTMLDialogElement;
+	let uploadModal: HTMLDialogElement;
 
-	let searchInput = $state();
+	let searchInput: string = $state('');
 	let submittedSpinner = $state(false);
 </script>
 
@@ -200,9 +201,20 @@
 					use:enhance
 				>
 					<label
-						class="view-top-navbar-input input input-bordered input-primary relative flex w-full max-w-[30rem] self-center rounded-full border-gray-400 text-lg"
+						class="view-top-navbar-input input input-bordered input-primary relative flex w-full max-w-[30rem] items-center self-center rounded-full border-gray-400"
 						for="session"
 					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1.3em"
+							height="1.3em"
+							class="tabler:player-track-next-filled me-4 text-base-content/30"
+							viewBox="0 0 24 24"
+							><path
+								fill="currentColor"
+								d="M2 5v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7C3.012 3.682 2 4.141 2 5m11 0v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7C14.012 3.682 13 4.141 13 5"
+							/></svg
+						>
 						<input
 							type="text"
 							name="session"
@@ -214,7 +226,7 @@
 							}}
 							required
 						/>
-						<button class="view-input-button group absolute -top-0 right-1">
+						<button class="view-input-button -me-3 ms-2">
 							{#if submittedSpinner && searchInput.length > 0}
 								<span class="loading loading-spinner"></span>
 							{:else}
@@ -253,8 +265,8 @@
 					</h3>
 
 					<form method="POST" id="insert-form" action="?/insert" class="grid gap-y-1" use:enhance>
-						{#if form?.insertNameMissing}<span class="text-lg text-error">Please enter a name:</span>{/if}
-						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
+						{#if form?.insertNameMissing}<span class="text-error">Please enter a name:</span>{/if}
+						<label class="input input-bordered input-primary flex w-full items-center border border-gray-400">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="1em"
@@ -277,7 +289,7 @@
 								type="text"
 								name="name"
 								bind:value={nameData}
-								class="shrink text-lg"
+								class="shrink"
 								placeholder="Name"
 								onkeydown={(evt) => {
 									editFormSubmitKeyboardShortcut(evt, 'insert-form');
@@ -285,14 +297,14 @@
 								required
 							/>
 						</label>
-						{#if form?.insertDeptMissing}<span class="text-lg text-error">Please enter a dept:</span>{/if}
-						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400 text-lg">
+						{#if form?.insertDeptMissing}<span class="text-error">Please enter a dept:</span>{/if}
+						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400">
 							<Home class="me-2 flex-none stroke-base-content/70" />
 							<input
 								type="text"
 								name="dept"
 								bind:value={deptData}
-								class="grow text-lg"
+								class="grow"
 								placeholder="Dept"
 								onkeydown={(evt) => {
 									editFormSubmitKeyboardShortcut(evt, 'insert-form');
@@ -301,10 +313,10 @@
 							/>
 						</label>
 						{#if form?.insertGradeMissing}
-							<span class="text-lg text-error">Please select a grade:</span>{/if}
-						<div class="flex flex-wrap items-center justify-start text-lg">
+							<span class="text-error">Please select a grade:</span>{/if}
+						<div class="flex flex-wrap items-center justify-start">
 							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium text-base-content/70">A</span>
+								<span class="label-text font-medium text-base-content/70">A</span>
 								<input
 									type="radio"
 									name="grade"
@@ -314,7 +326,7 @@
 								/>
 							</label>
 							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium text-base-content/70">B</span>
+								<span class="label-text font-medium text-base-content/70">B</span>
 								<input
 									type="radio"
 									name="grade"
@@ -324,7 +336,7 @@
 								/>
 							</label>
 							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium text-base-content/70">C+</span>
+								<span class="label-text font-medium text-base-content/70">C+</span>
 								<input
 									type="radio"
 									name="grade"
@@ -334,7 +346,7 @@
 								/>
 							</label>
 							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium text-base-content/70">C</span>
+								<span class="label-text font-medium text-base-content/70">C</span>
 								<input
 									type="radio"
 									name="grade"
@@ -344,7 +356,7 @@
 								/>
 							</label>
 							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium text-base-content/70">C-</span>
+								<span class="label-text font-medium text-base-content/70">C-</span>
 								<input
 									type="radio"
 									name="grade"
@@ -354,7 +366,7 @@
 								/>
 							</label>
 							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text text-lg font-medium text-base-content/70">D</span>
+								<span class="label-text font-medium text-base-content/70">D</span>
 								<input
 									type="radio"
 									value="D"
@@ -365,7 +377,7 @@
 							</label>
 						</div>
 
-						<label class="input input-bordered input-primary flex w-full items-center border border-gray-400 text-lg">
+						<label class="input input-bordered input-primary flex w-full items-center border border-gray-400">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="1em"
@@ -388,7 +400,7 @@
 								type="text"
 								name="remarks"
 								bind:value={remarksData}
-								class="grow text-lg"
+								class="grow"
 								placeholder="Remarks (Optional)"
 								onkeydown={(evt) => {
 									editFormSubmitKeyboardShortcut(evt, 'insert-form');
@@ -449,33 +461,17 @@
 						>Add Multiple
 					</h3>
 
-					<ol class="">
-						<li class="list-none">
+					<ul class="ms-1 space-y-2 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+						<li>
 							<button
-								class="text-xl"
 								onclick={() => {
-									upload_modal.showModal();
+									uploadModal.showModal();
 								}}
 							>
-								<!-- <svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="icon icon-tabler icons-tabler-outline icon-tabler-upload mb-1 me-2 inline"
-							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-								d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"
-							/><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg
-						> -->
 								Upload from file (.csv)</button
 							>
 						</li>
-					</ol>
+					</ul>
 				</div>
 				<!-- 
 			/////////////////////////////////////////
@@ -511,66 +507,80 @@
 							<path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
 						</svg>Manage Session
 					</h3>
-
-					<div class="join grid grid-cols-2">
-						<form method="POST" action="?/save" bind:this={formSaveSession}>
-							<button
-								class="btn btn-primary join-item w-full font-bold text-base-100"
-								onclick={() => {
-									formSaveSuccessLoading = true;
-									setTimeout(() => {
-										formSaveSuccessLoading = false;
-									}, 1500);
-								}}
-							>
-								{#if formSaveSuccessLoading}
-									<span class="loading loading-spinner text-base-100"></span>
-								{:else}
-									<svg
+					<ul class="ms-1 space-y-2 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+						<li>
+							<form method="POST" action="?/save" bind:this={formSaveSession}>
+								<button
+									class="flex items-center gap-4 hover:text-primary"
+									onclick={() => {
+										formSaveSuccessLoading = true;
+										setTimeout(() => {
+											formSaveSuccessLoading = false;
+										}, 1500);
+									}}
+									><svg
 										xmlns="http://www.w3.org/2000/svg"
-										width="2em"
-										height="2em"
+										width="1.3em"
+										height="1.3em"
 										viewBox="0 0 24 24"
 										fill="none"
+										stroke="currentColor"
 										stroke-width="2"
 										stroke-linecap="round"
 										stroke-linejoin="round"
-										class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle stroke-base-100"
+										class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle"
 									>
 										<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 										<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
 										<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
 										<path d="M14 4l0 4l-6 0l0 -4" />
-									</svg><span class="hidden text-xl 2xl:contents">Save</span>
-								{/if}
+									</svg>Save{#if formSaveSuccessLoading}
+										<span class="loading-primary loading loading-spinner loading-sm ms-2"></span>
+									{/if}
+								</button>
+								<input type="hidden" name="order" bind:value={order} />
+							</form>
+						</li>
+						<li>
+							<button
+								class="flex items-center gap-4 hover:text-error"
+								onclick={() => {
+									deleteSessionModal.showModal();
+								}}
+								><svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1.3em"
+									height="1.3em"
+									class="tabler:trash"
+									viewBox="0 0 24 24"
+									><path
+										fill="none"
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M4 7h16m-10 4v6m4-6v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"
+									/></svg
+								>Delete
 							</button>
+						</li>
+						<li>
+							<div class="flex items-center gap-4">
+								<input
+									type="checkbox"
+									id="auto-save-checkbox"
+									class="checkbox-primary checkbox checkbox-sm"
+									bind:checked={autoSave}
+								/>
+								<label for="auto-save-checkbox" class="font-medium">Auto save every 3 mins</label>
 
-							<input type="hidden" name="order" bind:value={order} />
-						</form>
-						<button
-							class="group btn btn-outline join-item btn-neutral w-full hover:border-red-700 hover:bg-error"
-							onclick={() => {
-								deleteSessionModal.showModal();
-							}}
-						>
-							<Trash class="inline h-[2em] w-[2em] stroke-neutral group-hover:stroke-base-100" /><span
-								class="ms-0 hidden text-xl font-bold 2xl:contents">Delete</span
-							>
-						</button>
-					</div>
-					<div class="flex items-center gap-2">
-						<input type="checkbox" id="auto-save-checkbox" class="checkbox-primary checkbox" bind:checked={autoSave} />
-						<label for="auto-save-checkbox" class="text-lg font-medium">Auto save every 3 mins</label>
-
-						{#if formSaveSuccessLoading}
-							<span class="loading loading-dots loading-sm ms-2 self-end text-primary"></span>
-						{/if}
-
-						<form method="POST" action="?/save" bind:this={formAutoSaveSession} use:enhance>
-							<!-- <button class="hidden"></button> -->
-							<input type="hidden" name="order" bind:value={order} />
-						</form>
-					</div>
+								<form method="POST" action="?/save" bind:this={formAutoSaveSession} use:enhance>
+									<!-- <button class="hidden"></button> -->
+									<input type="hidden" name="order" bind:value={order} />
+								</form>
+							</div>
+						</li>
+					</ul>
 				</div>
 			</div>
 			<div class="view-footer pt-16 text-base">© 2024 Zixian Chen.</div>
@@ -589,7 +599,7 @@
 	/
 	///////////////////////////////////////// 
 	-->
-	<div class="col-span-2 min-h-dvh pb-4 pt-8 lg:pt-8">
+	<div class="col-span-2 min-h-dvh px-12 pb-4 pt-8 lg:pt-8">
 		<ol class="view-content space-y-4">
 			<div class="view-ranking-title px-4 pb-4 md:px-10">
 				<h1>Ranking: {data.id}</h1>
@@ -676,65 +686,88 @@
 		</ol>
 	</div>
 
-	<div class="mx-8 pt-[11.9rem] xl:me-8 xl:ms-0">
-		<div class="view-summary-sidebar grid content-start justify-items-center gap-y-4 rounded-2xl bg-base-200 px-8 pt-8">
+	<div class="grid content-start gap-4 border-l-2 border-l-base-300/30 bg-base-200 px-8">
+		<h3 class="justify-self-start pt-8 text-3xl font-extrabold text-base-content/85">Details</h3>
+		<div class="view-home-info grid content-start justify-items-center gap-y-4">
+			<h3 class="flex items-center gap-4 justify-self-start pt-8 font-extrabold text-base-content/70">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1.3em"
+					height="1.3em"
+					class="tabler:info-circle"
+					viewBox="0 0 24 24"
+					><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+						><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0m9-3h.01" /><path d="M11 12h1v4h1" /></g
+					></svg
+				>Properties
+			</h3>
+			<div class="grid content-start justify-items-center gap-y-4"></div>
+		</div>
+		<div class="view-summary-sidebar grid content-start justify-items-center">
+			<h3 class="flex items-center gap-4 justify-self-start pt-8 font-extrabold text-base-content/70">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1.3em"
+					height="1.3em"
+					class="tabler:chart-pie-3"
+					viewBox="0 0 24 24"
+					><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+						><path d="m12 12l-6.5 5.5M12 3v9h9" /><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0" /></g
+					></svg
+				>Grade Distribution
+			</h3>
 			{#await newCounts}
-				<span class="loading loading-spinner text-primary"></span>
+				<span class="loading loading-spinner my-8 text-primary"></span>
 			{:then newCounts}
-				<h3 class="justify-self-start text-3xl font-extrabold text-base-content/85">Grade Distribution</h3>
-				{#await newCounts}
-					<span class="loading loading-spinner loading-lg block justify-self-center text-primary"></span>
-				{:then newCounts}
-					<div class="grid grid-cols-3 gap-2 pt-8 min-[1921px]:grid-cols-5">
-						<div
-							class="row-span-2 animate-scale content-center p-4 text-5xl font-black text-base-content/80 min-[1921px]:row-span-1"
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-users text-3xl"
-								><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-									d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
-								/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path
-									d="M21 21v-2a4 4 0 0 0 -3 -3.85"
-								/></svg
-							>{newCounts.total}
-						</div>
+				<div class="justify-items-around grid w-full grid-cols-3 gap-2 pt-8 min-[1921px]:grid-cols-5">
+					<div
+						class="row-span-2 animate-scale content-center p-4 text-5xl font-black text-base-content/80 min-[1921px]:row-span-1"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1em"
+							height="1em"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="icon icon-tabler icons-tabler-outline icon-tabler-users text-3xl"
+							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+								d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
+							/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path
+								d="M21 21v-2a4 4 0 0 0 -3 -3.85"
+							/></svg
+						>{newCounts.total}
+					</div>
 
-						<div class="grid content-center justify-items-center rounded-xl bg-[#FED049] px-4 py-2">
-							<div class="text-lg font-medium">A</div>
-							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
-								{newCounts.a}
-							</div>
-						</div>
-						<div class="grid content-center justify-items-center rounded-xl bg-[#808836]/60 px-4 py-2">
-							<div class="text-lg font-medium">B</div>
-							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
-								{newCounts.b}
-							</div>
-						</div>
-						<div class="grid content-center justify-items-center rounded-xl bg-[#FF9A00] px-4 py-2">
-							<div class="text-lg font-medium">C</div>
-							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
-								{newCounts.c}
-							</div>
-						</div>
-						<div class="grid content-center justify-items-center rounded-xl bg-[#D10363]/60 px-4 py-2">
-							<div class="text-lg font-medium">D</div>
-							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
-								{newCounts.d}
-							</div>
+					<div class="grid content-center justify-items-center rounded-xl bg-[#FED049] px-4 py-2">
+						<div class="font-medium">A</div>
+						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+							{newCounts.a}
 						</div>
 					</div>
-					<Chart figures={newCounts} />
-				{/await}
+					<div class="grid content-center justify-items-center rounded-xl bg-[#808836]/60 px-4 py-2">
+						<div class="font-medium">B</div>
+						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+							{newCounts.b}
+						</div>
+					</div>
+					<div class="grid content-center justify-items-center rounded-xl bg-[#FF9A00] px-4 py-2">
+						<div class="font-medium">C</div>
+						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+							{newCounts.c}
+						</div>
+					</div>
+					<div class="grid content-center justify-items-center rounded-xl bg-[#D10363]/60 px-4 py-2">
+						<div class="font-medium">D</div>
+						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+							{newCounts.d}
+						</div>
+					</div>
+				</div>
+				<Chart figures={newCounts} />
 			{/await}
 		</div>
 	</div>
@@ -752,7 +785,7 @@
 /
 ///////////////////////////////////////// 
 -->
-<dialog id="upload_modal" class="view-upload-modal modal overflow-y-scroll">
+<dialog bind:this={uploadModal} class="view-upload-modal modal overflow-y-scroll">
 	<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
 		<h2 class="rounded-t-lg bg-primary p-5 font-bold text-base-100">Add Via CSV File Upload</h2>
 
@@ -1003,6 +1036,9 @@
 	}
 	.view-home-sidebar {
 		view-transition-name: view-home-sidebar;
+	}
+	.view-home-info {
+		view-transition-name: view-home-info;
 	}
 	.view-summary-sidebar {
 		view-transition-name: view-summary-sidebar;
