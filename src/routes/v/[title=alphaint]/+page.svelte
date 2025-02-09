@@ -13,8 +13,7 @@
 
 	let { data, form } = $props();
 
-	let formSaveSession = $state();
-	let formAutoSaveSession: HTMLFormElement = $state();
+	let formAutoSaveSession: HTMLFormElement | undefined = $state();
 	let formSaveSuccessLoading = $state(false);
 	let autoSave = $state(true);
 	let nameData = $state();
@@ -105,8 +104,8 @@
 	let submittedSpinner = $state(false);
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-	<div class="col-span-1 grid grid-cols-[auto_1fr] border-b-2 border-base-300 bg-base-200 text-2xl lg:border-r-2">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10">
+	<div class="col-span-3 grid grid-cols-[auto_1fr] border-b-2 border-base-300 bg-base-200 text-2xl lg:border-r-2">
 		<!-- <SmallScreenHamburger /> -->
 
 		<div class="view-outline hidden bg-base-200 text-2xl text-base-content/70 lg:grid">
@@ -190,24 +189,14 @@
 
 		<!-- Sidebar -->
 
-		<div class="view-home-sidebar grid content-start gap-8 px-8 pb-4 pt-8">
-			<h3 class="text-3xl font-extrabold text-base-content/85">Session Controls</h3>
-			<div class="hidden items-center border-b-2 border-b-base-300/10 md:flex">
-				<form
-					method="POST"
-					id="view-top-navbar-input"
-					action="?/redirect"
-					class="flex w-full justify-center"
-					use:enhance
-				>
-					<label
-						class="view-top-navbar-input input input-bordered input-primary relative flex w-full max-w-[30rem] items-center self-center rounded-full border-gray-400"
-						for="session"
-					>
+		<div class="view-home-sidebar grid content-start px-8 pb-4 pt-8">
+			<div class="hidden items-center border-b-2 border-b-base-300/10 md:grid">
+				<form method="POST" id="view-top-navbar-input" action="?/redirect" class="pb-8" use:enhance>
+					<label class="view-top-navbar-input input input-bordered flex w-full items-center rounded-full" for="session">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							width="1.3em"
-							height="1.3em"
+							width="1em"
+							height="1em"
 							class="tabler:player-track-next-filled me-4 text-base-content/30"
 							viewBox="0 0 24 24"
 							><path
@@ -220,7 +209,8 @@
 							name="session"
 							bind:value={searchInput}
 							placeholder="Jump to another session"
-							class="w-full"
+							class="grow"
+							autocomplete="off"
 							onkeydown={(evt) => {
 								editFormSubmitKeyboardShortcut(evt, 'view-top-navbar-input');
 							}}
@@ -244,248 +234,7 @@
 					</label>
 				</form>
 			</div>
-			<div class="grid content-start gap-y-12">
-				<div class="view-add-sidebar grid gap-4">
-					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1.3em"
-							height="1.3em"
-							class="tabler:playlist-add"
-							viewBox="0 0 24 24"
-							><path
-								fill="none"
-								stroke="currentColor"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M19 8H5m0 4h9m-3 4H5m10 0h6m-3-3v6"
-							/></svg
-						>Add Officer
-					</h3>
-
-					<form method="POST" id="insert-form" action="?/insert" class="grid gap-y-1" use:enhance>
-						{#if form?.insertNameMissing}<span class="text-error">Please enter a name:</span>{/if}
-						<label class="input input-bordered input-primary flex w-full items-center border border-gray-400">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus me-2 flex-none"
-							>
-								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-								<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-								<path d="M16 19h6" />
-								<path d="M19 16v6" />
-								<path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
-							</svg>
-							<input
-								type="text"
-								name="name"
-								bind:value={nameData}
-								class="shrink"
-								placeholder="Name"
-								onkeydown={(evt) => {
-									editFormSubmitKeyboardShortcut(evt, 'insert-form');
-								}}
-								required
-							/>
-						</label>
-						{#if form?.insertDeptMissing}<span class="text-error">Please enter a dept:</span>{/if}
-						<label class="border-1 input input-bordered input-primary flex w-full items-center border-gray-400">
-							<Home class="me-2 flex-none stroke-base-content/70" />
-							<input
-								type="text"
-								name="dept"
-								bind:value={deptData}
-								class="grow"
-								placeholder="Dept"
-								onkeydown={(evt) => {
-									editFormSubmitKeyboardShortcut(evt, 'insert-form');
-								}}
-								required
-							/>
-						</label>
-						{#if form?.insertGradeMissing}
-							<span class="text-error">Please select a grade:</span>{/if}
-						<div class="flex flex-wrap items-center justify-start">
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text font-medium text-base-content/70">A</span>
-								<input
-									type="radio"
-									name="grade"
-									value="A"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									bind:group={gradeData}
-								/>
-							</label>
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text font-medium text-base-content/70">B</span>
-								<input
-									type="radio"
-									name="grade"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									value="B"
-									bind:group={gradeData}
-								/>
-							</label>
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text font-medium text-base-content/70">C+</span>
-								<input
-									type="radio"
-									name="grade"
-									value="C+"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									bind:group={gradeData}
-								/>
-							</label>
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text font-medium text-base-content/70">C</span>
-								<input
-									type="radio"
-									name="grade"
-									value="C"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									bind:group={gradeData}
-								/>
-							</label>
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text font-medium text-base-content/70">C-</span>
-								<input
-									type="radio"
-									name="grade"
-									value="C-"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									bind:group={gradeData}
-								/>
-							</label>
-							<label class="label me-2 cursor-pointer space-x-1">
-								<span class="label-text font-medium text-base-content/70">D</span>
-								<input
-									type="radio"
-									value="D"
-									name="grade"
-									class="radio border-gray-400 bg-base-100 checked:bg-primary"
-									bind:group={gradeData}
-								/>
-							</label>
-						</div>
-
-						<label class="input input-bordered input-primary flex w-full items-center border border-gray-400">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1em"
-								height="1em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
-							>
-								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-								<path d="M8 9h8" />
-								<path d="M8 13h6" />
-								<path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-							</svg>
-
-							<input
-								type="text"
-								name="remarks"
-								bind:value={remarksData}
-								class="grow"
-								placeholder="Remarks (Optional)"
-								onkeydown={(evt) => {
-									editFormSubmitKeyboardShortcut(evt, 'insert-form');
-								}}
-							/>
-						</label>
-						<button class="btn btn-primary relative w-full text-xl font-bold text-primary-content"
-							>Add<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1.2em"
-								height="1.2em"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right inline"
-							>
-								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-								<path d="M5 12l14 0" />
-								<path d="M13 18l6 -6" />
-								<path d="M13 6l6 6" />
-							</svg>
-						</button>
-					</form>
-				</div>
-
-				<!-- 
-			/////////////////////////////////////////
-			/
-			/
-			/
-			/
-			/	Upload
-			/
-			/
-			/	
-			/
-			///////////////////////////////////////// 
-			-->
-				<div class="view-upload-sidebar grid gap-4">
-					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1.2em"
-							height="1.2em"
-							class="tabler:table-plus"
-							viewBox="0 0 24 24"
-							><path
-								fill="none"
-								stroke="currentColor"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M12.5 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7.5M3 10h18M10 3v18m6-2h6m-3-3v6"
-							/></svg
-						>Add Multiple
-					</h3>
-
-					<ul class="ms-1 space-y-2 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
-						<li>
-							<button
-								onclick={() => {
-									uploadModal.showModal();
-								}}
-							>
-								Upload from file (.csv)</button
-							>
-						</li>
-					</ul>
-				</div>
-				<!-- 
-			/////////////////////////////////////////
-			/
-			/
-			/
-			/
-			/	Manage Session
-			/
-			/
-			/	
-			/
-			///////////////////////////////////////// 
-			-->
+			<div class="grid content-start">
 				<div class="view-manage-sidebar grid gap-4">
 					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
 						<svg
@@ -507,43 +256,29 @@
 							<path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
 						</svg>Manage Session
 					</h3>
-					<ul class="ms-1 space-y-2 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+					<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
 						<li>
-							<form method="POST" action="?/save" bind:this={formSaveSession}>
-								<button
-									class="flex items-center gap-4 hover:text-primary"
-									onclick={() => {
-										formSaveSuccessLoading = true;
-										setTimeout(() => {
-											formSaveSuccessLoading = false;
-										}, 1500);
-									}}
-									><svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="1.3em"
-										height="1.3em"
-										viewBox="0 0 24 24"
+							<button class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1.3em"
+									height="1.3em"
+									class="tabler:pencil"
+									viewBox="0 0 24 24"
+									><path
 										fill="none"
 										stroke="currentColor"
-										stroke-width="2"
 										stroke-linecap="round"
 										stroke-linejoin="round"
-										class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy motion-safe:animate-wiggle"
-									>
-										<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-										<path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-										<path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-										<path d="M14 4l0 4l-6 0l0 -4" />
-									</svg>Save{#if formSaveSuccessLoading}
-										<span class="loading-primary loading loading-spinner loading-sm ms-2"></span>
-									{/if}
-								</button>
-								<input type="hidden" name="order" bind:value={order} />
-							</form>
+										stroke-width="2"
+										d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"
+									/></svg
+								>Edit Title
+							</button>
 						</li>
 						<li>
 							<button
-								class="flex items-center gap-4 hover:text-error"
+								class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-error hover:text-error-content"
 								onclick={() => {
 									deleteSessionModal.showModal();
 								}}
@@ -565,23 +300,259 @@
 							</button>
 						</li>
 						<li>
-							<div class="flex items-center gap-4">
-								<input
-									type="checkbox"
-									id="auto-save-checkbox"
-									class="checkbox-primary checkbox checkbox-sm"
-									bind:checked={autoSave}
-								/>
-								<label for="auto-save-checkbox" class="font-medium">Auto save every 3 mins</label>
+							<button class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1.3em"
+									height="1.3em"
+									class="tabler:share"
+									viewBox="0 0 24 24"
+									><path
+										fill="none"
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M3 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0m12-6a3 3 0 1 0 6 0a3 3 0 1 0-6 0m0 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0m-6.3-7.3l6.6-3.4m-6.6 6l6.6 3.4"
+									/></svg
+								>Share
+							</button>
+						</li>
+					</ul>
+				</div>
+				<div class="view-add-sidebar mt-8 grid gap-4 border-t-2 border-t-base-300 pt-8">
+					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1.2em"
+							height="1.2em"
+							class="tabler:table-plus"
+							viewBox="0 0 24 24"
+							><path
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M12.5 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7.5M3 10h18M10 3v18m6-2h6m-3-3v6"
+							/></svg
+						>Add
+					</h3>
+
+					<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+						<li>
+							<details class="collapse rounded-lg bg-base-200">
+								<summary class=""
+									><div
+										class="flex cursor-pointer items-center gap-4 rounded-lg p-2 text-lg font-medium hover:bg-primary hover:text-primary-content"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="1.3em"
+											height="1.3em"
+											class="tabler:square-plus"
+											viewBox="0 0 24 24"
+											><path
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M9 12h6m-3-3v6M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+											/></svg
+										>New Entry
+									</div></summary
+								>
+								<div
+									class="collapse-content ms-1 mt-2 space-y-2 border-l-4 border-l-base-300 p-0 ps-8 text-lg font-medium"
+								>
+									<form method="POST" id="insert-form" action="?/insert" class="grid gap-1" use:enhance>
+										<label class="input input-bordered flex items-center">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="1em"
+												height="1em"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus me-2 hidden flex-none text-base-content/50 xl:flex"
+											>
+												<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+												<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+												<path d="M16 19h6" />
+												<path d="M19 16v6" />
+												<path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
+											</svg>
+											<input
+												type="text"
+												name="name"
+												bind:value={nameData}
+												class="shrink"
+												placeholder="Name"
+												onkeydown={(evt) => {
+													editFormSubmitKeyboardShortcut(evt, 'insert-form');
+												}}
+												autocomplete="off"
+												required
+											/>
+										</label>
+
+										<label class="input input-bordered flex items-center">
+											<Home class="me-2 hidden flex-none stroke-base-content/50 xl:flex" />
+											<input
+												type="text"
+												name="dept"
+												bind:value={deptData}
+												class="grow"
+												placeholder="Dept"
+												onkeydown={(evt) => {
+													editFormSubmitKeyboardShortcut(evt, 'insert-form');
+												}}
+												autocomplete="off"
+												required
+											/>
+										</label>
+
+										<select bind:value={gradeData} name="grade" class="select select-bordered text-base-content/50">
+											<option value="A">A</option>
+											<option value="B">B</option>
+											<option value="C+">C+</option>
+											<option value="C" selected>C</option>
+											<option value="C-">C-</option>
+											<option value="D">D</option>
+										</select>
+
+										<label class="input input-bordered flex w-full items-center border text-base-content/50">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="1em"
+												height="1em"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
+											>
+												<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+												<path d="M8 9h8" />
+												<path d="M8 13h6" />
+												<path
+													d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
+												/>
+											</svg>
+
+											<input
+												type="text"
+												name="remarks"
+												bind:value={remarksData}
+												class="grow"
+												placeholder="Remarks (Optional)"
+												onkeydown={(evt) => {
+													editFormSubmitKeyboardShortcut(evt, 'insert-form');
+												}}
+											/>
+										</label>
+										<input type="hidden" name="session-id" value={data.streamed.session.id} />
+										<button class="btn btn-primary text-lg font-bold text-primary-content" aria-label="Add">Add</button>
+									</form>
+								</div>
+							</details>
+						</li>
+						<li>
+							<button
+								class="flex w-full items-center gap-4 rounded-lg p-2 text-lg font-medium hover:bg-primary hover:text-primary-content"
+								onclick={() => {
+									uploadModal.showModal();
+								}}
+								><svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1.3em"
+									height="1.3em"
+									class="tabler:upload"
+									viewBox="0 0 24 24"
+									><path
+										fill="none"
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 9l5-5l5 5m-5-5v12"
+									/></svg
+								>Upload from file (.csv)</button
+							>
+						</li>
+					</ul>
+					{#if form?.insertNameMissing}<span class="text-error">Please enter a name:</span>{/if}
+					{#if form?.insertDeptMissing}<span class="text-error">Please enter a dept:</span>{/if}
+					{#if form?.insertGradeMissing}<span class="text-error">Please select a grade:</span>{/if}
+				</div>
+
+				<!-- 
+			/////////////////////////////////////////
+			/
+			/
+			/
+			/
+			/	Upload
+			/
+			/
+			/	
+			/
+			///////////////////////////////////////// 
+			-->
+
+				<div class="view-upload-sidebar mt-8 grid gap-4 border-t-2 border-t-base-300/70 pt-8">
+					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1.3em"
+							height="1.3em"
+							class="tabler:settings"
+							viewBox="0 0 24 24"
+							><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								><path
+									d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37c1 .608 2.296.07 2.572-1.065"
+								/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0-6 0" /></g
+							></svg
+						>Settings
+					</h3>
+					<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+						<li>
+							<div class="flex items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content">
+								<label for="auto-save-checkbox" class="grow font-medium">Auto save every 3 mins</label>
 
 								<form method="POST" action="?/save" bind:this={formAutoSaveSession} use:enhance>
 									<!-- <button class="hidden"></button> -->
 									<input type="hidden" name="order" bind:value={order} />
 								</form>
+								<input
+									type="checkbox"
+									id="auto-save-checkbox"
+									class="toggle toggle-primary toggle-sm"
+									bind:checked={autoSave}
+								/>
 							</div>
 						</li>
 					</ul>
 				</div>
+				<!-- 
+			/////////////////////////////////////////
+			/
+			/
+			/
+			/
+			/	Manage Session
+			/
+			/
+			/	
+			/
+			///////////////////////////////////////// 
+			-->
 			</div>
 			<div class="view-footer pt-16 text-base">© 2024 Zixian Chen.</div>
 		</div>
@@ -599,10 +570,10 @@
 	/
 	///////////////////////////////////////// 
 	-->
-	<div class="col-span-2 min-h-dvh px-12 pb-4 pt-8 lg:pt-8">
+	<div class="col-span-5 min-h-dvh px-12 pb-4 pt-8 lg:pt-8">
 		<ol class="view-content space-y-4">
 			<div class="view-ranking-title px-4 pb-4 md:px-10">
-				<h1>Ranking: {data.id}</h1>
+				<h1>Ranking: {data.streamed.session.title}</h1>
 				<div class="flex gap-4 pt-8">
 					<form
 						method="POST"
@@ -612,9 +583,7 @@
 						class="join flex rounded-lg"
 						use:enhance
 					>
-						<label
-							class="input input-sm join-item input-bordered input-primary flex max-w-44 items-center border-gray-400 lg:max-w-full"
-						>
+						<label class="input input-sm join-item input-bordered flex max-w-44 items-center lg:max-w-full">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="1em"
@@ -632,12 +601,18 @@
 									d="M4 4h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v7l-6 2v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227z"
 								/>
 							</svg>
-							<input type="text" bind:value={filterInput} name="filter" class="lg:grow" placeholder="Keywords" />
+							<input
+								type="text"
+								bind:value={filterInput}
+								name="filter"
+								class="text-base-content/70 lg:grow"
+								placeholder="Keywords"
+							/>
 						</label>
 						<select
 							id="filter-grade"
 							name="grade"
-							class="join-item select select-bordered select-primary select-sm border-gray-400"
+							class="join-item select select-bordered select-sm text-base-content/70"
 							bind:value={filterGradeValue}
 							onchange={() => {
 								filterForm.requestSubmit();
@@ -652,10 +627,12 @@
 							<option value="D">D</option>
 							<option value="All">All</option>
 						</select>
+						<input type="hidden" name="session-title" value={data.streamed.session.title} />
+
 						<button class="btn btn-primary join-item btn-sm font-bold text-base-100">Filter</button>
 					</form>
 					<button
-						class="inline-block self-center"
+						class="inline-block self-center text-base-content/70"
 						onclick={() => {
 							filterInput = '';
 							filterGradeValue = 'Grade';
@@ -681,14 +658,14 @@
 				</div>
 			</div>
 			{#key data.streamed.result}
-				<DragDrop streamedResult={data.streamed.result} bind:value={order} />
+				<DragDrop session={data.streamed.session} streamedResult={data.streamed.result} bind:value={order} />
 			{/key}
 		</ol>
 	</div>
 
-	<div class="grid content-start gap-4 border-l-2 border-l-base-300/30 bg-base-200 px-8">
+	<div class="col-span-2 grid content-start border-l-2 border-l-base-300/30 bg-base-200 px-8">
 		<h3 class="justify-self-start pt-8 text-3xl font-extrabold text-base-content/85">Details</h3>
-		<div class="view-home-info grid content-start justify-items-center gap-y-4">
+		<div class="view-home-info grid content-start gap-y-4">
 			<h3 class="flex items-center gap-4 justify-self-start pt-8 font-extrabold text-base-content/70">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -701,7 +678,24 @@
 					></svg
 				>Properties
 			</h3>
-			<div class="grid content-start justify-items-center gap-y-4"></div>
+			<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+				<li>
+					<div class="flex items-center gap-4">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1.3em"
+							height="1.3em"
+							class="tabler:calendar-time"
+							viewBox="0 0 24 24"
+							><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								><path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" /><path
+									d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16"
+								/><path d="M18 16.496V18l1 1" /></g
+							></svg
+						>Created:
+					</div>
+				</li>
+			</ul>
 		</div>
 		<div class="view-summary-sidebar grid content-start justify-items-center">
 			<h3 class="flex items-center gap-4 justify-self-start pt-8 font-extrabold text-base-content/70">
@@ -905,6 +899,7 @@
 						{/if}
 					{/key}
 				</button>
+				<input type="hidden" name="session-id" value={data.streamed.session.id} />
 			</form>
 		</div>
 	</div>

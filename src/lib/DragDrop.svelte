@@ -18,16 +18,16 @@
 	import Papa from 'papaparse';
 	import DragDrop from '$lib/DragDrop.svelte';
 
-	let { streamedResult = [], value = $bindable() } = $props();
+	let { session, streamedResult = [], value = $bindable() } = $props();
 
 	/**
 	 * @typedef {Object} edit - stores the uuid and a boolean value that is then switched upon clicking of edit button. Needs $state for reactivity, simple assignment didn't work after next170
-	 * @property {string} uuid - entry's uuid from db
+	 * @property {string} id - entry's uuid from db
 	 * @property {boolean} editStatus - switch to determine if edit form should be displayed
 	 */
 	let edit = $state({});
 	for (let i = 0; i < streamedResult.length; i++) {
-		const key = streamedResult[i].uuid;
+		const key = streamedResult[i].id;
 		edit[key] = false;
 	}
 
@@ -40,15 +40,17 @@
 	let initOrderWantedlength = initOrder.length - 1;
 	for (let i = 0; i < streamedResult.length; i++) {
 		if (i === 0) {
-			initOrder = String(streamedResult[i].uuid);
+			initOrder = String(streamedResult[i].id);
 		} else {
-			initOrder = initOrder + ',' + streamedResult[i].uuid;
+			initOrder = initOrder + ',' + streamedResult[i].id;
 		}
 	}
 
 	initOrder.slice(initOrderWantedlength);
 
 	let order = $state(initOrder);
+	$inspect(initOrder);
+	$inspect(order);
 
 	let nothingFound = $state(false);
 
@@ -128,8 +130,8 @@
 				{#each streamedResult as person, i}
 					<div
 						class="grid grid-cols-12 rounded-lg border border-gray-400 transition duration-700 ease-out hover:border-primary"
-						id={person.uuid}
-						data-sortable-id={person.uuid}
+						id={person.id}
+						data-sortable-id={person.id}
 					>
 						<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
 							<div
@@ -139,17 +141,17 @@
 							</div>
 						</div>
 						<div class="sortable-handle col-span-12 flex items-center justify-center lg:col-span-1">
-							<!-- form="edit-form-{person.uuid}" name="grade__{person.uuid}"-->
-							<form id="edit-grade-form-{person.uuid}" method="POST" action="?/editgrade" use:enhance>
+							<!-- form="edit-form-{person.id}" name="grade__{person.id}"-->
+							<form id="edit-grade-form-{person.id}" method="POST" action="?/editgrade" use:enhance>
 								<input type="hidden" name="edit-grade-target" value={person.id} />
 								<input type="hidden" name="edit-grade-target-name" value={person.name} />
 								<select
 									bind:value={person.grade}
 									name="grade"
-									id="grade__{person.uuid}"
+									id="grade__{person.id}"
 									class="grade-selection select select-primary select-sm border-0 text-2xl font-extrabold"
 									onchange={() => {
-										const currentForm = document.getElementById(`edit-grade-form-${person.uuid}`);
+										const currentForm = document.getElementById(`edit-grade-form-${person.id}`);
 										currentForm.requestSubmit ? currentForm.requestSubmit() : currentForm.submit();
 										console.log('Form submitted!');
 									}}
@@ -164,22 +166,22 @@
 							</form>
 						</div>
 
-						{#if person.uuid && edit[person.uuid] === true}
+						{#if person.id && edit[person.id] === true}
 							<div
 								class="col-span-9 grid grid-cols-8 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2"
-								id="div__{person.uuid}"
+								id="div__{person.id}"
 								in:slide={{ duration: 500, axis: 'y', easing: circOut }}
 								out:slide={{ duration: 10, axis: 'y', easing: circOut }}
 							>
 								<div class="col-span-8">
-									<form method="POST" id="edit-form-{person.uuid}" action="?/edit" use:enhance>
+									<form method="POST" id="edit-form-{person.id}" action="?/edit" use:enhance>
 										<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
 									</form>
 								</div>
 								<div class="col-span-4">
 									<label
 										class="input input-bordered flex w-full items-center gap-2 border-gray-400 text-lg"
-										for="edit-person-name-{person.uuid}"
+										for="edit-person-name-{person.id}"
 										><svg
 											xmlns="http://www.w3.org/2000/svg"
 											width="1em"
@@ -197,13 +199,13 @@
 										>
 										<EditFields
 											name="edit-person-name"
-											id="edit-person-name-{person.uuid}"
-											form="edit-form-{person.uuid}"
+											id="edit-person-name-{person.id}"
+											form="edit-form-{person.id}"
 											class="grow"
 											value={person.name}
 											placeholder="Name"
 											onkeydown={(evt) => {
-												editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
+												editFormSubmitKeyboardShortcut(evt, `edit-form-${person.id}`);
 											}}
 										/></label
 									>
@@ -212,18 +214,18 @@
 								<div class="col-span-4">
 									<label
 										class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
-										for="edit-person-dept-{person.uuid}"
+										for="edit-person-dept-{person.id}"
 									>
 										<Home class="me-2 flex-none" />
 										<EditFields
 											name="edit-person-dept"
 											class="grow"
-											form="edit-form-{person.uuid}"
+											form="edit-form-{person.id}"
 											value={person.dept}
-											id="edit-person-dept-{person.uuid}"
+											id="edit-person-dept-{person.id}"
 											placeholder="Dept"
 											onkeydown={(evt) => {
-												editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
+												editFormSubmitKeyboardShortcut(evt, `edit-form-${person.id}`);
 											}}
 										/>
 									</label>
@@ -231,7 +233,7 @@
 								<div class="col-span-8">
 									<label
 										class="textarea textarea-bordered flex h-24 w-full items-center items-center gap-2 border-gray-400 text-lg md:h-56"
-										for="edit-person-remarks-{person.uuid}"
+										for="edit-person-remarks-{person.id}"
 										><svg
 											xmlns="http://www.w3.org/2000/svg"
 											width="1.5em"
@@ -252,15 +254,15 @@
 											/>
 										</svg>
 										<textarea
-											form="edit-form-{person.uuid}"
+											form="edit-form-{person.id}"
 											name="edit-person-remarks"
-											id="edit-person-remarks-{person.uuid}"
+											id="edit-person-remarks-{person.id}"
 											class="h-full w-full focus:outline-none"
 											maxlength="999"
 											placeholder="Remarks"
 											value={person.remarks}
 											onkeydown={(evt) => {
-												editFormSubmitKeyboardShortcut(evt, `edit-form-${person.uuid}`);
+												editFormSubmitKeyboardShortcut(evt, `edit-form-${person.id}`);
 											}}
 										></textarea>
 									</label>
@@ -268,9 +270,9 @@
 								<div class="col-span-6 bg-base-300 md:col-span-6">
 									<button
 										class="btn btn-primary join-item text-lg"
-										form="edit-form-{person.uuid}"
+										form="edit-form-{person.id}"
 										onclick={() => {
-											edit[person.uuid] = false;
+											edit[person.id] = false;
 										}}
 									>
 										<TablerEdit class="inline h-[1em] w-[1em]" />Save
@@ -278,7 +280,7 @@
 								</div>
 							</div>
 						{:else}
-							<div class="col-span-12 self-center lg:col-span-9" id="div__{person.uuid}">
+							<div class="col-span-12 self-center lg:col-span-9" id="div__{person.id}">
 								<div class="grid grid-cols-8 items-center px-2 py-2">
 									<div class="col-span-4 flex items-center gap-4 text-lg font-bold">
 										{person.name}
@@ -381,7 +383,7 @@
 										<button
 											class="flex items-center gap-2"
 											onclick={() => {
-												edit[person.uuid] = !edit[person.uuid];
+												edit[person.id] = !edit[person.id];
 											}}
 											><svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -456,6 +458,7 @@
 {#if !nothingFound}
 	<form method="POST" action="?/save" class="ignore-from-sorting mx-10 mt-10 flex justify-center lg:justify-end">
 		<input type="hidden" name="order" bind:value={order} />
+		<input type="hidden" name="session-id" value={session.id} />
 		<button class="btn btn-success flex items-center gap-2 font-bold lg:min-w-24">Save Changes</button>
 	</form>
 {/if}

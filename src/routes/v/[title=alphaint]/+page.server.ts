@@ -1,5 +1,5 @@
 import { db } from '$lib/drizzle/db';
-import { records } from '$lib/drizzle/schema';
+import { records, sessions, users } from '$lib/drizzle/schema';
 import { desc, asc, eq, and, or, ilike } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
@@ -45,14 +45,19 @@ const slugifyString = (str: string) => {
 //todo - bug: adding > save > reload > newest entry would disappear > comes back after a refresh. Only in production
 export const load = (async ({ params, url }) => {
 	console.log('Load triggered');
-	const sessionId = String(params.id);
-	console.log('Session ID: ', sessionId);
+	const paramSessionTitle = String(params.title);
+	console.log('Session ID: ', paramSessionTitle);
+
+	const sessionArray = await db.select().from(sessions).where(eq(sessions.title, paramSessionTitle));
+	const session = sessionArray[0];
+	// const result = await db.select().from(records).where(eq(records.session, session.id));
+
 	const filterParam = url.searchParams.get('filter');
 	const filterGradeParam = url.searchParams.get('grade');
 	let result;
 
 	if (!filterParam || !filterGradeParam) {
-		const sq = db.select().from(records).where(eq(records.session, sessionId)).as('sq');
+		const sq = db.select().from(records).where(eq(records.session, session.id)).as('sq');
 		result = await db
 			.select()
 			.from(sq)
@@ -71,28 +76,47 @@ export const load = (async ({ params, url }) => {
 			.from(records)
 			.where(
 				and(
-					eq(records.session, sessionId),
+					eq(records.session, session.id),
 					or(ilike(records.name, `%${filterParam}%`), ilike(records.dept, `%${filterParam}%`)),
 					eq(records.grade, filterGradeParam),
 				),
 			)
 			.orderBy(asc(records.sequence));
 	} else {
-		result = await db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence));
+		result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
 	}
 
 	let sequence = getInitSequence(result);
 	console.log('Result: ', result.length);
 
 	return {
-		id: sessionId,
-		streamed: { result, sequence },
+		// id: sessionId,
+		streamed: { session, result, sequence },
 	};
 }) satisfies PageServerLoad;
 
 export const actions = {
 	insert: async function ({ request, params }) {
-		const sessionId = String(params.id);
+		const submittedData = await request.formData();
+		if (!submittedData.get('name')) {
+			return fail(400, { insertNameMissing: true });
+		}
+		if (!submittedData.get('dept')) {
+			return fail(400, { insertDeptMissing: true });
+		}
+		if (!submittedData.get('grade')) {
+			return fail(400, { insertGradeMissing: true });
+		}
+		if (!submittedData.get('session-id')) {
+			return fail(400, { insertSessionIdMissing: true });
+		}
+		const name = String(submittedData.get('name'));
+		const dept = String(submittedData.get('dept'));
+		const grade = String(submittedData.get('grade'));
+		const remarks = String(submittedData.get('remarks'));
+		const sessionId = String(submittedData.get('session-id'));
+		console.log('Session ID: ', sessionId);
+
 		let currentLargestSequence = await db
 			.select({
 				sequence: records.sequence,
@@ -108,21 +132,6 @@ export const actions = {
 			}
 		}
 
-		const submittedData = await request.formData();
-		if (!submittedData.get('name')) {
-			return fail(400, { insertNameMissing: true });
-		}
-		if (!submittedData.get('dept')) {
-			return fail(400, { insertDeptMissing: true });
-		}
-		if (!submittedData.get('grade')) {
-			return fail(400, { insertGradeMissing: true });
-		}
-		const name = String(submittedData.get('name'));
-		const dept = String(submittedData.get('dept'));
-		const grade = String(submittedData.get('grade'));
-		const remarks = String(submittedData.get('remarks'));
-		console.log(name, dept, grade, remarks);
 		const res = await db.insert(records).values({
 			name: name,
 			dept: dept,
@@ -180,15 +189,14 @@ export const actions = {
 	delete: async function ({ request }) {
 		const deleteData = await request.formData();
 		const delTarget = deleteData.get('delete-target');
-		//give a delay so delete animation can finish
-		await delay(500);
 		await db.delete(records).where(eq(records.id, delTarget));
 	},
 
 	save: async function ({ request, params }) {
 		try {
-			const sessionId = String(params.id);
 			const saveData = await request.formData();
+			const sessionId = saveData.get('session-id');
+			console.log(sessionId);
 
 			// Grab the sortable order
 			const orderInput = saveData.get('order');
@@ -201,7 +209,7 @@ export const actions = {
 				await db
 					.update(records)
 					.set({ sequence: individualOrder })
-					.where(and(eq(records.session, sessionId), eq(records.uuid, orderArray[i])));
+					.where(and(eq(records.session, sessionId), eq(records.id, orderArray[i])));
 			}
 
 			// Delay for the spinner icon/toast
@@ -217,10 +225,15 @@ export const actions = {
 		}
 	},
 
-	deleteSession: async function ({ request, params }) {
-		const sessionId = params.id;
-		await delay(400);
-		const deleteSession = await db.delete(records).where(eq(records.session, sessionId));
+	deleteSession: async function ({ request }) {
+		const formData = await request.formData();
+		const sessionId = formData.get('session-id');
+		if (!sessionId) {
+			return fail(400, { formDeleteSessionFail: true });
+		}
+
+		// const deleteRecords = await db.delete(records).where(eq(records.session, sessionId));
+		const deleteSession = await db.delete(sessions).where(eq(sessions.id, sessionId));
 		if (deleteSession) {
 			console.log('Deleted successfully!');
 			redirect(307, '/');
@@ -231,7 +244,7 @@ export const actions = {
 
 	filter: async function ({ request, params }) {
 		const rawFormInput = await request.formData();
-		const sessionId = String(params.id);
+		const sessionTitle = rawFormInput.get('session-title');
 		let filterFormInput;
 		let filterFormGradeInput;
 		let finalUrlString;
@@ -264,7 +277,7 @@ export const actions = {
 		} else {
 			finalUrlString = '';
 		}
-		redirect(307, `/v/${sessionId}/?${finalUrlString}`);
+		redirect(307, `/v/${sessionTitle}/?${finalUrlString}`);
 	},
 
 	redirect: async ({ request }) => {
