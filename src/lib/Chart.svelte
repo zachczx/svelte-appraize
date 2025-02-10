@@ -51,6 +51,9 @@
 			data: gradeData,
 			options: {
 				plugins: {
+					tooltip: {
+						enabled: false,
+					},
 					datalabels: {
 						font: {
 							family: 'Nunito Sans Variable',
@@ -58,7 +61,7 @@
 							weight: 800,
 						},
 						color: '#515151',
-						formatter: function (value) {
+						formatter: function (value, context) {
 							if (value === 0) {
 								return '';
 							}
