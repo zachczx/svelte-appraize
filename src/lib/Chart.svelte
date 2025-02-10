@@ -1,67 +1,81 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import ApexCharts from 'apexcharts?client';
+	import Chart from 'chart.js/auto';
+	import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-	// interface ChartOptions {
-	// 	options: {
-	// 		chart: {
-	// 			type: string;
-	// 		};
-	// 		series: number[];
-	// 		chartOptions: {
-	// 			labels: string[];
-	// 		};
-	// 		plotOptions: {
-	// 			pie: {
-	// 				size?: number;
-	// 				donut: {
-	// 					size: string;
-	// 				};
-	// 			};
-	// 		};
-	// 	};
-	// }
 	let { figures } = $props();
-	let chartEl: HTMLDivElement;
-	// let { options }: ChartOptions = $props();
+	let chartEl: HTMLCanvasElement;
+
+	const gradeData = {
+		labels: ['A', 'B', 'C', 'D'],
+		datasets: [
+			{
+				// label: 'Grades',
+				data: [figures.percentageA, figures.percentageB, figures.percentageC, figures.percentageD],
+				backgroundColor: ['#F66D44', '#FEAE65', '#E6F69D', '#AADEA7'],
+				hoverOffset: 4,
+			},
+		],
+	};
 
 	$effect(() => {
-		const options = {
+		//Apexcharts
+		/* 	const options = {
 			chart: {
-				type: 'donut',
+				type: 'pie',
 			},
-
 			series: [figures.percentageA, figures.percentageB, figures.percentageC, figures.percentageD],
-			float_precision: 2,
 			labels: ['A', 'B', 'C', 'D'],
 			legend: { show: false },
 			colors: ['#FED049', '#808836', '#FF9A00', '#D10363'],
-			plotOptions: {
-				pie: {
-					// customScale: 0.2,
-					size: 200,
-					donut: {
-						labels: {
-							show: false,
-							name: {},
-							value: {},
-						},
-					},
-				},
-			},
 			dataLabels: {
 				enabled: true,
+				textAnchor: 'middle',
+				distributed: false,
+				offsetX: 0,
+				offsetY: 0,
 				formatter: function (val) {
-					return val + '%';
+					return val.toFixed(0) + '%';
+				},
+				style: {
+					fontSize: '1.5rem',
+					fontFamily: 'Nunito Sans Variable',
+					fontWeight: 'bold',
 				},
 			},
 		};
 		const chart = new ApexCharts(chartEl, options);
-		chart.render();
+		chart.render(); */
+		Chart.register(ChartDataLabels);
+		const chart = new Chart(chartEl, {
+			type: 'doughnut',
+			data: gradeData,
+			options: {
+				plugins: {
+					datalabels: {
+						font: {
+							family: 'Nunito Sans Variable',
+							size: 20,
+							weight: 800,
+						},
+						color: '#515151',
+						formatter: function (value) {
+							if (value === 0) {
+								return '';
+							}
+							if (value > 0) {
+								return value.toFixed(0) + '%';
+							}
+						},
+					},
+					legend: {
+						display: false,
+					},
+				},
+			},
+		});
 	});
 </script>
 
-<!-- <div bind:this={chartEl} class=""></div> -->
-<div class="h-full max-h-[30rem] w-full max-w-[30rem] overflow-auto p-8">
-	<div bind:this={chartEl} class=""></div>
+<div class="h-full w-fit overflow-auto p-8">
+	<canvas bind:this={chartEl} class="max-h-[20rem] max-w-[20rem]"></canvas>
 </div>

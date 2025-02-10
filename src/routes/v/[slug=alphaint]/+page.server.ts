@@ -1,8 +1,10 @@
 import { db } from '$lib/drizzle/db';
 import { records, sessions, users } from '$lib/drizzle/schema';
+import type { Action } from './$types';
 import { desc, asc, eq, and, or, ilike } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
+import { slugify } from '$lib/utils';
 //superforms
 import { z } from 'zod';
 import { message, superValidate } from 'sveltekit-superforms';
@@ -12,10 +14,11 @@ import { PUBLIC_S3_BUCKET_NAME } from '$env/static/public'; //it's a public key,
 import { R2_S3 } from '$lib/R2_S3';
 import { Upload } from '@aws-sdk/lib-storage';
 //For Buffer/Handling of file
-import * as fs from 'fs';
 import Papa from 'papaparse';
 
 const regexRoute = /^[a-zA-Z0-9-]*$/;
+const uploadSizeLimit = 10000;
+const grades = ['A', 'B', 'C+', 'C', 'C-', 'D'];
 
 /**
  *
@@ -28,29 +31,12 @@ let delay = (time: number) => {
 	});
 };
 
-/**
- *
- * @param str get rid of weird characters in filename, from cloudflare r2 upload
- * @returns
- */
-const slugifyString = (str: string) => {
-	return str
-		.trim()
-		.toLowerCase()
-		.replace(/\s+/g, '-')
-		.replace(/\./g, '-')
-		.replace(/-+/g, '-')
-		.replace(/[^a-z0-9-]/g, '-');
-};
 //todo - bug: adding > save > reload > newest entry would disappear > comes back after a refresh. Only in production
 export const load = (async ({ params, url }) => {
 	console.log('Load triggered');
-	const paramSessionTitle = String(params.title);
-	console.log('Session ID: ', paramSessionTitle);
-
-	const sessionArray = await db.select().from(sessions).where(eq(sessions.title, paramSessionTitle));
+	const paramSessionSlug = String(params.slug);
+	const sessionArray = await db.select().from(sessions).where(eq(sessions.slug, paramSessionSlug));
 	const session = sessionArray[0];
-	// const result = await db.select().from(records).where(eq(records.session, session.id));
 
 	const filterParam = url.searchParams.get('filter');
 	const filterGradeParam = url.searchParams.get('grade');
@@ -87,10 +73,8 @@ export const load = (async ({ params, url }) => {
 	}
 
 	let sequence = getInitSequence(result);
-	console.log('Result: ', result.length);
 
 	return {
-		// id: sessionId,
 		streamed: { session, result, sequence },
 	};
 }) satisfies PageServerLoad;
@@ -145,7 +129,7 @@ export const actions = {
 	edit: async ({ request }) => {
 		const editData = await request.formData();
 		console.log(editData);
-		const editTarget = editData.get('edit-target');
+		const editTarget = String(editData.get('edit-target'));
 		const editName = String(editData.get('edit-person-name')).trim();
 		const editDept = String(editData.get('edit-person-dept')).trim();
 		const editRemarks = String(editData.get('edit-person-remarks')).trim();
@@ -164,10 +148,9 @@ export const actions = {
 
 	editgrade: async ({ request }) => {
 		const editGradeData = await request.formData();
-		console.log(editGradeData);
 		const editGradeGrade = String(editGradeData.get('grade'));
 		const editGradeName = String(editGradeData.get('edit-grade-target-name'));
-		const editGradeId = editGradeData.get('edit-grade-target');
+		const editGradeId = String(editGradeData.get('edit-grade-target'));
 		console.log(editGradeName, editGradeGrade, editGradeId);
 		if (
 			editGradeGrade === 'A' ||
@@ -187,19 +170,22 @@ export const actions = {
 	},
 
 	delete: async function ({ request }) {
-		const deleteData = await request.formData();
-		const delTarget = deleteData.get('delete-target');
+		const formData = await request.formData();
+		const delTarget: string = String(formData.get('delete-target'));
 		await db.delete(records).where(eq(records.id, delTarget));
 	},
 
 	save: async function ({ request, params }) {
 		try {
-			const saveData = await request.formData();
-			const sessionId = saveData.get('session-id');
-			console.log(sessionId);
+			const formData = await request.formData();
+			const sessionId: string = String(formData.get('session-id'));
 
 			// Grab the sortable order
-			const orderInput = saveData.get('order');
+			const orderInput: string = String(formData.get('order'));
+			if (!orderInput) {
+				return fail(400, { formSaveFail: true });
+			}
+
 			const orderArray = orderInput.split(',');
 			console.log('Form submitted formdata:', orderArray);
 
@@ -227,7 +213,7 @@ export const actions = {
 
 	deleteSession: async function ({ request }) {
 		const formData = await request.formData();
-		const sessionId = formData.get('session-id');
+		const sessionId = String(formData.get('session-id'));
 		if (!sessionId) {
 			return fail(400, { formDeleteSessionFail: true });
 		}
@@ -243,28 +229,21 @@ export const actions = {
 	},
 
 	filter: async function ({ request, params }) {
-		const rawFormInput = await request.formData();
-		const sessionTitle = rawFormInput.get('session-title');
+		const formData = await request.formData();
+		const sessionTitle = formData.get('session-title');
 		let filterFormInput;
 		let filterFormGradeInput;
 		let finalUrlString;
 
-		if (rawFormInput.get('filter')) {
-			filterFormInput = 'filter=' + String(rawFormInput.get('filter')).trim();
+		if (formData.get('filter')) {
+			filterFormInput = 'filter=' + String(formData.get('filter')).trim();
 			console.log('Server received filter string: ', filterFormInput);
 		}
 
-		if (
-			rawFormInput.get('grade') === 'A' ||
-			rawFormInput.get('grade') === 'B' ||
-			rawFormInput.get('grade') === 'C+' ||
-			rawFormInput.get('grade') === 'C' ||
-			rawFormInput.get('grade') === 'C-' ||
-			rawFormInput.get('grade') === 'D'
-		) {
-			filterFormGradeInput = 'grade=' + String(rawFormInput.get('grade'));
+		if (grades.includes(String(formData.get('grade')))) {
+			filterFormGradeInput = 'grade=' + String(formData.get('grade'));
 			console.log('Server received filter string: ', filterFormGradeInput);
-		} else if (rawFormInput.get('grade') === 'All') {
+		} else if (formData.get('grade') === 'All') {
 			filterFormGradeInput = '';
 		}
 
@@ -296,14 +275,14 @@ export const actions = {
 
 	uploadfile: async function ({ request, params }) {
 		const formData = await request.formData();
-		const sessionId = String(params.id);
-		const file = formData.get('fileupload');
-		// console.log(file);
+		const sessionId: string = formData.get('session-id') as string;
+		const file = formData.get('fileupload') as File;
+		if (!file) {
+			return fail(400, { uploadFailed: true });
+		}
 		const fileBuffer = Buffer.from(await file.arrayBuffer()); //readable after upload to r2
 		const fileBuffertoString = fileBuffer.toString();
-		// console.log(fileBuffertoString);
 		const arrayFile = Papa.parse(fileBuffertoString);
-		// console.log(arrayFile.data);
 
 		/**
 		 * @param {Object[]} data - Data object output from Papaparse
@@ -312,50 +291,20 @@ export const actions = {
 		 * @param {string} data[][2] - Grade A/B/C+/C/C-/D
 		 * @param {string} data[][3] - Remarks (optional)
 		 */
-		const data = arrayFile.data;
-		// console.log(data.length);
-		for (let i = 0; i < data.length; i++) {
-			console.log(data[i][2]);
-			let gradePreCleaning = String(data[i][2]);
-			let gradeInLoop = gradePreCleaning.toUpperCase();
-			// console.log(gradeInLoop);
-			if (
-				data[i].length === 4 &&
-				data[i][0] != '' &&
-				data[i][1] != '' &&
-				data[i][0] != 'Name' &&
-				data[i][1] != 'Dept' &&
-				data[i][2].includes('Grade') === false &&
-				(gradeInLoop === 'A' ||
-					gradeInLoop === 'B' ||
-					gradeInLoop === 'C+' ||
-					gradeInLoop === 'C' ||
-					gradeInLoop === 'C-' ||
-					gradeInLoop != 'D')
-			) {
-				let currentLargestSequence = await db
-					.select()
-					.from(records)
-					.where(eq(records.session, sessionId))
-					.orderBy(desc(records.sequence))
-					.limit(1);
-				let sequenceToInsert;
-				if (currentLargestSequence == 0) {
-					sequenceToInsert = 1;
-				} else {
-					sequenceToInsert = currentLargestSequence[0].sequence + 1;
-				}
-
-				await db.insert(records).values({
-					name: data[i][0],
-					dept: data[i][1],
-					grade: gradeInLoop,
-					session: sessionId,
-					sequence: sequenceToInsert,
-					remarks: data[i][3],
-				});
+		const data: string[][] = arrayFile.data as string[][];
+		const row = await db
+			.select()
+			.from(records)
+			.where(eq(records.session, sessionId))
+			.orderBy(desc(records.sequence))
+			.limit(1);
+		let dbLargestSequence = 0;
+		if (row.length > 0) {
+			if (row[0].sequence) {
+				dbLargestSequence = row[0].sequence;
 			}
 		}
+		dbInsertCsvRows(sessionId, data, db, dbLargestSequence);
 
 		// Upload to Cloudflare R2
 		if (!file.name || file.name === undefined) {
@@ -365,13 +314,13 @@ export const actions = {
 			!file.type ||
 			file.name.trim() === '' ||
 			file.type.trim() === '' ||
-			file.size > 10000
+			file.size > uploadSizeLimit
 		) {
 			console.log('Fail, not a csv file');
 			return fail(400, { error: true, message: 'You must upload a .csv file' });
 		}
 
-		const objectKey = `${slugifyString(Date.now().toString())}-${slugifyString(file.name)}.csv`;
+		const objectKey = `${slugify(Date.now().toString())}-${slugify(file.name)}.csv`;
 
 		const send = new Upload({
 			client: R2_S3,
@@ -384,26 +333,83 @@ export const actions = {
 			},
 		});
 		send.on('httpUploadProgress', (progress) => {
-			//console.log(progress);
+			console.log('uploaded!!!');
 		});
 
 		await send.done();
-		return { formUploadSuccess: true };
+		return { uploadSuccess: true };
+	},
+
+	editSessionTitle: async function ({ request }) {
+		const formData = await request.formData();
+		const sessionId = String(formData.get('session-id'));
+		const newTitle = String(formData.get('title'));
+		const slugTitle = slugify(newTitle);
+		const edit = await db.update(sessions).set({ title: newTitle, slug: slugTitle }).where(eq(sessions.id, sessionId));
+		if (!edit) {
+			return fail(400, { error: true, message: 'Edit failed!' });
+		}
+		redirect(301, `/v/${slugTitle}`);
 	},
 } satisfies Actions;
 
-function getInitSequence(result) {
+function getInitSequence(result: object[]) {
 	let sequence = '';
 	let sequenceCutLastChar = sequence.length - 1;
 
 	for (let i = 0; i < result.length; i++) {
 		if (i === 0) {
-			sequence = String(result[i].uuid);
+			sequence = String(result[i].id);
 		} else {
-			sequence = sequence + ',' + result[i].uuid;
+			sequence = sequence + ',' + result[i].id;
 		}
 	}
-
 	sequence.slice(sequenceCutLastChar);
 	return sequence;
+}
+
+function validateFileUpload(data: string[]) {
+	const grades = ['A', 'B', 'C+', 'C', 'C-', 'D'];
+	let gradePreCleaning = String(data[2]);
+	let gradeInLoop = gradePreCleaning.toUpperCase();
+
+	if (data.length !== 4 || data[0] === '' || data[1] === '' || data[2] === '') {
+		return false;
+	}
+	if (data[0] === 'Name' || data[1] === 'Dept' || data[2] === 'Grade') {
+		return false;
+	}
+	if (!grades.includes(gradeInLoop)) {
+		return false;
+	}
+	return true;
+}
+
+async function dbInsertCsvRows(sessionId: string, data: string[][], db: any, dbLargestSequence: number) {
+	let currentLargestSequence = dbLargestSequence;
+	let sequenceToInsert;
+	console.log('very outside: ', currentLargestSequence);
+	for (let i = 0; i < data.length; i++) {
+		if (!data[i][0] || !data[i][1] || !data[i][2] || !data[i][3]) {
+			break;
+		}
+		console.log('Outside: ', currentLargestSequence);
+		let gradePreCleaning = String(data[i][2]);
+		let gradeInLoop = gradePreCleaning.toUpperCase();
+		if (validateFileUpload(data[i])) {
+			sequenceToInsert = currentLargestSequence + 1;
+			currentLargestSequence += 1;
+
+			console.log('Inside currentLargestSequence: ', currentLargestSequence);
+			console.log('Inside sequenceToInsert: ', sequenceToInsert);
+			await db.insert(records).values({
+				name: data[i][0],
+				dept: data[i][1],
+				grade: gradeInLoop,
+				session: sessionId,
+				sequence: sequenceToInsert,
+				remarks: data[i][3],
+			});
+		}
+	}
 }

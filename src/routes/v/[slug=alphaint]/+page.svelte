@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { PageProps } from './$types';
+	import { CalculateDateAgo } from '$lib/utils';
 	import { enhance } from '$app/forms';
 	import Trash from '$lib/svg/Trash.svelte';
 	import { slide } from 'svelte/transition';
@@ -7,11 +9,13 @@
 	import { editFormSubmitKeyboardShortcut } from '$lib/FormSubmitKeyboardShortcut';
 	import SmallScreenHamburger from '$lib/SmallScreenHamburger.svelte';
 	import Papa from 'papaparse';
+	import { page } from '$app/stores';
 
 	import DragDrop from '$lib/DragDrop.svelte';
 	import Chart from '$lib/Chart.svelte';
+	import FileUploadForm from '$lib/FileUploadForm.svelte';
 
-	let { data, form } = $props();
+	let { data, form }: PageProps = $props();
 
 	let formAutoSaveSession: HTMLFormElement | undefined = $state();
 	let formSaveSuccessLoading = $state(false);
@@ -32,9 +36,7 @@
 
 	let order = $state(data.streamed.sequence);
 
-	let uploadPreview = $state(false);
 	let outsideVar = $state();
-	let formUploadButtonSpinner = $state(false);
 
 	let newCounts = $derived.by(async () => {
 		let newCounts = {
@@ -95,6 +97,10 @@
 				}
 			}
 		}, 180000);
+
+		if (form?.uploadSuccess) {
+			uploadModal.close();
+		}
 	});
 
 	let deleteSessionModal: HTMLDialogElement;
@@ -102,6 +108,9 @@
 
 	let searchInput: string = $state('');
 	let submittedSpinner = $state(false);
+
+	let currentPageUrl = $state($page.url.origin + '/v/' + data.streamed.session.slug);
+	let shareCopiedSuccess = $state(false);
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10">
@@ -258,23 +267,65 @@
 					</h3>
 					<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
 						<li>
-							<button class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="1.3em"
-									height="1.3em"
-									class="tabler:pencil"
-									viewBox="0 0 24 24"
-									><path
-										fill="none"
-										stroke="currentColor"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"
-									/></svg
-								>Edit Title
-							</button>
+							<details class="collapse rounded-lg bg-base-200">
+								<summary class=""
+									><div
+										class="flex cursor-pointer items-center gap-4 rounded-lg p-2 text-lg font-medium hover:bg-primary hover:text-primary-content"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="1.3em"
+											height="1.3em"
+											class="tabler:pencil"
+											viewBox="0 0 24 24"
+											><path
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"
+											/></svg
+										>Edit Title
+									</div></summary
+								>
+								<div class="collapse-content ms-1 mt-2 border-l-4 border-l-base-300 p-0 ps-8 text-lg font-medium">
+									<form method="POST" action="?/editSessionTitle" class="grid gap-1" use:enhance>
+										<label class="input input-bordered flex items-center rounded-full">
+											<input
+												type="text"
+												name="title"
+												value={data.streamed.session.title}
+												class="w-full"
+												placeholder="Edit Title"
+												autocomplete="off"
+												required
+											/>
+											<button
+												aria-label="edit"
+												class="h-8.5 w-8.5 -me-2 ms-2 flex items-center justify-center rounded-full bg-primary p-1.5 text-primary-content"
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="1.5em"
+													height="1.5em"
+													class="tabler:pencil h-6 w-6"
+													viewBox="0 0 24 24"
+													><path
+														fill="none"
+														stroke="currentColor"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="3"
+														d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"
+													/></svg
+												>
+											</button>
+										</label>
+										<input type="hidden" name="session-id" value={data.streamed.session.id} />
+									</form>
+								</div>
+							</details>
 						</li>
 						<li>
 							<button
@@ -300,23 +351,83 @@
 							</button>
 						</li>
 						<li>
-							<button class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="1.3em"
-									height="1.3em"
-									class="tabler:share"
-									viewBox="0 0 24 24"
-									><path
-										fill="none"
-										stroke="currentColor"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M3 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0m12-6a3 3 0 1 0 6 0a3 3 0 1 0-6 0m0 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0m-6.3-7.3l6.6-3.4m-6.6 6l6.6 3.4"
-									/></svg
-								>Share
-							</button>
+							<details class="collapse rounded-lg bg-base-200">
+								<summary class=""
+									><div
+										class="flex cursor-pointer items-center gap-4 rounded-lg p-2 text-lg font-medium hover:bg-primary hover:text-primary-content"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="1.3em"
+											height="1.3em"
+											class="tabler:share"
+											viewBox="0 0 24 24"
+											><path
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M3 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0m12-6a3 3 0 1 0 6 0a3 3 0 1 0-6 0m0 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0m-6.3-7.3l6.6-3.4m-6.6 6l6.6 3.4"
+											/></svg
+										>Share
+									</div></summary
+								>
+								<div class="collapse-content ms-1 mt-2 border-l-4 border-l-base-300 p-0 ps-8 text-lg font-medium">
+									<label class="input input-bordered flex items-center rounded-full">
+										<input type="text" name="url" bind:value={currentPageUrl} class="w-full" autocomplete="off" />
+										<button
+											aria-label="edit"
+											class="h-8.5 w-8.5 -me-2 ms-2 flex items-center justify-center rounded-full {shareCopiedSuccess
+												? 'bg-success'
+												: 'bg-primary'} p-1.5 text-primary-content"
+											onclick={() => {
+												navigator.clipboard.writeText(currentPageUrl);
+												shareCopiedSuccess = true;
+												setTimeout(() => {
+													shareCopiedSuccess = false;
+												}, 5000);
+											}}
+										>
+											{#if shareCopiedSuccess}
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="1.2em"
+													height="1.2em"
+													class="tabler:check h-5 w-5"
+													viewBox="0 0 24 24"
+													><path
+														fill="none"
+														stroke="currentColor"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="4"
+														d="m5 12l5 5L20 7"
+													/></svg
+												>
+											{:else}
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="1.2em"
+													height="1.2em"
+													class="tabler:copy h-4.5 w-4.5"
+													viewBox="0 0 24 24"
+													><g
+														fill="none"
+														stroke="currentColor"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="3"
+														><path
+															d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"
+														/><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1" /></g
+													></svg
+												>
+											{/if}
+										</button>
+									</label>
+								</div>
+							</details>
 						</li>
 					</ul>
 				</div>
@@ -529,6 +640,7 @@
 								<form method="POST" action="?/save" bind:this={formAutoSaveSession} use:enhance>
 									<!-- <button class="hidden"></button> -->
 									<input type="hidden" name="order" bind:value={order} />
+									<input type="hidden" name="session-id" value={data.streamed.session.id} />
 								</form>
 								<input
 									type="checkbox"
@@ -693,6 +805,11 @@
 								/><path d="M18 16.496V18l1 1" /></g
 							></svg
 						>Created:
+						{#if data.streamed.session.timestamp}
+							{CalculateDateAgo(data.streamed.session.timestamp)}
+						{:else}
+							Oops, something went wrong
+						{/if}
 					</div>
 				</li>
 			</ul>
@@ -713,10 +830,8 @@
 			{#await newCounts}
 				<span class="loading loading-spinner my-8 text-primary"></span>
 			{:then newCounts}
-				<div class="justify-items-around grid w-full grid-cols-3 gap-2 pt-8 min-[1921px]:grid-cols-5">
-					<div
-						class="row-span-2 animate-scale content-center p-4 text-5xl font-black text-base-content/80 min-[1921px]:row-span-1"
-					>
+				<div class="justify-items-around grid w-full grid-cols-3 gap-2 pt-8">
+					<div class="row-span-2 animate-scale content-center p-4 text-5xl font-black text-base-content/80">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1em"
@@ -736,25 +851,25 @@
 						>{newCounts.total}
 					</div>
 
-					<div class="grid content-center justify-items-center rounded-xl bg-[#FED049] px-4 py-2">
+					<div class="grid content-center justify-items-center rounded-xl bg-[#F66D44] px-4 py-2">
 						<div class="font-medium">A</div>
 						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
 							{newCounts.a}
 						</div>
 					</div>
-					<div class="grid content-center justify-items-center rounded-xl bg-[#808836]/60 px-4 py-2">
+					<div class="grid content-center justify-items-center rounded-xl bg-[#FEAE65]/60 px-4 py-2">
 						<div class="font-medium">B</div>
 						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
 							{newCounts.b}
 						</div>
 					</div>
-					<div class="grid content-center justify-items-center rounded-xl bg-[#FF9A00] px-4 py-2">
+					<div class="grid content-center justify-items-center rounded-xl bg-[#E6F69D] px-4 py-2">
 						<div class="font-medium">C</div>
 						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
 							{newCounts.c}
 						</div>
 					</div>
-					<div class="grid content-center justify-items-center rounded-xl bg-[#D10363]/60 px-4 py-2">
+					<div class="grid content-center justify-items-center rounded-xl bg-[#AADEA7] px-4 py-2">
 						<div class="font-medium">D</div>
 						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
 							{newCounts.d}
@@ -781,95 +896,22 @@
 -->
 <dialog bind:this={uploadModal} class="view-upload-modal modal overflow-y-scroll">
 	<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
-		<h2 class="rounded-t-lg bg-primary p-5 font-bold text-base-100">Add Via CSV File Upload</h2>
-
-		<div class="p-4">
-			<form id="form-fileupload" enctype="multipart/form-data" action="?/uploadfile" method="POST" use:enhance>
-				<label for="fileupload" class="text-lg">Upload your file (.csv):</label>
-				<input
-					type="file"
-					name="fileupload"
-					id="fileupload"
-					accept=".csv"
-					class="file-input file-input-bordered file-input-primary w-full"
-					onchange={() => {
-						const file = document.getElementById('fileupload').files[0];
-						console.log(file);
-						var reader = new FileReader();
-
-						// Read file into memory as UTF-16
-						reader.readAsText(file);
-						reader.onload = (evt) => {
-							//const csv = reader.result;
-							const csv = evt.target.result;
-							outsideVar = Papa.parse(csv, { delimiter: ',', header: true, dynamicTyping: false });
-						};
-
-						uploadPreview = true;
-					}}
-				/>
-			</form>
-			<div class="modal-action flex justify-end pb-4">
-				<form method="dialog">
-					<button class="btn btn-outline text-lg">Close</button>
-				</form>
-				<button
-					form="form-fileupload"
-					class="btn btn-primary min-w-32 text-lg font-bold"
-					onclick={() => {
-						formUploadButtonSpinner = true;
-						const dialogUpload = document.getElementById('upload_modal');
-						setTimeout(() => {
-							dialogUpload.close('Closed');
-						}, 1500);
-					}}
-					>{#if formUploadButtonSpinner}<span class="loading loading-spinner loading-md"
-						></span>{:else}Upload{/if}</button
+		<form method="dialog" class="grid justify-items-end p-2">
+			<button aria-label="close">
+				<svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" class="tabler:x" viewBox="0 0 24 24"
+					><path
+						fill="none"
+						stroke="currentColor"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M18 6L6 18M6 6l12 12"
+					/></svg
 				>
-			</div>
-			{#if uploadPreview}
-				{#await outsideVar}
-					<span class="loading loading-spinner loading-md text-primary"></span>
-				{:then outsideVar}
-					{#key outsideVar}
-						<h3 class="mt-8">Preview</h3>
-						<div class="grid grid-cols-4 rounded-lg border border-gray-400 text-gray-400">
-							<div
-								class="rounded-tl-lg border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold"
-							>
-								Name
-							</div>
-							<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Dept</div>
-							<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Grade</div>
-							<div class="rounded-tr-lg border-b border-b-gray-400 bg-base-200 p-2 font-bold">Remarks</div>
-							{#each outsideVar.data as item}
-								{#if item.Name != '' && item.Dept != '' && item.Grade != ''}
-									<div class="border-b border-r border-b-gray-400 border-r-gray-400 p-2">{item.Name}</div>
-									<div class="border-b border-r border-b-gray-400 border-r-gray-400 p-2">{item.Dept}</div>
-									<div class="border-b border-r border-b-gray-400 border-r-gray-400 p-2">{item.Grade}</div>
-									<div class="border-b border-b-gray-400 p-2">{item.Remarks}</div>
-								{/if}
-							{/each}
-						</div>
-					{/key}
-				{/await}
-			{:else}
-				<div class="mt-8">CSV file must only have 4 columns: Name, Dept, Grade, Remarks. For example:</div>
-				<div class="grid grid-cols-4 rounded-lg border border-gray-400 text-gray-400">
-					<div class="rounded-tl-lg border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">
-						Name
-					</div>
-					<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Dept</div>
-					<div class="border-b border-r border-b-gray-400 border-r-gray-400 bg-base-200 p-2 font-bold">Grade</div>
-					<div class="rounded-tr-lg border-b border-b-gray-400 bg-base-200 p-2 font-bold">Remarks</div>
+			</button>
+		</form>
 
-					<div class="border-r border-r-gray-400 p-2">Mary</div>
-					<div class="border-r border-r-gray-400 p-2">Sue</div>
-					<div class="border-r border-r-gray-400 p-2">B</div>
-					<div class="p-2">She was hardworking.</div>
-				</div>
-			{/if}
-		</div>
+		<FileUploadForm session={data.streamed.session} />
 	</div>
 </dialog>
 
@@ -967,7 +1009,7 @@
 		<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">Error saving!</div>
 	</div>
 {/if}
-{#if form?.formUploadSuccess}
+{#if form?.uploadSuccess}
 	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
 		<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
 			<svg

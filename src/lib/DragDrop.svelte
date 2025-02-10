@@ -25,7 +25,7 @@
 	 * @property {string} id - entry's uuid from db
 	 * @property {boolean} editStatus - switch to determine if edit form should be displayed
 	 */
-	let edit = $state({});
+	let edit = $state([]);
 	for (let i = 0; i < streamedResult.length; i++) {
 		const key = streamedResult[i].id;
 		edit[key] = false;
@@ -34,7 +34,7 @@
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
 	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
 
-	let sortableEl;
+	let sortableEl: HTMLDivElement;
 
 	let initOrder = '';
 	let initOrderWantedlength = initOrder.length - 1;
@@ -47,10 +47,7 @@
 	}
 
 	initOrder.slice(initOrderWantedlength);
-
 	let order = $state(initOrder);
-	$inspect(initOrder);
-	$inspect(order);
 
 	let nothingFound = $state(false);
 
@@ -135,9 +132,23 @@
 					>
 						<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
 							<div
-								class="flex h-full grow items-center rounded-t-lg bg-base-300 p-2 lg:grow-0 lg:rounded-l-lg lg:rounded-r-none lg:rounded-tl-lg"
+								class="flex h-full grow items-center rounded-t-lg bg-base-300 p-2 text-base-content lg:grow-0 lg:rounded-l-lg lg:rounded-r-none lg:rounded-tl-lg"
 							>
-								<GripVertical class="stroke-base-content" />
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1em"
+									height="1em"
+									class="tabler:grip-vertical"
+									viewBox="0 0 24 24"
+									><path
+										fill="none"
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M8 5a1 1 0 1 0 2 0a1 1 0 1 0-2 0m0 7a1 1 0 1 0 2 0a1 1 0 1 0-2 0m0 7a1 1 0 1 0 2 0a1 1 0 1 0-2 0m6-14a1 1 0 1 0 2 0a1 1 0 1 0-2 0m0 7a1 1 0 1 0 2 0a1 1 0 1 0-2 0m0 7a1 1 0 1 0 2 0a1 1 0 1 0-2 0"
+									/></svg
+								>
 							</div>
 						</div>
 						<div class="sortable-handle col-span-12 flex items-center justify-center lg:col-span-1">
@@ -456,7 +467,12 @@
 	{/key}
 </div>
 {#if !nothingFound}
-	<form method="POST" action="?/save" class="ignore-from-sorting mx-10 mt-10 flex justify-center lg:justify-end">
+	<form
+		method="POST"
+		action="?/save"
+		class="ignore-from-sorting mx-10 mt-10 flex justify-center lg:justify-end"
+		use:enhance
+	>
 		<input type="hidden" name="order" bind:value={order} />
 		<input type="hidden" name="session-id" value={session.id} />
 		<button class="btn btn-success flex items-center gap-2 font-bold lg:min-w-24">Save Changes</button>
@@ -465,7 +481,15 @@
 
 <style>
 	.sortable-handle {
-		/* cursor: url('/hand-grab.svg'), auto; */
-		cursor: move;
+		cursor: move; /* fallback if grab cursor is unsupported */
+		cursor: grab;
+		cursor: -moz-grab;
+		cursor: -webkit-grab;
+
+		&:active {
+			cursor: grabbing;
+			cursor: -moz-grabbing;
+			cursor: -webkit-grabbing;
+		}
 	}
 </style>

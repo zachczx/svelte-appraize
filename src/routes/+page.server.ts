@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { message } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
+import { slugify } from '$lib/utils';
 
 // Superforms
 const schema = z.object({
@@ -40,13 +41,18 @@ export const actions = {
 			resultDefaultUser = await db.insert(users).values({ email: defaultUser }).returning();
 		}
 
+		const slugTitle = slugify(form.data.session);
+
 		let session = await db.select().from(sessions).where(eq(sessions.title, form.data.session));
 		let res;
 		console.log(form.data.session);
 		console.log(resultDefaultUser[0]);
 		if (session.length === 0) {
 			console.log('session not found!');
-			res = await db.insert(sessions).values({ title: form.data.session, owner: resultDefaultUser[0].id }).returning();
+			res = await db
+				.insert(sessions)
+				.values({ title: form.data.session, slug: slugTitle, owner: resultDefaultUser[0].id })
+				.returning();
 			console.log('inserted session');
 		}
 
