@@ -83,7 +83,7 @@
 					}, 2000);
 				}
 			}
-		}, 2000);
+		}, 20000);
 
 		if (form?.uploadSuccess) {
 			uploadModal.close();
