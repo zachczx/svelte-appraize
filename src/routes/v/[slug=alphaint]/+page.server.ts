@@ -42,36 +42,37 @@ export const load = (async ({ params, url }) => {
 	const filterGradeParam = url.searchParams.get('grade');
 	let result;
 
-	if (!filterParam || !filterGradeParam) {
-		const sq = db.select().from(records).where(eq(records.session, session.id)).as('sq');
-		result = await db
-			.select()
-			.from(sq)
-			.where(
-				or(
-					filterParam ? ilike(sq.name, `%${filterParam}%`) : undefined,
-					filterParam ? ilike(sq.dept, `%${filterParam}%`) : undefined,
-					filterParam ? ilike(sq.remarks, `%${filterParam}%`) : undefined,
-					filterGradeParam ? eq(sq.grade, filterGradeParam) : undefined,
-				),
-			)
-			.orderBy(asc(sq.sequence));
-	} else if (filterParam && filterGradeParam) {
-		result = await db
-			.select()
-			.from(records)
-			.where(
-				and(
-					eq(records.session, session.id),
-					or(ilike(records.name, `%${filterParam}%`), ilike(records.dept, `%${filterParam}%`)),
-					eq(records.grade, filterGradeParam),
-				),
-			)
-			.orderBy(asc(records.sequence));
-	} else {
-		result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
-	}
+	// if (!filterParam || !filterGradeParam) {
+	// 	const sq = db.select().from(records).where(eq(records.session, session.id)).as('sq');
+	// 	result = await db
+	// 		.select()
+	// 		.from(sq)
+	// 		.where(
+	// 			or(
+	// 				filterParam ? ilike(sq.name, `%${filterParam}%`) : undefined,
+	// 				filterParam ? ilike(sq.dept, `%${filterParam}%`) : undefined,
+	// 				filterParam ? ilike(sq.remarks, `%${filterParam}%`) : undefined,
+	// 				filterGradeParam ? eq(sq.grade, filterGradeParam) : undefined,
+	// 			),
+	// 		)
+	// 		.orderBy(asc(sq.sequence));
+	// } else if (filterParam && filterGradeParam) {
+	// 	result = await db
+	// 		.select()
+	// 		.from(records)
+	// 		.where(
+	// 			and(
+	// 				eq(records.session, session.id),
+	// 				or(ilike(records.name, `%${filterParam}%`), ilike(records.dept, `%${filterParam}%`)),
+	// 				eq(records.grade, filterGradeParam),
+	// 			),
+	// 		)
+	// 		.orderBy(asc(records.sequence));
+	// } else {
+	// result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
+	// }
 
+	result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
 	let sequence = getInitSequence(result);
 
 	return {
@@ -197,16 +198,10 @@ export const actions = {
 					.set({ sequence: individualOrder })
 					.where(and(eq(records.session, sessionId), eq(records.id, orderArray[i])));
 			}
-
-			// Delay for the spinner icon/toast
-			await delay(1000);
 			console.log('Order saved successfully');
-
 			return { formSaveSuccess: true };
 		} catch (error) {
-			console.log("There's an error:");
 			console.log(error);
-			await delay(1000);
 			return fail(400, { formSaveFail: true });
 		}
 	},
@@ -350,6 +345,17 @@ export const actions = {
 			return fail(400, { error: true, message: 'Edit failed!' });
 		}
 		redirect(301, `/v/${slugTitle}`);
+	},
+
+	toggleTalent: async function ({ request }) {
+		const formData = await request.formData();
+		const talent = formData.get('talent') === 'true' ? true : false;
+		const recordId = String(formData.get('record-id'));
+		const update = await db.update(records).set({ talent: talent }).where(eq(records.id, recordId));
+		if (!update) {
+			return fail(400, { error: true, message: 'Update failed!' });
+		}
+		return { updateTalentSuccess: true };
 	},
 } satisfies Actions;
 

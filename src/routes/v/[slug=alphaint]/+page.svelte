@@ -2,13 +2,11 @@
 	import type { PageProps } from './$types';
 	import { CalculateDateAgo } from '$lib/utils';
 	import { enhance } from '$app/forms';
-	import Trash from '$lib/svg/Trash.svelte';
+
 	import { slide } from 'svelte/transition';
 	import { circOut } from 'svelte/easing';
 	import Home from '$lib/svg/Home.svelte';
 	import { editFormSubmitKeyboardShortcut } from '$lib/FormSubmitKeyboardShortcut';
-	import SmallScreenHamburger from '$lib/SmallScreenHamburger.svelte';
-	import Papa from 'papaparse';
 	import { page } from '$app/stores';
 
 	import DragDrop from '$lib/DragDrop.svelte';
@@ -17,7 +15,7 @@
 
 	let { data, form }: PageProps = $props();
 
-	let formAutoSaveSession: HTMLFormElement | undefined = $state();
+	let formAutoSaveSession: HTMLFormElement; //= $state();
 	let formSaveSuccessLoading = $state(false);
 	let autoSave = $state(true);
 	let nameData = $state();
@@ -27,16 +25,7 @@
 
 	let deleteSessionButtonClickedSpinner = $state(false);
 
-	/**
-	 * @type {HTMLFormElement} filterform - form element for filter bar
-	 */
-	let filterForm: HTMLFormElement;
-	let filterInput = $state();
-	let filterGradeValue = $state('Grade');
-
 	let order = $state(data.streamed.sequence);
-
-	let outsideVar = $state();
 
 	let newCounts = $derived.by(async () => {
 		let newCounts = {
@@ -72,7 +61,6 @@
 		}
 		newCounts.cTotal = newCounts.cPlus + newCounts.c + newCounts.cMinus;
 		newCounts.total = newCounts.a + newCounts.b + newCounts.cTotal + newCounts.d;
-		// console.log(newCounts);
 		if (newCounts.total == 0 || !newCounts.total) {
 			newCounts.percentageA = newCounts.percentageB = newCounts.cTotal = newCounts.percentageD = 0;
 		} else {
@@ -89,14 +77,13 @@
 			if (formAutoSaveSession) {
 				if (autoSave) {
 					formAutoSaveSession.requestSubmit();
-					console.log('Auto saved successfully');
 					formSaveSuccessLoading = true;
 					setTimeout(() => {
 						formSaveSuccessLoading = false;
-					}, 1500);
+					}, 2000);
 				}
 			}
-		}, 180000);
+		}, 2000);
 
 		if (form?.uploadSuccess) {
 			uploadModal.close();
@@ -635,10 +622,32 @@
 					<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
 						<li>
 							<div class="flex items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content">
-								<label for="auto-save-checkbox" class="grow font-medium">Auto save every 3 mins</label>
+								<label for="auto-save-checkbox" class="flex grow items-center font-medium"
+									><svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="1.3em"
+										height="1.3em"
+										class="material-symbols:save-clock-outline-rounded me-4"
+										viewBox="0 0 24 24"
+										><path
+											fill="currentColor"
+											d="M5 19V5v5.075V10zm0 2q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h11.175q.4 0 .763.15t.637.425l2.85 2.85q.275.275.425.638t.15.762v1.55q0 .425-.288.713t-.712.287t-.712-.288T19 9.376V7.85L16.15 5H5v14h5.8q.425 0 .713.288T11.8 20t-.288.713T10.8 21zm13 1q-2.075 0-3.537-1.463T13 17t1.463-3.537T18 12t3.538 1.463T23 17t-1.463 3.538T18 22m.5-5.2v-2.3q0-.2-.15-.35T18 14t-.35.15t-.15.35v2.275q0 .2.075.388t.225.337l1.525 1.525q.15.15.35.15t.35-.15t.15-.35t-.15-.35zM7 10h7q.425 0 .713-.288T15 9V7q0-.425-.288-.712T14 6H7q-.425 0-.712.288T6 7v2q0 .425.288.713T7 10m4.05 7.85q-.025-.225-.038-.437T11 16.975q0-1.35.5-2.6t1.45-2.225q-.225-.075-.462-.112T12 12q-1.25 0-2.125.875T9 15q0 .975.563 1.763t1.487 1.087"
+										/></svg
+									>Auto save {#if formSaveSuccessLoading}
+										<span class="loading loading-spinner loading-sm ms-4 text-primary"></span>
+									{/if}</label
+								>
 
-								<form method="POST" action="?/save" bind:this={formAutoSaveSession} use:enhance>
-									<!-- <button class="hidden"></button> -->
+								<form
+									method="POST"
+									action="/autosave"
+									bind:this={formAutoSaveSession}
+									use:enhance={() => {
+										return async ({ update }) => {
+											update({ reset: false, invalidateAll: false });
+										};
+									}}
+								>
 									<input type="hidden" name="order" bind:value={order} />
 									<input type="hidden" name="session-id" value={data.streamed.session.id} />
 								</form>
@@ -686,7 +695,7 @@
 		<ol class="view-content space-y-4">
 			<div class="view-ranking-title px-4 pb-4 md:px-10">
 				<h1>Ranking: {data.streamed.session.title}</h1>
-				<div class="flex gap-4 pt-8">
+				<!-- <div class="flex gap-4 pt-8">
 					<form
 						method="POST"
 						action="?/filter"
@@ -768,10 +777,13 @@
 						</svg><span class="hidden lg:inline">Reset</span>
 					</button>
 				</div>
+			</div> -->
+				<div class="grid gap-8 pt-12">
+					{#key data.streamed.result}
+						<DragDrop session={data.streamed.session} streamedResult={data.streamed.result} bind:value={order} />
+					{/key}
+				</div>
 			</div>
-			{#key data.streamed.result}
-				<DragDrop session={data.streamed.session} streamedResult={data.streamed.result} bind:value={order} />
-			{/key}
 		</ol>
 	</div>
 

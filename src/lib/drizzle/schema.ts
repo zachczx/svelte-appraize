@@ -11,7 +11,7 @@ export const records = pgTable('records', {
 		.notNull(),
 	sequence: integer('sequence'),
 	previous: boolean('previous'),
-	talent: varchar('talent', { length: 10 }),
+	talent: boolean('talent').default(false),
 	remarks: varchar('remarks', { length: 1000 }),
 	timestamp: timestamp('timestamp', { withTimezone: true }).defaultNow(),
 });

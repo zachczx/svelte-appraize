@@ -50,6 +50,7 @@
 							placeholder="Create or continue session (eg. cs24)"
 							bind:value={$form.session}
 							class="view-input-button w-full"
+							autocomplete="off"
 							onkeydown={(evt) => {
 								editFormSubmitKeyboardShortcut(evt, 'landing-input');
 								if (evt.key === 'Enter' && $form.session.length > 0) {
