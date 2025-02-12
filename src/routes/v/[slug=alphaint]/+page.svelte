@@ -694,7 +694,7 @@
 	<div class="col-span-5 min-h-dvh px-12 pb-4 pt-8 lg:pt-8">
 		<ol class="view-content space-y-4">
 			<div class="view-ranking-title px-4 pb-4 md:px-10">
-				<h1>Ranking: {data.streamed.session.title}</h1>
+				<h1>{data.streamed.session.title}</h1>
 				<div class="grid gap-8 pt-12">
 					{#key data.streamed.result}
 						<DragDrop session={data.streamed.session} streamedResult={data.streamed.result} bind:value={order} />
