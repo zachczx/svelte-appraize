@@ -194,7 +194,7 @@
 	{/each}
 </ul> -->
 <main>
-	<div id="table" bind:this={sortableEl} class="relative grid space-y-4">
+	<div id="table" bind:this={sortableEl} class="relative grid">
 		<!-- {#if nothingFound}
 		<div class="space-y-4 p-2 lg:px-10 lg:py-28">
 			<div class="flex justify-center"><UndrawNoData /></div>
@@ -214,14 +214,12 @@
 			{:else}
 				{#each filteredResults as person, i}
 					<div
-						class="grid grid-cols-12 rounded-lg border border-gray-400 transition duration-700 ease-out hover:border-primary"
+						class="grid grid-cols-12 border-b-2 border-base-content/[0.07] py-2 last:border-0"
 						id={person.id}
 						data-sortable-id={person.id}
 					>
 						<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
-							<div
-								class="flex h-full grow items-center rounded-t-lg bg-base-300 p-2 text-base-content lg:grow-0 lg:rounded-l-lg lg:rounded-r-none lg:rounded-tl-lg"
-							>
+							<div class="flex h-full grow items-center p-2 text-base-content lg:grow-0">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="1em"
@@ -495,136 +493,141 @@
 								</ul>
 							</div>
 						</div>
-					</div>
-
-					<dialog bind:this={edit[i].dialogElement} class="view-upload-modal modal overflow-y-scroll">
-						<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
-							<form method="dialog" class="grid justify-items-end p-2">
-								<button aria-label="close">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="1.3em"
-										height="1.3em"
-										class="tabler:x"
-										viewBox="0 0 24 24"
-										><path
-											fill="none"
-											stroke="currentColor"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M18 6L6 18M6 6l12 12"
-										/></svg
-									>
-								</button>
-							</form>
-							<h2 class="px-8 py-2 font-bold">Edit Entry</h2>
-							<form method="POST" id="edit-dialog-{person.id}" action="?/edit" class="grid gap-2 px-8 py-2" use:enhance>
-								<label class="input input-bordered flex items-center gap-4">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="1em"
-										height="1em"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus hidden text-base-content/50 xl:flex"
-									>
-										<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-										<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-										<path d="M16 19h6" />
-										<path d="M19 16v6" />
-										<path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
-									</svg>
-									<input
-										type="text"
-										name="edit-name"
-										value={person.name}
-										class="shrink"
-										placeholder="Name"
-										autocomplete="off"
-										required
-									/>
-								</label>
-
-								<label class="input input-bordered flex items-center gap-4">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="1em"
-										height="1em"
-										class="tabler:home hidden text-base-content/50 xl:flex"
-										viewBox="0 0 24 24"
-										><g
-											fill="none"
-											stroke="currentColor"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											><path d="M5 12H3l9-9l9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /><path
-												d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"
-											/></g
-										></svg
-									>
-									<input
-										type="text"
-										name="edit-dept"
-										value={person.dept}
-										class="grow"
-										placeholder="Dept"
-										autocomplete="off"
-										required
-									/>
-								</label>
-
-								<label class="input input-bordered flex w-full items-center border">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="1em"
-										height="1em"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none text-base-content/50"
-									>
-										<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-										<path d="M8 9h8" />
-										<path d="M8 13h6" />
-										<path
-											d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
-										/>
-									</svg>
-
-									<input
-										type="text"
-										name="edit-remarks"
-										value={person.remarks}
-										class="grow"
-										placeholder="Remarks (Optional)"
-									/>
-								</label>
-								<input type="hidden" name="edit-session-id" value={session.id} />
-								<input type="hidden" name="edit-record-id" value={person.id} />
-							</form>
-							<div class="grid grid-cols-2 gap-2 px-8 pb-8">
-								<form method="dialog" class="">
-									<button class="btn btn-outline btn-primary w-full text-lg text-primary-content" aria-label="close">
-										Close
+						<dialog bind:this={edit[i].dialogElement} class="view-upload-modal modal overflow-y-scroll">
+							<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
+								<form method="dialog" class="grid justify-items-end p-2">
+									<button aria-label="close">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="1.3em"
+											height="1.3em"
+											class="tabler:x"
+											viewBox="0 0 24 24"
+											><path
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M18 6L6 18M6 6l12 12"
+											/></svg
+										>
 									</button>
 								</form>
-								<button
-									form="edit-dialog-{person.id}"
-									class="btn btn-primary text-lg font-bold text-primary-content"
-									aria-label="Add">Edit</button
+								<h2 class="px-8 py-2 font-bold">Edit Entry</h2>
+								<form
+									method="POST"
+									id="edit-dialog-{person.id}"
+									action="?/edit"
+									class="grid gap-2 px-8 py-2"
+									use:enhance
 								>
+									<label class="input input-bordered flex items-center gap-4">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="1em"
+											height="1em"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus hidden text-base-content/50 xl:flex"
+										>
+											<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+											<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+											<path d="M16 19h6" />
+											<path d="M19 16v6" />
+											<path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
+										</svg>
+										<input
+											type="text"
+											name="edit-name"
+											value={person.name}
+											class="shrink"
+											placeholder="Name"
+											autocomplete="off"
+											required
+										/>
+									</label>
+
+									<label class="input input-bordered flex items-center gap-4">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="1em"
+											height="1em"
+											class="tabler:home hidden text-base-content/50 xl:flex"
+											viewBox="0 0 24 24"
+											><g
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												><path d="M5 12H3l9-9l9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /><path
+													d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"
+												/></g
+											></svg
+										>
+										<input
+											type="text"
+											name="edit-dept"
+											value={person.dept}
+											class="grow"
+											placeholder="Dept"
+											autocomplete="off"
+											required
+										/>
+									</label>
+
+									<label class="input input-bordered flex w-full items-center border">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="1em"
+											height="1em"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none text-base-content/50"
+										>
+											<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+											<path d="M8 9h8" />
+											<path d="M8 13h6" />
+											<path
+												d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
+											/>
+										</svg>
+
+										<input
+											type="text"
+											name="edit-remarks"
+											value={person.remarks}
+											class="grow"
+											placeholder="Remarks (Optional)"
+										/>
+									</label>
+									<input type="hidden" name="edit-session-id" value={session.id} />
+									<input type="hidden" name="edit-record-id" value={person.id} />
+								</form>
+								<div class="grid grid-cols-2 gap-2 px-8 pb-8">
+									<form method="dialog" class="">
+										<button class="btn btn-outline btn-primary w-full text-lg text-primary-content" aria-label="close">
+											Close
+										</button>
+									</form>
+									<button
+										form="edit-dialog-{person.id}"
+										class="btn btn-primary text-lg font-bold text-primary-content"
+										aria-label="Add">Edit</button
+									>
+								</div>
 							</div>
-						</div>
-					</dialog>
+						</dialog>
+					</div>
 				{/each}
 			{/if}
 		{/await}
