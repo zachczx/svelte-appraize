@@ -20,15 +20,18 @@
 
 	let { session, streamedResult = [], value = $bindable() } = $props();
 
-	/**
-	 * @typedef {Object} edit - stores the uuid and a boolean value that is then switched upon clicking of edit button. Needs $state for reactivity, simple assignment didn't work after next170
-	 * @property {string} id - entry's uuid from db
-	 * @property {boolean} editStatus - switch to determine if edit form should be displayed
-	 */
-	let edit = $state([]);
+	interface EditEntry {
+		id: string;
+
+		dialogElement?: HTMLDialogElement;
+	}
+	let edit: EditEntry[] = $state([]);
 	for (let i = 0; i < streamedResult.length; i++) {
-		const key = streamedResult[i].id;
-		edit[key] = false;
+		const entry = {
+			id: streamedResult[i].id,
+			dialogElement: undefined,
+		};
+		edit.push(entry);
 	}
 
 	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
@@ -425,7 +428,8 @@
 										<button
 											class="flex items-center gap-2"
 											onclick={() => {
-												edit[person.id] = !edit[person.id];
+												edit[i].dialogElement?.showModal();
+												console.log(edit[i].dialogElement);
 											}}
 											><svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -492,6 +496,135 @@
 							</div>
 						</div>
 					</div>
+
+					<dialog bind:this={edit[i].dialogElement} class="view-upload-modal modal overflow-y-scroll">
+						<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
+							<form method="dialog" class="grid justify-items-end p-2">
+								<button aria-label="close">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="1.3em"
+										height="1.3em"
+										class="tabler:x"
+										viewBox="0 0 24 24"
+										><path
+											fill="none"
+											stroke="currentColor"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M18 6L6 18M6 6l12 12"
+										/></svg
+									>
+								</button>
+							</form>
+							<h2 class="px-8 py-2 font-bold">Edit Entry</h2>
+							<form method="POST" id="edit-dialog-{person.id}" action="?/edit" class="grid gap-2 px-8 py-2" use:enhance>
+								<label class="input input-bordered flex items-center gap-4">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="1em"
+										height="1em"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus hidden text-base-content/50 xl:flex"
+									>
+										<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+										<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+										<path d="M16 19h6" />
+										<path d="M19 16v6" />
+										<path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
+									</svg>
+									<input
+										type="text"
+										name="edit-name"
+										value={person.name}
+										class="shrink"
+										placeholder="Name"
+										autocomplete="off"
+										required
+									/>
+								</label>
+
+								<label class="input input-bordered flex items-center gap-4">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="1em"
+										height="1em"
+										class="tabler:home hidden text-base-content/50 xl:flex"
+										viewBox="0 0 24 24"
+										><g
+											fill="none"
+											stroke="currentColor"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											><path d="M5 12H3l9-9l9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /><path
+												d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"
+											/></g
+										></svg
+									>
+									<input
+										type="text"
+										name="edit-dept"
+										value={person.dept}
+										class="grow"
+										placeholder="Dept"
+										autocomplete="off"
+										required
+									/>
+								</label>
+
+								<label class="input input-bordered flex w-full items-center border">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="1em"
+										height="1em"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none text-base-content/50"
+									>
+										<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+										<path d="M8 9h8" />
+										<path d="M8 13h6" />
+										<path
+											d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
+										/>
+									</svg>
+
+									<input
+										type="text"
+										name="edit-remarks"
+										value={person.remarks}
+										class="grow"
+										placeholder="Remarks (Optional)"
+									/>
+								</label>
+								<input type="hidden" name="edit-session-id" value={session.id} />
+								<input type="hidden" name="edit-record-id" value={person.id} />
+							</form>
+							<div class="grid grid-cols-2 gap-2 px-8 pb-8">
+								<form method="dialog" class="">
+									<button class="btn btn-outline btn-primary w-full text-lg text-primary-content" aria-label="close">
+										Close
+									</button>
+								</form>
+								<button
+									form="edit-dialog-{person.id}"
+									class="btn btn-primary text-lg font-bold text-primary-content"
+									aria-label="Add">Edit</button
+								>
+							</div>
+						</div>
+					</dialog>
 				{/each}
 			{/if}
 		{/await}
@@ -510,120 +643,6 @@
 	{/if}
 </main>
 
-<!-- {#if person.id && edit[person.id] === true}
-<div
-	class="col-span-9 grid grid-cols-8 gap-4 border-x border-x-gray-400 bg-base-300 px-4 py-2"
-	id="div__{person.id}"
-	in:slide={{ duration: 500, axis: 'y', easing: circOut }}
-	out:slide={{ duration: 10, axis: 'y', easing: circOut }}
->
-	<div class="col-span-8">
-		<form method="POST" id="edit-form-{person.id}" action="?/edit" use:enhance>
-			<input type="hidden" id="hidden-target" name="edit-target" value={person.id} />
-		</form>
-	</div>
-	<div class="col-span-4">
-		<label
-			class="input input-bordered flex w-full items-center gap-2 border-gray-400 text-lg"
-			for="edit-person-name-{person.id}"
-			><svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="1em"
-				height="1em"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="icon icon-tabler icons-tabler-outline icon-tabler-user me-2 inline"
-				><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-					d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"
-				/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg
-			>
-			<EditFields
-				name="edit-person-name"
-				id="edit-person-name-{person.id}"
-				form="edit-form-{person.id}"
-				class="grow"
-				value={person.name}
-				placeholder="Name"
-				onkeydown={(evt) => {
-					editFormSubmitKeyboardShortcut(evt, `edit-form-${person.id}`);
-				}}
-			/></label
-		>
-	</div>
-
-	<div class="col-span-4">
-		<label
-			class="input input-bordered flex w-full items-center items-center gap-2 border-gray-400 text-lg"
-			for="edit-person-dept-{person.id}"
-		>
-			<Home class="me-2 flex-none" />
-			<EditFields
-				name="edit-person-dept"
-				class="grow"
-				form="edit-form-{person.id}"
-				value={person.dept}
-				id="edit-person-dept-{person.id}"
-				placeholder="Dept"
-				onkeydown={(evt) => {
-					editFormSubmitKeyboardShortcut(evt, `edit-form-${person.id}`);
-				}}
-			/>
-		</label>
-	</div>
-	<div class="col-span-8">
-		<label
-			class="textarea textarea-bordered flex h-24 w-full items-center items-center gap-2 border-gray-400 text-lg md:h-56"
-			for="edit-person-remarks-{person.id}"
-			><svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="1.5em"
-				height="1.5em"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
-			>
-				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-				<path d="M8 9h8" />
-				<path d="M8 13h6" />
-				<path
-					d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
-				/>
-			</svg>
-			<textarea
-				form="edit-form-{person.id}"
-				name="edit-person-remarks"
-				id="edit-person-remarks-{person.id}"
-				class="h-full w-full focus:outline-none"
-				maxlength="999"
-				placeholder="Remarks"
-				value={person.remarks}
-				onkeydown={(evt) => {
-					editFormSubmitKeyboardShortcut(evt, `edit-form-${person.id}`);
-				}}
-			></textarea>
-		</label>
-	</div>
-	<div class="col-span-6 bg-base-300 md:col-span-6">
-		<button
-			class="btn btn-primary join-item text-lg"
-			form="edit-form-{person.id}"
-			onclick={() => {
-				edit[person.id] = false;
-			}}
-		>
-			<TablerEdit class="inline h-[1em] w-[1em]" />Save
-		</button>
-	</div>
-</div>
-{:else} -->
 <style>
 	.sortable-handle {
 		cursor: move; /* fallback if grab cursor is unsupported */

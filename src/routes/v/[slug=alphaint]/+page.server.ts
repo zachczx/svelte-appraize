@@ -128,23 +128,18 @@ export const actions = {
 	},
 
 	edit: async ({ request }) => {
-		const editData = await request.formData();
-		console.log(editData);
-		const editTarget = String(editData.get('edit-target'));
-		const editName = String(editData.get('edit-person-name')).trim();
-		const editDept = String(editData.get('edit-person-dept')).trim();
-		const editRemarks = String(editData.get('edit-person-remarks')).trim();
-
-		if (!editName || editName == '' || !editDept || editDept == '') {
-			return { editInsertFailedGrade: true };
-		} else {
-			console.log('Name: ', editName, '\n', 'Dept: ', editDept, '\n', 'Remarks: ', editRemarks);
-			await db
-				.update(records)
-				.set({ name: editName, dept: editDept, remarks: editRemarks })
-				.where(eq(records.id, editTarget));
-			return { editInsertSuccess: true };
-		}
+		const formData = await request.formData();
+		const name = String(formData.get('edit-name'));
+		const dept = String(formData.get('edit-dept'));
+		const remarks = String(formData.get('edit-remarks'));
+		const sessionId = String(formData.get('edit-session-id'));
+		const recordId = String(formData.get('edit-record-id'));
+		console.log(name);
+		const res = await db
+			.update(records)
+			.set({ name: name, dept: dept, remarks: remarks })
+			.where(eq(records.id, recordId));
+		return { editInsertSuccess: true };
 	},
 
 	editgrade: async ({ request }) => {
