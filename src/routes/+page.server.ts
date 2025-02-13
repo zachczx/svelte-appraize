@@ -10,6 +10,7 @@ import { message } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { slugify } from '$lib/utils';
+import { clerkClient } from 'svelte-clerk/server';
 
 // Superforms
 const schema = z.object({
@@ -28,30 +29,42 @@ export const load = async () => {
 
 const defaultUser: string = 'test@test.com';
 export const actions = {
-	default: async ({ request }) => {
+	default: async ({ request, locals }) => {
 		const form = await superValidate(request, zod(schema));
 
 		if (!form.valid) {
 			return fail(400, { form });
 		}
+		/////////////////////////
 
-		let resultDefaultUser = await db.select().from(users).where(eq(users.email, defaultUser));
-		if (resultDefaultUser.length === 0) {
-			console.log('not found, inserted default user');
-			resultDefaultUser = await db.insert(users).values({ email: defaultUser }).returning();
+		const { userId } = locals.auth;
+		let ownerIdToInsert: string;
+		if (!userId) {
+			let resultDefaultUser = await db.select().from(users).where(eq(users.email, defaultUser));
+			if (resultDefaultUser.length === 0) {
+				console.log('not found, inserted default user');
+				resultDefaultUser = await db.insert(users).values({ email: defaultUser }).returning();
+			}
+			ownerIdToInsert = resultDefaultUser[0].id;
+		} else {
+			const user = await clerkClient.users.getUser(userId);
+			const clerkUserEmail = user.emailAddresses[0].emailAddress;
+			let resultUser = await db.select().from(users).where(eq(users.email, clerkUserEmail));
+			if (resultUser.length === 0) {
+				console.log('clerk authenticated user not found in my db, inserting clerk user');
+				resultUser = await db.insert(users).values({ email: clerkUserEmail }).returning();
+			}
+			ownerIdToInsert = resultUser[0].id;
 		}
 
 		const slugTitle = slugify(form.data.session);
-
 		let session = await db.select().from(sessions).where(eq(sessions.title, form.data.session));
 		let res;
-		console.log(form.data.session);
-		console.log(resultDefaultUser[0]);
 		if (session.length === 0) {
 			console.log('session not found!');
 			res = await db
 				.insert(sessions)
-				.values({ title: form.data.session, slug: slugTitle, owner: resultDefaultUser[0].id })
+				.values({ title: form.data.session, slug: slugTitle, owner: ownerIdToInsert })
 				.returning();
 			console.log('inserted session');
 		}

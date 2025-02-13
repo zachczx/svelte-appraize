@@ -27,21 +27,19 @@
 <!-- <SuperDebug data={$form} /> -->
 <!---->
 
-<div class="max-w-dvw flex min-h-dvh flex-wrap content-center justify-center bg-primary px-2">
-	<div
-		class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl border-2 border-primary/70 bg-base-100/80 p-3 pt-4 backdrop-blur-2xl lg:p-10"
-	>
-		<div>
+<div class="max-w-dvw flex min-h-dvh flex-wrap content-center justify-center bg-base-200 px-2">
+	<div class="view-outline grid w-full max-w-5xl space-y-10 rounded-2xl p-3 pt-4 backdrop-blur-2xl lg:p-10">
+		<div class="text-center">
 			<div class="view-header text-7xl font-black text-primary">
 				<a href="/">Appraize</a>
 			</div>
-			<p class="text-lg">Ranking sessions made easy.</p>
+			<p class="text-lg">Ranking sessions made easier.</p>
 		</div>
 		<div>
 			<form method="POST" id="landing-input" use:enhance>
-				<div class="flex w-full">
+				<div class="flex w-full justify-center">
 					<label
-						class="view-input input input-bordered input-primary relative flex w-full self-center rounded-full border-2 text-lg shadow"
+						class="view-input input relative flex w-full max-w-[40rem] self-center rounded-full border-2 text-lg shadow-lg shadow-primary/30 focus-within:border-transparent focus-within:shadow-lg focus-within:shadow-primary/30 focus-within:outline-primary/30"
 						for="session"
 					>
 						<input
@@ -94,7 +92,7 @@
 					</label>
 				</div>
 			</form>
-			<div class="flex flex-wrap px-2 pt-3 font-medium">
+			<div class="flex flex-wrap justify-center px-2 pt-3 font-medium">
 				{#if $errors.session}
 					<span class="text-base text-red-400">{$errors.session}</span>
 				{:else}

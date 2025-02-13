@@ -15,6 +15,7 @@ import { R2_S3 } from '$lib/R2_S3';
 import { Upload } from '@aws-sdk/lib-storage';
 //For Buffer/Handling of file
 import Papa from 'papaparse';
+import { error } from '@sveltejs/kit';
 
 const regexRoute = /^[a-zA-Z0-9-]*$/;
 const uploadSizeLimit = 10000;
@@ -31,47 +32,29 @@ let delay = (time: number) => {
 	});
 };
 
-//todo - bug: adding > save > reload > newest entry would disappear > comes back after a refresh. Only in production
-export const load = (async ({ params, url }) => {
+export const load = (async ({ params }) => {
 	console.log('Load triggered');
 	const paramSessionSlug = String(params.slug);
-	const sessionArray = await db.select().from(sessions).where(eq(sessions.slug, paramSessionSlug));
+	const sessionArray = await db
+		.select({
+			id: sessions.id,
+			title: sessions.title,
+			slug: sessions.slug,
+			timestamp: sessions.timestamp,
+			owner: sessions.owner,
+			username: users.name,
+			email: users.email,
+		})
+		.from(sessions)
+		.leftJoin(users, eq(sessions.owner, users.id))
+		.where(eq(sessions.slug, paramSessionSlug));
+
 	const session = sessionArray[0];
+	if (!session) {
+		error(404, { message: 'Not found' });
+	}
 
-	const filterParam = url.searchParams.get('filter');
-	const filterGradeParam = url.searchParams.get('grade');
 	let result;
-
-	// if (!filterParam || !filterGradeParam) {
-	// 	const sq = db.select().from(records).where(eq(records.session, session.id)).as('sq');
-	// 	result = await db
-	// 		.select()
-	// 		.from(sq)
-	// 		.where(
-	// 			or(
-	// 				filterParam ? ilike(sq.name, `%${filterParam}%`) : undefined,
-	// 				filterParam ? ilike(sq.dept, `%${filterParam}%`) : undefined,
-	// 				filterParam ? ilike(sq.remarks, `%${filterParam}%`) : undefined,
-	// 				filterGradeParam ? eq(sq.grade, filterGradeParam) : undefined,
-	// 			),
-	// 		)
-	// 		.orderBy(asc(sq.sequence));
-	// } else if (filterParam && filterGradeParam) {
-	// 	result = await db
-	// 		.select()
-	// 		.from(records)
-	// 		.where(
-	// 			and(
-	// 				eq(records.session, session.id),
-	// 				or(ilike(records.name, `%${filterParam}%`), ilike(records.dept, `%${filterParam}%`)),
-	// 				eq(records.grade, filterGradeParam),
-	// 			),
-	// 		)
-	// 		.orderBy(asc(records.sequence));
-	// } else {
-	// result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
-	// }
-
 	result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
 	let sequence = getInitSequence(result);
 

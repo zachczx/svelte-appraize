@@ -18,17 +18,16 @@
 	import Papa from 'papaparse';
 	import DragDrop from '$lib/DragDrop.svelte';
 
-	let { session, streamedResult = [], value = $bindable() } = $props();
+	let { session, streamedResults = [], value = $bindable() } = $props();
 
 	interface EditEntry {
 		id: string;
-
 		dialogElement?: HTMLDialogElement;
 	}
 	let edit: EditEntry[] = $state([]);
-	for (let i = 0; i < streamedResult.length; i++) {
+	for (let i = 0; i < streamedResults.length; i++) {
 		const entry = {
-			id: streamedResult[i].id,
+			id: streamedResults[i].id,
 			dialogElement: undefined,
 		};
 		edit.push(entry);
@@ -41,11 +40,11 @@
 
 	let initOrder = '';
 	let initOrderWantedlength = initOrder.length - 1;
-	for (let i = 0; i < streamedResult.length; i++) {
+	for (let i = 0; i < streamedResults.length; i++) {
 		if (i === 0) {
-			initOrder = String(streamedResult[i].id);
+			initOrder = String(streamedResults[i].id);
 		} else {
-			initOrder = initOrder + ',' + streamedResult[i].id;
+			initOrder = initOrder + ',' + streamedResults[i].id;
 		}
 	}
 
@@ -60,7 +59,7 @@
 	});
 
 	$effect(() => {
-		if (streamedResult.length === 0) {
+		if (streamedResults.length === 0) {
 			nothingFound = true;
 		}
 
@@ -97,102 +96,109 @@
 	});
 
 	const isVisible: boolean[] = $state([]);
-
-	let filterKeyword: string = $state('');
-	let filterGrade: string = $state('Grade');
-	let filterOthers: string = $state('Others');
-
-	let filteredResults = $derived.by(() => {
-		let filteredResults;
-		filteredResults = streamedResult.filter((entry) => {
-			if (filterKeyword.length > 0) {
-				if (filterGrade.length > 0 && filterGrade !== 'All' && filterGrade !== 'Grade') {
-					if (
-						(entry.name.toLowerCase().includes(filterKeyword.toLowerCase()) ||
-							entry.dept.toLowerCase().includes(filterKeyword.toLowerCase()) ||
-							entry.remarks.toLowerCase().includes(filterKeyword.toLowerCase())) &&
-						entry.grade === filterGrade
-					) {
-						return entry;
-					}
-				} else {
-					if (
-						entry.name.toLowerCase().includes(filterKeyword.toLowerCase()) ||
-						entry.dept.toLowerCase().includes(filterKeyword.toLowerCase()) ||
-						entry.remarks.toLowerCase().includes(filterKeyword.toLowerCase())
-					) {
-						return entry;
-					}
-				}
-			}
-
-			if (filterKeyword.length === 0) {
-				if (filterGrade === 'All' || filterGrade === 'Grade') {
-					return entry;
-				}
-				if (
-					filterGrade === 'A' ||
-					filterGrade === 'B' ||
-					filterGrade === 'C+' ||
-					filterGrade === 'C' ||
-					filterGrade === 'C-' ||
-					filterGrade === 'D'
-				)
-					return entry.grade === filterGrade;
-			}
-		});
-		return filteredResults;
-	});
 </script>
 
-<!-- {#if !nothingFound}
-	<div class="mx-2 hidden grid-cols-12 rounded-lg pt-10 text-xl font-extrabold text-gray-500 md:mx-10 lg:grid">
-		<div class="col-span-1"></div>
-		<div class="col-span-1">Grade</div>
-		<div class="col-span-4">Name</div>
-		<div class="col-span-4">Dept</div>
-		<div class="col-span-2"></div>
-	</div>
-{/if} -->
-<div class="join flex">
-	<label class="input join-item input-bordered flex w-full items-center rounded-full">
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="1.3em"
-			height="1.3em"
-			class="tabler:filter me-4 text-base-content/50"
-			viewBox="0 0 24 24"
-			><path
+<div class="relative grid w-full">
+	<form
+		method="POST"
+		id="main-insert-form"
+		action="?/insert"
+		class="join grid w-full grid-cols-[1fr_auto_1fr] rounded-full"
+		use:enhance
+	>
+		<label class="input join-item input-bordered flex items-center">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="1em"
+				height="1em"
+				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
+				stroke-width="2"
 				stroke-linecap="round"
 				stroke-linejoin="round"
-				stroke-width="2"
-				d="M4 4h16v2.172a2 2 0 0 1-.586 1.414L15 12v7l-6 2v-8.5L4.52 7.572A2 2 0 0 1 4 6.227z"
-			/></svg
+				class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus me-2 hidden flex-none text-base-content/50 xl:flex"
+			>
+				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+				<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+				<path d="M16 19h6" />
+				<path d="M19 16v6" />
+				<path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
+			</svg>
+			<input
+				type="text"
+				name="name"
+				class="shrink"
+				placeholder="Name"
+				onkeydown={(evt) => {
+					editFormSubmitKeyboardShortcut(evt, 'insert-form');
+				}}
+				autocomplete="off"
+				required
+			/>
+		</label>
+
+		<select name="grade" class="join-item select select-bordered text-base-content/50">
+			<option value="A">A</option>
+			<option value="B">B</option>
+			<option value="C+">C+</option>
+			<option value="C" selected>C</option>
+			<option value="C-">C-</option>
+			<option value="D">D</option>
+		</select>
+		<input type="hidden" name="session-id" value={session.id} />
+		<label class="input join-item input-bordered flex items-center">
+			<Home class="me-2 hidden flex-none stroke-base-content/50 xl:flex" />
+			<input
+				type="text"
+				name="dept"
+				class="grow"
+				placeholder="Dept"
+				onkeydown={(evt) => {
+					editFormSubmitKeyboardShortcut(evt, 'insert-form');
+				}}
+				autocomplete="off"
+				required
+			/>
+		</label>
+
+		<!-- <label class="input join-item input-bordered flex w-full items-center border text-base-content/50">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="1em"
+			height="1em"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
 		>
-		<input bind:value={filterKeyword} class="grow text-sm" placeholder="Filter by keyword" autocomplete="off" />
-	</label>
-	<select bind:value={filterGrade} class="join-item select select-bordered rounded-full text-base-content/70">
-		<option disabled selected value="Grade">Grade</option>
-		<option value="A">A</option>
-		<option value="B">B</option>
-		<option value="C+">C+</option>
-		<option value="C">C</option>
-		<option value="C-">C-</option>
-		<option value="D">D</option>
-		<option value="All">All</option>
-	</select>
-	<select bind:value={filterOthers} class="join-item select select-bordered rounded-full text-base-content/70">
-		<option disabled selected value="Others">Others</option>
-		<option value="Talent">Talent</option>
-	</select>
+			<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+			<path d="M8 9h8" />
+			<path d="M8 13h6" />
+			<path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
+		</svg>
+
+		<input
+			type="text"
+			name="remarks"
+			class="grow"
+			placeholder="Remarks (Optional)"
+			onkeydown={(evt) => {
+				editFormSubmitKeyboardShortcut(evt, 'insert-form');
+			}}
+		/>
+	</label> -->
+	</form>
+	<button
+		form="main-insert-form"
+		class="absolute right-1.5 top-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-3xl font-black text-primary-content"
+		aria-label="Add">+</button
+	>
 </div>
-<!-- <ul>
-	{#each filteredResults as result}
-		<li>{result.name} {result.grade}</li>
-	{/each}
-</ul> -->
+
 <main>
 	<div id="table" bind:this={sortableEl} class="relative grid">
 		<!-- {#if nothingFound}
@@ -202,7 +208,7 @@
 		</div>
 	{/if} -->
 
-		{#await filteredResults}
+		{#await streamedResults}
 			<span class="ignore-elements loading loading-spinner loading-lg justify-self-center py-5 text-primary md:py-10"
 			></span>
 		{:then result}
@@ -212,7 +218,7 @@
 					<h2 class="text-center lg:text-4xl">There's nothing here!</h2>
 				</div>
 			{:else}
-				{#each filteredResults as person, i}
+				{#each streamedResults as person, i}
 					<div
 						class="grid grid-cols-12 border-b-2 border-base-content/[0.07] py-2 last:border-0"
 						id={person.id}
