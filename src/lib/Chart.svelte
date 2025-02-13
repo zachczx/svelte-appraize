@@ -79,6 +79,6 @@
 	});
 </script>
 
-<div class="h-full w-fit overflow-auto p-8">
-	<canvas bind:this={chartEl} class="max-h-[20rem] max-w-[20rem]"></canvas>
+<div class="grid justify-items-center overflow-auto p-8">
+	<canvas bind:this={chartEl} class="max-h-56 max-w-56"></canvas>
 </div>

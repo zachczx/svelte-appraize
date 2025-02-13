@@ -58,6 +58,8 @@
 		nothingFound = false;
 	});
 
+	let total = $derived(streamedResults.length);
+
 	$effect(() => {
 		if (streamedResults.length === 0) {
 			nothingFound = true;
@@ -620,17 +622,32 @@
 			{/if}
 		{/await}
 	</div>
+
 	{#if !nothingFound}
-		<form
-			method="POST"
-			action="?/save"
-			class="ignore-from-sorting mt-10 flex justify-center lg:justify-end"
-			use:enhance
-		>
-			<input type="hidden" name="order" bind:value={order} />
-			<input type="hidden" name="session-id" value={session.id} />
-			<button class="btn btn-primary flex items-center gap-2 text-lg font-bold lg:min-w-24">Save Changes</button>
-		</form>
+		<div class="ignore-from-sorting mt-10 grid grid-cols-2 content-center">
+			<div class="flex items-center gap-4 p-2 text-4xl font-black text-base-content/80">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1em"
+					height="1em"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="icon icon-tabler icons-tabler-outline icon-tabler-users text-2xl"
+					><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path
+						d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"
+					/><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="M21 21v-2a4 4 0 0 0 -3 -3.85" /></svg
+				>{total}
+			</div>
+			<form method="POST" action="?/save" class="content-center justify-self-center lg:justify-self-end" use:enhance>
+				<input type="hidden" name="order" bind:value={order} />
+				<input type="hidden" name="session-id" value={session.id} />
+				<button class="btn btn-primary flex items-center gap-2 text-lg font-bold lg:min-w-24">Save Changes</button>
+			</form>
+		</div>
 	{/if}
 </main>
 

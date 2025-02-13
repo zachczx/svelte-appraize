@@ -668,164 +668,68 @@
 		</ol>
 	</div>
 
-	<div class="col-span-2 grid content-start border-l-2 border-l-base-300/10 bg-base-200 px-8">
+	<div class="col-span-2 grid content-start border-l-2 border-l-base-300/10 bg-base-200 px-8 pb-8">
 		<h3 class="justify-self-start pt-8 text-3xl font-extrabold text-base-content/85">Details</h3>
-		<div class="view-home-info grid content-start gap-y-4">
-			<h3 class="flex items-center gap-4 justify-self-start pt-8 font-extrabold text-base-content/70">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="1.3em"
-					height="1.3em"
-					class="tabler:info-circle"
-					viewBox="0 0 24 24"
-					><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-						><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0m9-3h.01" /><path d="M11 12h1v4h1" /></g
-					></svg
-				>Properties
-			</h3>
-			<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
-				<li>
-					<div class="flex items-center gap-4 py-2">
+		<div class="mt-8 grid content-start">
+			<details open>
+				<summary class="flex items-center"
+					><h3 class="flex grow items-center gap-4 justify-self-start font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
 							height="1.3em"
-							class="tabler:calendar-time"
+							class="tabler:filter text-base-content/50"
 							viewBox="0 0 24 24"
-							><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-								><path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" /><path
-									d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16"
-								/><path d="M18 16.496V18l1 1" /></g
-							></svg
-						>
-						{#if data.streamed.session.timestamp}
-							{CalculateDateAgo(data.streamed.session.timestamp)}
-						{:else}
-							Oops, something went wrong
-						{/if}
-					</div>
-				</li>
-				<li>
-					<div class="flex items-center gap-4 overflow-hidden py-2">
-						<svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" viewBox="0 0 24 24"
 							><path
 								fill="none"
 								stroke="currentColor"
 								stroke-linecap="round"
 								stroke-linejoin="round"
 								stroke-width="2"
-								d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0-8 0M6 21v-2a4 4 0 0 1 4-4h3.5m4.92.61a2.1 2.1 0 0 1 2.97 2.97L18 22h-3v-3z"
+								d="M4 4h16v2.172a2 2 0 0 1-.586 1.414L15 12v7l-6 2v-8.5L4.52 7.572A2 2 0 0 1 4 6.227z"
 							/></svg
-						><span class="max-w-48 truncate">{data.streamed.session.email}</span>
-					</div>
-				</li>
-			</ul>
-		</div>
-		<div class="grid content-start gap-y-4">
-			<h3 class="flex items-center gap-4 justify-self-start pt-8 font-extrabold text-base-content/70">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="1.3em"
-					height="1.3em"
-					class="tabler:filter text-base-content/50"
-					viewBox="0 0 24 24"
-					><path
-						fill="none"
-						stroke="currentColor"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M4 4h16v2.172a2 2 0 0 1-.586 1.414L15 12v7l-6 2v-8.5L4.52 7.572A2 2 0 0 1 4 6.227z"
-					/></svg
-				>Filter
-			</h3>
-			<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
-				<li class="py-2">
-					<div class="ms-1 flex items-center gap-4 border-l-4 border-l-base-300 ps-8">
-						<label class="input join-item input-bordered flex w-full items-center rounded-full">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="1.3em"
-								height="1.3em"
-								class="tabler:filter me-4 text-base-content/50"
-								viewBox="0 0 24 24"
-								><path
-									fill="none"
-									stroke="currentColor"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M4 4h16v2.172a2 2 0 0 1-.586 1.414L15 12v7l-6 2v-8.5L4.52 7.572A2 2 0 0 1 4 6.227z"
-								/></svg
-							>
-							<input
-								bind:value={filterKeyword}
-								class="grow text-lg"
-								placeholder="Filter by keyword"
-								autocomplete="off"
-							/>
-						</label>
-					</div>
-				</li>
-				<li class="py-2">
-					<div class="ms-1 grid grid-cols-3 gap-2 border-l-4 border-l-base-300 ps-8">
-						<label class="col-span-3 flex cursor-pointer items-center gap-4">
-							<input type="checkbox" bind:checked={filterGrade.a} class="checkbox-primary checkbox" />
-							<span class="label-text text-lg">A</span>
-						</label>
-						<label class="col-span-3 flex cursor-pointer items-center gap-4">
-							<input type="checkbox" bind:checked={filterGrade.b} class="checkbox-primary checkbox" /><span
-								class="label-text text-lg">B</span
-							>
-						</label>
-						<label class="flex cursor-pointer items-center gap-4">
-							<input type="checkbox" bind:checked={filterGrade['c+']} class="checkbox-primary checkbox" /><span
-								class="label-text text-lg">C+</span
-							>
-						</label>
-						<label class="flex cursor-pointer items-center gap-4">
-							<input type="checkbox" bind:checked={filterGrade.c} class="checkbox-primary checkbox" /><span
-								class="label-text text-lg">C</span
-							>
-						</label>
-						<label class="flex cursor-pointer items-center gap-4">
-							<input type="checkbox" bind:checked={filterGrade['c-']} class="checkbox-primary checkbox" /><span
-								class="label-text text-lg">C-</span
-							>
-						</label>
-						<label class="col-span-3 flex cursor-pointer items-center gap-4">
-							<input type="checkbox" bind:checked={filterGrade.d} class="checkbox-primary checkbox" /><span
-								class="label-text text-lg">D</span
-							>
-						</label>
-					</div>
-				</li>
-				<li class="py-2">
-					<div class="ms-1 grid grid-cols-3 gap-2 border-l-4 border-l-base-300 ps-8">
-						<label class="flex cursor-pointer items-center gap-4">
-							<input type="checkbox" bind:checked={filterIsTalent} class="checkbox-primary checkbox" /><span
-								class="label-text text-lg"
-								><svg
+						>Filter
+					</h3>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1em"
+						height="1em"
+						class="tabler:chevron-down arrow-down text-2xl"
+						viewBox="0 0 24 24"
+						><path
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="m6 9l6 6l6-6"
+						/></svg
+					>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1em"
+						height="1em"
+						class="tabler:chevron-up arrow-up text-2xl"
+						viewBox="0 0 24 24"
+						><path
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="m6 15l6-6l6 6"
+						/></svg
+					></summary
+				>
+				<ul class="ms-1 mt-4 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+					<li class="py-2">
+						<div class="flex items-center gap-4">
+							<label class="input join-item input-bordered flex w-full items-center rounded-full">
+								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="1.3em"
 									height="1.3em"
-									class="tabler:star-filled text-yellow-400"
-									viewBox="0 0 24 24"
-									><path
-										fill="currentColor"
-										d="m8.243 7.34l-6.38.925l-.113.023a1 1 0 0 0-.44 1.684l4.622 4.499l-1.09 6.355l-.013.11a1 1 0 0 0 1.464.944l5.706-3l5.693 3l.1.046a1 1 0 0 0 1.352-1.1l-1.091-6.355l4.624-4.5l.078-.085a1 1 0 0 0-.633-1.62l-6.38-.926l-2.852-5.78a1 1 0 0 0-1.794 0z"
-									/></svg
-								></span
-							>
-						</label>
-						<label class="flex cursor-pointer items-center gap-4">
-							<input type="checkbox" bind:checked={filterIsNotTalent} class="checkbox-primary checkbox" /><span
-								class="label-text text-lg"
-								><svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="1.3em"
-									height="1.3em"
-									class="tabler:star text-base-content/50"
+									class="tabler:filter me-4 text-base-content/50"
 									viewBox="0 0 24 24"
 									><path
 										fill="none"
@@ -833,79 +737,259 @@
 										stroke-linecap="round"
 										stroke-linejoin="round"
 										stroke-width="2"
-										d="m12 17.75l-6.172 3.245l1.179-6.873l-5-4.867l6.9-1l3.086-6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"
+										d="M4 4h16v2.172a2 2 0 0 1-.586 1.414L15 12v7l-6 2v-8.5L4.52 7.572A2 2 0 0 1 4 6.227z"
 									/></svg
-								></span
-							>
-						</label>
-					</div>
-				</li>
-			</ul>
+								>
+								<input
+									bind:value={filterKeyword}
+									class="grow text-lg"
+									placeholder="Filter by keyword"
+									autocomplete="off"
+								/>
+							</label>
+						</div>
+					</li>
+					<li class="py-2">
+						<div class="grid grid-cols-3 gap-2">
+							<label class="col-span-3 flex cursor-pointer items-center gap-4">
+								<input type="checkbox" bind:checked={filterGrade.a} class="checkbox-primary checkbox" />
+								<span class="label-text text-lg">A</span>
+							</label>
+							<label class="col-span-3 flex cursor-pointer items-center gap-4">
+								<input type="checkbox" bind:checked={filterGrade.b} class="checkbox-primary checkbox" /><span
+									class="label-text text-lg">B</span
+								>
+							</label>
+							<label class="flex cursor-pointer items-center gap-4">
+								<input type="checkbox" bind:checked={filterGrade['c+']} class="checkbox-primary checkbox" /><span
+									class="label-text text-lg">C+</span
+								>
+							</label>
+							<label class="flex cursor-pointer items-center gap-4">
+								<input type="checkbox" bind:checked={filterGrade.c} class="checkbox-primary checkbox" /><span
+									class="label-text text-lg">C</span
+								>
+							</label>
+							<label class="flex cursor-pointer items-center gap-4">
+								<input type="checkbox" bind:checked={filterGrade['c-']} class="checkbox-primary checkbox" /><span
+									class="label-text text-lg">C-</span
+								>
+							</label>
+							<label class="col-span-3 flex cursor-pointer items-center gap-4">
+								<input type="checkbox" bind:checked={filterGrade.d} class="checkbox-primary checkbox" /><span
+									class="label-text text-lg">D</span
+								>
+							</label>
+						</div>
+					</li>
+					<li class="py-2">
+						<div class="grid grid-cols-3 gap-2">
+							<label class="flex cursor-pointer items-center gap-4">
+								<input type="checkbox" bind:checked={filterIsTalent} class="checkbox-primary checkbox" /><span
+									class="label-text text-lg"
+									><svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="1.3em"
+										height="1.3em"
+										class="tabler:star-filled text-yellow-400"
+										viewBox="0 0 24 24"
+										><path
+											fill="currentColor"
+											d="m8.243 7.34l-6.38.925l-.113.023a1 1 0 0 0-.44 1.684l4.622 4.499l-1.09 6.355l-.013.11a1 1 0 0 0 1.464.944l5.706-3l5.693 3l.1.046a1 1 0 0 0 1.352-1.1l-1.091-6.355l4.624-4.5l.078-.085a1 1 0 0 0-.633-1.62l-6.38-.926l-2.852-5.78a1 1 0 0 0-1.794 0z"
+										/></svg
+									></span
+								>
+							</label>
+							<label class="flex cursor-pointer items-center gap-4">
+								<input type="checkbox" bind:checked={filterIsNotTalent} class="checkbox-primary checkbox" /><span
+									class="label-text text-lg"
+									><svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="1.3em"
+										height="1.3em"
+										class="tabler:star text-base-content/50"
+										viewBox="0 0 24 24"
+										><path
+											fill="none"
+											stroke="currentColor"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="m12 17.75l-6.172 3.245l1.179-6.873l-5-4.867l6.9-1l3.086-6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"
+										/></svg
+									></span
+								>
+							</label>
+						</div>
+					</li>
+				</ul>
+			</details>
 		</div>
-		<div class="view-summary-sidebar grid content-start justify-items-center">
-			<h3 class="flex items-center gap-4 justify-self-start pt-8 font-extrabold text-base-content/70">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="1.3em"
-					height="1.3em"
-					class="tabler:chart-pie-3"
-					viewBox="0 0 24 24"
-					><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-						><path d="m12 12l-6.5 5.5M12 3v9h9" /><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0" /></g
-					></svg
-				>Grade Distribution
-			</h3>
-			{#await newCounts}
-				<span class="loading loading-spinner my-8 text-primary"></span>
-			{:then newCounts}
-				<div class="justify-items-around grid w-full grid-cols-3 gap-2 pt-8">
-					<div class="row-span-2 animate-scale content-center p-4 text-5xl font-black text-base-content/80">
+
+		<div class="mt-8 grid content-start border-t-2 border-t-base-300 pt-8">
+			<details open>
+				<summary class="flex items-center"
+					><h3 class="flex grow items-center gap-4 font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
+							width="1.3em"
+							height="1.3em"
+							class="tabler:chart-pie-3"
 							viewBox="0 0 24 24"
+							><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								><path d="m12 12l-6.5 5.5M12 3v9h9" /><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0" /></g
+							></svg
+						>Grade Distribution
+					</h3>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1em"
+						height="1em"
+						class="tabler:chevron-down arrow-down text-2xl"
+						viewBox="0 0 24 24"
+						><path
 							fill="none"
 							stroke="currentColor"
-							stroke-width="2"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							class="icon icon-tabler icons-tabler-outline icon-tabler-users text-3xl"
-							><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
-								d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
-							/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path
-								d="M21 21v-2a4 4 0 0 0 -3 -3.85"
-							/></svg
-						>{newCounts.total}
+							stroke-width="2"
+							d="m6 9l6 6l6-6"
+						/></svg
+					>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1em"
+						height="1em"
+						class="tabler:chevron-up arrow-up text-2xl"
+						viewBox="0 0 24 24"
+						><path
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="m6 15l6-6l6 6"
+						/></svg
+					></summary
+				>
+				{#await newCounts}
+					<span class="loading loading-spinner my-8 text-primary"></span>
+				{:then newCounts}
+					<div class="justify-items-around grid w-full grid-cols-4 gap-2 pt-8">
+						<div class="grid content-center justify-items-center rounded-xl bg-[#F66D44] px-2 py-2">
+							<div class="font-medium">A</div>
+							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+								{newCounts.a}
+							</div>
+						</div>
+						<div class="grid content-center justify-items-center rounded-xl bg-[#FEAE65]/60 px-4 py-2">
+							<div class="font-medium">B</div>
+							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+								{newCounts.b}
+							</div>
+						</div>
+						<div class="grid content-center justify-items-center rounded-xl bg-[#E6F69D] px-4 py-2">
+							<div class="font-medium">C</div>
+							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+								{newCounts.c}
+							</div>
+						</div>
+						<div class="grid content-center justify-items-center rounded-xl bg-[#AADEA7] px-4 py-2">
+							<div class="font-medium">D</div>
+							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+								{newCounts.d}
+							</div>
+						</div>
 					</div>
+					<Chart figures={newCounts} />
+				{/await}
+			</details>
+		</div>
 
-					<div class="grid content-center justify-items-center rounded-xl bg-[#F66D44] px-4 py-2">
-						<div class="font-medium">A</div>
-						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
-							{newCounts.a}
+		<div class="mt-4 grid content-start gap-y-4 border-t-2 border-t-base-300 pt-8">
+			<details>
+				<summary class="flex items-center"
+					><h3 class="flex grow items-center gap-4 justify-self-start font-extrabold text-base-content/70">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1.3em"
+							height="1.3em"
+							class="tabler:info-circle"
+							viewBox="0 0 24 24"
+							><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0m9-3h.01" /><path d="M11 12h1v4h1" /></g
+							></svg
+						>Properties
+					</h3>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1em"
+						height="1em"
+						class="tabler:chevron-down arrow-down text-2xl"
+						viewBox="0 0 24 24"
+						><path
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="m6 9l6 6l6-6"
+						/></svg
+					>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1em"
+						height="1em"
+						class="tabler:chevron-up arrow-up text-2xl"
+						viewBox="0 0 24 24"
+						><path
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="m6 15l6-6l6 6"
+						/></svg
+					></summary
+				>
+				<ul class="ms-1 mt-4 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+					<li>
+						<div class="flex items-center gap-4 py-2">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="1.3em"
+								height="1.3em"
+								class="tabler:calendar-time"
+								viewBox="0 0 24 24"
+								><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+									><path d="M11.795 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" /><path
+										d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0-8 0m1-15v4M7 3v4m-4 4h16"
+									/><path d="M18 16.496V18l1 1" /></g
+								></svg
+							>
+							{#if data.streamed.session.timestamp}
+								{CalculateDateAgo(data.streamed.session.timestamp)}
+							{:else}
+								Oops, something went wrong
+							{/if}
 						</div>
-					</div>
-					<div class="grid content-center justify-items-center rounded-xl bg-[#FEAE65]/60 px-4 py-2">
-						<div class="font-medium">B</div>
-						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
-							{newCounts.b}
+					</li>
+					<li>
+						<div class="flex items-center gap-4 overflow-hidden py-2">
+							<svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" viewBox="0 0 24 24"
+								><path
+									fill="none"
+									stroke="currentColor"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0-8 0M6 21v-2a4 4 0 0 1 4-4h3.5m4.92.61a2.1 2.1 0 0 1 2.97 2.97L18 22h-3v-3z"
+								/></svg
+							><span class="max-w-48 truncate">{data.streamed.session.email}</span>
 						</div>
-					</div>
-					<div class="grid content-center justify-items-center rounded-xl bg-[#E6F69D] px-4 py-2">
-						<div class="font-medium">C</div>
-						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
-							{newCounts.c}
-						</div>
-					</div>
-					<div class="grid content-center justify-items-center rounded-xl bg-[#AADEA7] px-4 py-2">
-						<div class="font-medium">D</div>
-						<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
-							{newCounts.d}
-						</div>
-					</div>
-				</div>
-				<Chart figures={newCounts} />
-			{/await}
+					</li>
+				</ul>
+			</details>
 		</div>
 	</div>
 </div>
@@ -1185,4 +1269,17 @@
 		border-radius: 50%;
 		display: inline-block;
 	} */
+
+	details {
+		cursor: pointer;
+		summary > .arrow-up {
+			display: none;
+		}
+		&[open] > summary > .arrow-up {
+			display: flex;
+		}
+		&[open] > summary > .arrow-down {
+			display: none;
+		}
+	}
 </style>
