@@ -145,6 +145,9 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Appraize | {data.streamed.session.title}</title>
+</svelte:head>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-9">
 	<div
 		class="view-home-sidebar col-span-2 grid content-start border-base-300/10 bg-base-200 px-8 pb-4 pt-8 text-2xl lg:border-r-2"
@@ -874,25 +877,25 @@
 					<span class="loading loading-spinner my-8 text-primary"></span>
 				{:then newCounts}
 					<div class="justify-items-around grid w-full grid-cols-4 pt-8">
-						<div class="grid content-center justify-items-center rounded-l-2xl bg-[#F66D44] py-1">
+						<div class="grid content-center justify-items-center rounded-l-2xl bg-[#F66D44] py-2">
 							<div class="font-medium">A</div>
 							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
 								{newCounts.a}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center bg-[#FEAE65]/60 py-1">
+						<div class="grid content-center justify-items-center bg-[#FEAE65]/60 py-2">
 							<div class="font-medium">B</div>
 							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
 								{newCounts.b}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center bg-[#E6F69D] py-1">
+						<div class="grid content-center justify-items-center bg-[#E6F69D] py-2">
 							<div class="font-medium">C</div>
 							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
 								{newCounts.c}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center rounded-r-2xl bg-[#AADEA7] py-1">
+						<div class="grid content-center justify-items-center rounded-r-2xl bg-[#AADEA7] py-2">
 							<div class="font-medium">D</div>
 							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
 								{newCounts.d}
