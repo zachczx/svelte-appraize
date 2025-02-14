@@ -17,6 +17,7 @@
 	import { editFormSubmitKeyboardShortcut } from '$lib/FormSubmitKeyboardShortcut';
 	import Papa from 'papaparse';
 	import DragDrop from '$lib/DragDrop.svelte';
+	import EmptyStateSvg from '$lib/svg/EmptyStateSvg.svg?dataurl';
 
 	let { session, streamedResults = [], value = $bindable() } = $props();
 
@@ -193,9 +194,9 @@
 			></span>
 		{:then result}
 			{#if nothingFound}
-				<div class="space-y-12 p-2 lg:px-10 lg:py-28">
-					<div class="flex justify-center"><UndrawEmpty /></div>
-					<h2 class="text-center lg:text-4xl">There's nothing here!</h2>
+				<div class="grid min-h-[50dvh] content-center justify-items-center gap-8">
+					<img src={EmptyStateSvg} class="w-[30rem] hue-rotate-[150deg]" alt="" />
+					<div class="text-center lg:text-lg">There's nothing here!</div>
 				</div>
 			{:else}
 				{#each streamedResults as person, i}
