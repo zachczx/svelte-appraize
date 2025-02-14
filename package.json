@@ -16,7 +16,9 @@
 		"format": "prettier --write .",
 		"generate": "drizzle-kit generate",
 		"migrate": "drizzle-kit migrate",
-		"push": "drizzle-kit push"
+		"push": "drizzle-kit push",
+		"pull": "drizzle-kit pull",
+		"drop": "drizzle-kit drop"
 	},
 	"devDependencies": {
 		"@poppanator/sveltekit-svg": "^5.0.0",

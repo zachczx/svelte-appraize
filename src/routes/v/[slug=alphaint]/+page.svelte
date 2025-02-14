@@ -132,9 +132,7 @@
 				if ((entry.talent && filterIsTalent) || (!entry.talent && filterIsNotTalent)) {
 					for (const key in filterGrade) {
 						if (filterGrade[key]) {
-							console.log(key.toUpperCase());
 							if (entry.grade === key.toUpperCase()) {
-								console.log('chose ', entry.name);
 								return entry;
 							}
 						}
@@ -875,28 +873,28 @@
 				{#await newCounts}
 					<span class="loading loading-spinner my-8 text-primary"></span>
 				{:then newCounts}
-					<div class="justify-items-around grid w-full grid-cols-4 gap-2 pt-8">
-						<div class="grid content-center justify-items-center rounded-xl bg-[#F66D44] px-2 py-2">
+					<div class="justify-items-around grid w-full grid-cols-4 pt-8">
+						<div class="grid content-center justify-items-center rounded-l-2xl bg-[#F66D44] py-1">
 							<div class="font-medium">A</div>
-							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
 								{newCounts.a}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center rounded-xl bg-[#FEAE65]/60 px-4 py-2">
+						<div class="grid content-center justify-items-center bg-[#FEAE65]/60 py-1">
 							<div class="font-medium">B</div>
-							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
 								{newCounts.b}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center rounded-xl bg-[#E6F69D] px-4 py-2">
+						<div class="grid content-center justify-items-center bg-[#E6F69D] py-1">
 							<div class="font-medium">C</div>
-							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
 								{newCounts.c}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center rounded-xl bg-[#AADEA7] px-4 py-2">
+						<div class="grid content-center justify-items-center rounded-r-2xl bg-[#AADEA7] py-1">
 							<div class="font-medium">D</div>
-							<div class="flex animate-scale items-center justify-center text-3xl font-black text-base-content/80">
+							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
 								{newCounts.d}
 							</div>
 						</div>

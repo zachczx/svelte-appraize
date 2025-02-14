@@ -39,7 +39,7 @@
 			<form method="POST" id="landing-input" use:enhance>
 				<div class="flex w-full justify-center">
 					<label
-						class="view-input input relative flex w-full max-w-[40rem] self-center rounded-full border-2 text-lg shadow-lg shadow-primary/30 focus-within:border-transparent focus-within:shadow-lg focus-within:shadow-primary/30 focus-within:outline-primary/30"
+						class="input relative flex w-full max-w-[40rem] self-center rounded-full border-2 text-lg shadow-lg shadow-primary/30 focus-within:border-transparent focus-within:shadow-lg focus-within:shadow-primary/30 focus-within:outline-primary/30"
 						for="session"
 					>
 						<input

@@ -16,6 +16,7 @@ import { Upload } from '@aws-sdk/lib-storage';
 //For Buffer/Handling of file
 import Papa from 'papaparse';
 import { error } from '@sveltejs/kit';
+import { clerkClient } from 'svelte-clerk/server';
 
 const regexRoute = /^[a-zA-Z0-9-]*$/;
 const uploadSizeLimit = 10000;
@@ -57,6 +58,7 @@ export const load = (async ({ params }) => {
 	let result;
 	result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
 	let sequence = getInitSequence(result);
+	console.log(result);
 
 	return {
 		streamed: { session, result, sequence },
@@ -64,7 +66,7 @@ export const load = (async ({ params }) => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-	insert: async function ({ request, params }) {
+	insert: async function ({ request, locals }) {
 		const submittedData = await request.formData();
 		if (!submittedData.get('name')) {
 			return fail(400, { insertNameMissing: true });
@@ -84,6 +86,21 @@ export const actions = {
 		const remarks = String(submittedData.get('remarks'));
 		const sessionId = String(submittedData.get('session-id'));
 		console.log('Session ID: ', sessionId);
+
+		// Set owner
+		const { userId } = locals.auth;
+
+		if (!userId) {
+			redirect(307, '/login');
+			return;
+		}
+		let resultUser = await db.select().from(users).where(eq(users.id, userId));
+		if (resultUser.length === 0) {
+			console.log('clerk authenticated user not found in my db, inserting clerk user to fix that');
+			const user = await clerkClient.users.getUser(userId);
+			const clerkUserEmail = user.emailAddresses[0].emailAddress;
+			resultUser = await db.insert(users).values({ id: userId, email: clerkUserEmail }).returning();
+		}
 
 		let currentLargestSequence = await db
 			.select({
@@ -107,6 +124,7 @@ export const actions = {
 			session: sessionId,
 			sequence: sequenceToInsert,
 			remarks: remarks,
+			owner: userId,
 		});
 	},
 

@@ -105,10 +105,12 @@
 		method="POST"
 		id="main-insert-form"
 		action="?/insert"
-		class="join grid w-full grid-cols-[1fr_auto_1fr] rounded-full"
+		class="join grid w-full grid-cols-[1fr_auto_1fr] rounded-full border border-primary/20 text-lg shadow-lg shadow-primary/30"
 		use:enhance
 	>
-		<label class="input join-item input-bordered flex items-center">
+		<label
+			class="input join-item flex items-center focus-within:border-transparent focus-within:bg-primary/[0.02] focus-within:outline-primary/30"
+		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="1em"
@@ -140,7 +142,10 @@
 			/>
 		</label>
 
-		<select name="grade" class="join-item select select-bordered text-base-content/50">
+		<select
+			name="grade"
+			class="join-item select me-1 border-l-2 border-r-2 border-l-primary/20 border-r-primary/20 text-base-content/50 focus-within:border-transparent focus-within:bg-primary/[0.02] focus-within:outline-primary/30"
+		>
 			<option value="A">A</option>
 			<option value="B">B</option>
 			<option value="C+">C+</option>
@@ -149,7 +154,9 @@
 			<option value="D">D</option>
 		</select>
 		<input type="hidden" name="session-id" value={session.id} />
-		<label class="input join-item input-bordered flex items-center">
+		<label
+			class="input join-item flex items-center focus-within:border-transparent focus-within:bg-primary/[0.02] focus-within:outline-primary/30"
+		>
 			<Home class="me-2 hidden flex-none stroke-base-content/50 xl:flex" />
 			<input
 				type="text"
@@ -163,46 +170,17 @@
 				required
 			/>
 		</label>
-
-		<!-- <label class="input join-item input-bordered flex w-full items-center border text-base-content/50">
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="1em"
-			height="1em"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
-		>
-			<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-			<path d="M8 9h8" />
-			<path d="M8 13h6" />
-			<path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z" />
-		</svg>
-
-		<input
-			type="text"
-			name="remarks"
-			class="grow"
-			placeholder="Remarks (Optional)"
-			onkeydown={(evt) => {
-				editFormSubmitKeyboardShortcut(evt, 'insert-form');
-			}}
-		/>
-	</label> -->
 	</form>
 	<button
 		form="main-insert-form"
-		class="absolute right-1.5 top-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-3xl font-black text-primary-content"
+		class="absolute right-1.5 top-[0.425rem] flex h-9 w-9 items-center justify-center rounded-full bg-primary text-3xl font-black text-primary-content"
 		aria-label="Add">+</button
 	>
 </div>
 
 <main>
-	<div id="table" bind:this={sortableEl} class="relative grid">
+	<div class="mb-2">Showing {total} results</div>
+	<div id="table" bind:this={sortableEl} class="relative grid content-start">
 		<!-- {#if nothingFound}
 		<div class="space-y-4 p-2 lg:px-10 lg:py-28">
 			<div class="flex justify-center"><UndrawNoData /></div>
@@ -251,12 +229,12 @@
 								<input type="hidden" name="edit-grade-target" value={person.id} />
 								<input type="hidden" name="edit-grade-target-name" value={person.name} />
 								<select
-									bind:value={person.grade}
+									value={person.grade}
 									name="grade"
 									id="grade__{person.id}"
 									class="grade-selection select select-primary select-sm border-0 text-2xl font-extrabold"
 									onchange={() => {
-										const currentForm = document.getElementById(`edit-grade-form-${person.id}`);
+										const currentForm = document.getElementById(`edit-grade-form-${person.id}`) as HTMLFormElement;
 										currentForm.requestSubmit ? currentForm.requestSubmit() : currentForm.submit();
 										console.log('Form submitted!');
 									}}
@@ -430,7 +408,7 @@
 									>
 								</div>
 								<ul tabindex="-1" class="menu dropdown-content z-[1] m-0 w-52 rounded-lg bg-base-100 p-0 shadow-lg">
-									<li class="">
+									<li>
 										<button
 											class="flex items-center gap-2"
 											onclick={() => {
@@ -457,8 +435,36 @@
 											Edit
 										</button>
 									</li>
-
-									<li class="">
+									<li>
+										<button
+											class="flex items-center gap-2"
+											onclick={() => {
+												edit[i].dialogElement?.showModal();
+												console.log(edit[i].dialogElement);
+											}}
+											><svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="1.3em"
+												height="1.3em"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												class="icon icon-tabler icons-tabler-outline icon-tabler-message"
+											>
+												<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+												<path d="M8 9h8" />
+												<path d="M8 13h6" />
+												<path
+													d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
+												/>
+											</svg>
+											Add Remarks
+										</button>
+									</li>
+									<li>
 										<form method="POST" class="" action="?/delete" use:enhance>
 											<input type="hidden" name="delete-target" value={person.id} />
 											<button class="flex items-center gap-2"
@@ -624,25 +630,8 @@
 	</div>
 
 	{#if !nothingFound}
-		<div class="ignore-from-sorting mt-10 grid grid-cols-2 content-center">
-			<div class="flex items-center gap-4 p-2 text-4xl font-black text-base-content/80">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="1em"
-					height="1em"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="icon icon-tabler icons-tabler-outline icon-tabler-users text-2xl"
-					><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path
-						d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"
-					/><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="M21 21v-2a4 4 0 0 0 -3 -3.85" /></svg
-				>{total}
-			</div>
-			<form method="POST" action="?/save" class="content-center justify-self-center lg:justify-self-end" use:enhance>
+		<div class="ignore-from-sorting mt-10 grid content-center justify-self-center lg:justify-self-start">
+			<form method="POST" action="?/save" class="content-center" use:enhance>
 				<input type="hidden" name="order" bind:value={order} />
 				<input type="hidden" name="session-id" value={session.id} />
 				<button class="btn btn-primary flex items-center gap-2 text-lg font-bold lg:min-w-24">Save Changes</button>

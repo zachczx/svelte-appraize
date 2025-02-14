@@ -27,7 +27,7 @@ export const load = async () => {
 	return { form };
 };
 
-const defaultUser: string = 'test@test.com';
+const defaultUser: string = 'guest@guest.com';
 export const actions = {
 	default: async ({ request, locals }) => {
 		const form = await superValidate(request, zod(schema));
@@ -43,7 +43,7 @@ export const actions = {
 			let resultDefaultUser = await db.select().from(users).where(eq(users.email, defaultUser));
 			if (resultDefaultUser.length === 0) {
 				console.log('not found, inserted default user');
-				resultDefaultUser = await db.insert(users).values({ email: defaultUser }).returning();
+				resultDefaultUser = await db.insert(users).values({ id: defaultUser, email: defaultUser }).returning();
 			}
 			ownerIdToInsert = resultDefaultUser[0].id;
 		} else {
@@ -52,7 +52,7 @@ export const actions = {
 			let resultUser = await db.select().from(users).where(eq(users.email, clerkUserEmail));
 			if (resultUser.length === 0) {
 				console.log('clerk authenticated user not found in my db, inserting clerk user');
-				resultUser = await db.insert(users).values({ email: clerkUserEmail }).returning();
+				resultUser = await db.insert(users).values({ id: userId, email: clerkUserEmail }).returning();
 			}
 			ownerIdToInsert = resultUser[0].id;
 		}
