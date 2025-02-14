@@ -247,7 +247,7 @@ export const actions = {
 		} else {
 			finalUrlString = '';
 		}
-		redirect(307, `/v/${sessionTitle}/?${finalUrlString}`);
+		redirect(307, `/session/${sessionTitle}/?${finalUrlString}`);
 	},
 
 	redirect: async ({ request }) => {
@@ -258,7 +258,7 @@ export const actions = {
 			inputSessionTrimmed = inputSession.trim();
 		}
 		if (regexRoute.test(inputSessionTrimmed)) {
-			redirect(307, `/v/${inputSessionTrimmed}`);
+			redirect(307, `/session/${inputSessionTrimmed}`);
 		} else {
 			return fail(400, { formRedirectFailed: true });
 		}
@@ -340,7 +340,7 @@ export const actions = {
 		if (!edit) {
 			return fail(400, { error: true, message: 'Edit failed!' });
 		}
-		redirect(301, `/v/${slugTitle}`);
+		redirect(301, `/session/${slugTitle}`);
 	},
 
 	toggleTalent: async function ({ request }) {

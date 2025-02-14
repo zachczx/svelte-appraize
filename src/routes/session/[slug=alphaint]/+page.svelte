@@ -96,7 +96,7 @@
 	let searchInput: string = $state('');
 	let submittedSpinner = $state(false);
 
-	let currentPageUrl = $state($page.url.origin + '/v/' + data.streamed.session.slug);
+	let currentPageUrl = $state($page.url.origin + '/session/' + data.streamed.session.slug);
 	let shareCopiedSuccess = $state(false);
 
 	let filterKeyword: string = $state('');

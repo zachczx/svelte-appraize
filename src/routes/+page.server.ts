@@ -69,7 +69,7 @@ export const actions = {
 			console.log('inserted session');
 		}
 
-		const nextPage = '/v/' + form.data.session;
+		const nextPage = '/session/' + form.data.session;
 		redirect(301, nextPage);
 	},
 };
