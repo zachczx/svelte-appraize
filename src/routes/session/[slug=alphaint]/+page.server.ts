@@ -58,7 +58,6 @@ export const load = (async ({ params }) => {
 	let result;
 	result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
 	let sequence = getInitSequence(result);
-	console.log(result);
 
 	return {
 		streamed: { session, result, sequence },
