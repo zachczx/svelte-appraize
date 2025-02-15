@@ -93,7 +93,7 @@
 				</a>
 
 				<a
-					href="/"
+					href="/help"
 					aria-label="Help"
 					class="dropdown dropdown-right dropdown-hover flex items-center justify-center rounded-xl p-3 text-3xl hover:bg-primary hover:text-primary-content"
 				>

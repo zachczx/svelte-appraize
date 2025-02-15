@@ -655,8 +655,17 @@
 	</div>
 
 	<GenericModal title="Credits" bind:htmlElement={creditModal}>
-		<a href="https://www.figma.com/community/file/1130301037961264190">Empty state illustration</a> by
-		<a href="https://www.behance.net/boriskozelev">@boriskozelev</a>
+		<ul class="list-disc">
+			<li class="ms-6">
+				<a href="https://www.figma.com/community/file/1130301037961264190" target="_blank">Empty state illustration</a>
+				by
+				<a href="https://www.behance.net/boriskozelev" target="_blank">@boriskozelev</a>
+			</li>
+			<li class="ms-6">
+				Alien spaceship, naughty dog illustrations by
+				<a href="https://www.pixeltrue.com/" class="underline" target="_blank" title="Icons"> Pixel True </a>
+			</li>
+		</ul>
 	</GenericModal>
 
 	<!-- 
