@@ -27,9 +27,9 @@
 
 		<h2 class="px-8 pt-4 font-bold">{title}</h2>
 		{#if children}
-			<p class="px-8 py-4">
+			<div class="px-8 py-4">
 				{@render children()}
-			</p>
+			</div>
 		{/if}
 		<div class="modal-action flex justify-end p-4">
 			<form method="dialog">
