@@ -11,4 +11,3 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 *.old2
 *.old
-/src/lib/drizzle/migrations
