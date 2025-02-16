@@ -739,7 +739,7 @@
 				<h1>{data.session?.title}</h1>
 				<div class="grid gap-8 pt-12">
 					{#key filteredResults}
-						<DragDrop session={data.session} streamedResults={filteredResults} bind:value={order} />
+						<DragDrop session={data.session} results={filteredResults} bind:value={order} />
 					{/key}
 				</div>
 			</div>

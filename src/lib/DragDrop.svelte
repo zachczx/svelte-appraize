@@ -19,16 +19,16 @@
 	import DragDrop from '$lib/DragDrop.svelte';
 	import EmptyStateSvg from '$lib/svg/EmptyStateSvg.svg?dataurl';
 
-	let { session, streamedResults = [], value = $bindable() } = $props();
+	let { session, results = [], value = $bindable() } = $props();
 
 	interface EditEntry {
 		id: string;
 		dialogElement?: HTMLDialogElement;
 	}
 	let edit: EditEntry[] = $state([]);
-	for (let i = 0; i < streamedResults.length; i++) {
+	for (let i = 0; i < results.length; i++) {
 		const entry = {
-			id: streamedResults[i].id,
+			id: results[i].id,
 			dialogElement: undefined,
 		};
 		edit.push(entry);
@@ -41,11 +41,11 @@
 
 	let initOrder = '';
 	let initOrderWantedlength = initOrder.length - 1;
-	for (let i = 0; i < streamedResults.length; i++) {
+	for (let i = 0; i < results.length; i++) {
 		if (i === 0) {
-			initOrder = String(streamedResults[i].id);
+			initOrder = String(results[i].id);
 		} else {
-			initOrder = initOrder + ',' + streamedResults[i].id;
+			initOrder = initOrder + ',' + results[i].id;
 		}
 	}
 
@@ -59,10 +59,10 @@
 		nothingFound = false;
 	});
 
-	let total = $derived(streamedResults.length);
+	let total = $derived(results.length);
 
 	$effect(() => {
-		if (streamedResults.length === 0) {
+		if (results.length === 0) {
 			nothingFound = true;
 		}
 
@@ -189,7 +189,7 @@
 		</div>
 	{/if} -->
 
-		{#await streamedResults}
+		{#await results}
 			<span class="ignore-elements loading loading-spinner loading-lg justify-self-center py-5 text-primary md:py-10"
 			></span>
 		{:then result}
@@ -199,7 +199,7 @@
 					<div class="text-center lg:text-lg">There's nothing here!</div>
 				</div>
 			{:else}
-				{#each streamedResults as person, i}
+				{#each results as person, i}
 					<div
 						class="grid grid-cols-12 border-b-2 border-base-content/[0.07] py-2 last:border-0"
 						id={person.id}
