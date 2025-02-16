@@ -19,11 +19,6 @@
 	let formAutoSaveSession: HTMLFormElement; //= $state();
 	let formSaveSuccessLoading = $state(false);
 	let autoSave = $state(true);
-	let nameData = $state();
-	let deptData = $state();
-	let gradeData = $state();
-	let remarksData = $state();
-
 	let deleteSessionButtonClickedSpinner = $state(false);
 
 	let order = $state(data.sequence);
