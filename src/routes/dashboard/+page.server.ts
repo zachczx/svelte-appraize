@@ -29,6 +29,5 @@ export const load = async ({ locals }) => {
 		.leftJoin(sq, eq(sessions.id, sq.session))
 		.where(eq(sessions.owner, userId));
 
-	console.log(result);
-	return { streamed: { result } };
+	return { result };
 };

@@ -58,6 +58,7 @@ export const load = (async ({ params, locals }) => {
 
 	if (session.locked) {
 		const { userId } = locals.auth;
+
 		if (!userId) {
 			return error(401, { message: 'You are not authenticated!' });
 		}
@@ -66,13 +67,13 @@ export const load = (async ({ params, locals }) => {
 			return fail(403, { message: 'You do not have permission to access this!' });
 		}
 	}
-
-	let result;
-	result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
+	let result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
 	let sequence = getInitSequence(result);
 
 	return {
-		streamed: { session, result, sequence },
+		session,
+		result,
+		sequence,
 	};
 }) satisfies PageServerLoad;
 
@@ -103,7 +104,6 @@ export const actions = {
 
 		if (!userId) {
 			redirect(307, '/login');
-			return;
 		}
 		let resultUser = await db.select().from(users).where(eq(users.id, userId));
 		if (resultUser.length === 0) {

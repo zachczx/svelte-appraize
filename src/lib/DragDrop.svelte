@@ -110,7 +110,7 @@
 		use:enhance
 	>
 		<label
-			class="input join-item flex items-center focus-within:border-transparent focus-within:bg-primary/[0.02] focus-within:outline-primary/30"
+			class="input join-item flex w-full items-center focus-within:border-transparent focus-within:bg-primary/[0.02] focus-within:outline-primary/30"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"

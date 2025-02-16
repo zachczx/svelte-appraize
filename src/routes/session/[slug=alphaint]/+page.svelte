@@ -26,7 +26,7 @@
 
 	let deleteSessionButtonClickedSpinner = $state(false);
 
-	let order = $state(data.streamed.sequence);
+	let order = $state(data.sequence);
 
 	let newCounts = $derived.by(async () => {
 		let newCounts = {
@@ -43,21 +43,23 @@
 			percentageC: 0,
 			percentageD: 0,
 		};
-		let tempResult = await data.streamed.result;
+		let tempResult = await data.result;
 
-		for (let i = 0; i < tempResult.length; i++) {
-			if (tempResult[i].grade === 'A') {
-				newCounts.a += 1;
-			} else if (tempResult[i].grade === 'B') {
-				newCounts.b += 1;
-			} else if (tempResult[i].grade === 'C+') {
-				newCounts.cPlus += 1;
-			} else if (tempResult[i].grade === 'C') {
-				newCounts.c += 1;
-			} else if (tempResult[i].grade === 'C-') {
-				newCounts.cMinus += 1;
-			} else if (tempResult[i].grade === 'D') {
-				newCounts.d += 1;
+		if (tempResult) {
+			for (let i = 0; i < tempResult.length; i++) {
+				if (tempResult[i].grade === 'A') {
+					newCounts.a += 1;
+				} else if (tempResult[i].grade === 'B') {
+					newCounts.b += 1;
+				} else if (tempResult[i].grade === 'C+') {
+					newCounts.cPlus += 1;
+				} else if (tempResult[i].grade === 'C') {
+					newCounts.c += 1;
+				} else if (tempResult[i].grade === 'C-') {
+					newCounts.cMinus += 1;
+				} else if (tempResult[i].grade === 'D') {
+					newCounts.d += 1;
+				}
 			}
 		}
 		newCounts.cTotal = newCounts.cPlus + newCounts.c + newCounts.cMinus;
@@ -100,7 +102,7 @@
 	let searchInput: string = $state('');
 	let submittedSpinner = $state(false);
 
-	let currentPageUrl = $state($page.url.origin + '/session/' + data.streamed.session.slug);
+	let currentPageUrl = $state($page.url.origin + '/session/' + data.session?.slug);
 	let shareCopiedSuccess = $state(false);
 
 	let filterKeyword: string = $state('');
@@ -120,40 +122,42 @@
 
 	let filteredResults = $derived.by(() => {
 		let filteredResults;
-		filteredResults = data.streamed.result.filter((entry) => {
-			if (filterKeyword.length > 0) {
-				if ((entry.talent && filterIsTalent) || (!entry.talent && filterIsNotTalent)) {
-					if (
-						entry.name.toLowerCase().includes(filterKeyword.toLowerCase()) ||
-						entry.dept.toLowerCase().includes(filterKeyword.toLowerCase()) ||
-						entry.remarks?.toLowerCase().includes(filterKeyword.toLowerCase())
-					) {
-						for (const key in filterGrade) {
-							if (entry.grade === key.toUpperCase()) return entry;
-						}
-					}
-				}
-			}
 
-			if (filterKeyword.length === 0) {
-				if ((entry.talent && filterIsTalent) || (!entry.talent && filterIsNotTalent)) {
-					for (const key in filterGrade) {
-						if (filterGrade[key]) {
-							if (entry.grade === key.toUpperCase()) {
-								return entry;
+		if (data.result) {
+			filteredResults = data.result.filter((entry) => {
+				if (filterKeyword.length > 0) {
+					if ((entry.talent && filterIsTalent) || (!entry.talent && filterIsNotTalent)) {
+						if (
+							entry.name.toLowerCase().includes(filterKeyword.toLowerCase()) ||
+							entry.dept.toLowerCase().includes(filterKeyword.toLowerCase()) ||
+							entry.remarks?.toLowerCase().includes(filterKeyword.toLowerCase())
+						) {
+							for (const key in filterGrade) {
+								if (entry.grade === key.toUpperCase()) return entry;
 							}
 						}
 					}
 				}
-			}
-		});
 
+				if (filterKeyword.length === 0) {
+					if ((entry.talent && filterIsTalent) || (!entry.talent && filterIsNotTalent)) {
+						for (const key in filterGrade) {
+							if (filterGrade[key]) {
+								if (entry.grade === key.toUpperCase()) {
+									return entry;
+								}
+							}
+						}
+					}
+				}
+			});
+		}
 		return filteredResults;
 	});
 </script>
 
 <svelte:head>
-	<title>Appraize | {data.streamed.session.title}</title>
+	<title>Appraize | {data.session?.title}</title>
 </svelte:head>
 <div class="grid grid-cols-[auto_1fr_auto]">
 	<div class="grid h-full grid-rows-[1fr_auto]">
@@ -255,7 +259,7 @@
 											<input
 												type="text"
 												name="title"
-												value={data.streamed.session.title}
+												value={data.session?.title}
 												class="w-full"
 												placeholder="Edit Title"
 												autocomplete="off"
@@ -282,7 +286,7 @@
 												>
 											</button>
 										</label>
-										<input type="hidden" name="session-id" value={data.streamed.session.id} />
+										<input type="hidden" name="session-id" value={data.session?.id} />
 									</form>
 								</div>
 							</details>
@@ -548,7 +552,7 @@
 												}}
 											/>
 										</label>
-										<input type="hidden" name="session-id" value={data.streamed.session.id} />
+										<input type="hidden" name="session-id" value={data.session.id} />
 										<button class="btn btn-primary text-lg font-bold text-primary-content" aria-label="Add">Add</button>
 									</form>
 								</div>
@@ -628,7 +632,7 @@
 									}}
 								>
 									<input type="hidden" name="order" bind:value={order} />
-									<input type="hidden" name="session-id" value={data.streamed.session.id} />
+									<input type="hidden" name="session-id" value={data.session?.id} />
 								</form>
 								<input
 									type="checkbox"
@@ -696,7 +700,7 @@
 					name="locked"
 					value="true"
 					class="radio hidden"
-					checked={data.streamed.session.locked ? true : undefined}
+					checked={data.session?.locked ? true : undefined}
 					onchange={() => {
 						lockForm.requestSubmit();
 					}}
@@ -725,7 +729,7 @@
 					name="locked"
 					value="false"
 					class="radio hidden"
-					checked={data.streamed.session.locked === false || null || undefined ? true : undefined}
+					checked={data.session?.locked === false || null || undefined ? true : undefined}
 					onchange={() => {
 						lockForm.requestSubmit();
 					}}
@@ -736,11 +740,11 @@
 
 	<div class="min-h-dvh w-full bg-base-100 px-2 pb-4 pt-8 lg:pt-8">
 		<div class="grid justify-items-center space-y-4">
-			<div class="max-w-[800px] px-4 pb-4 md:px-10">
-				<h1>{data.streamed.session.title}</h1>
+			<div class="w-full max-w-[800px] px-4 pb-4 md:px-10">
+				<h1>{data.session?.title}</h1>
 				<div class="grid gap-8 pt-12">
 					{#key filteredResults}
-						<DragDrop session={data.streamed.session} streamedResults={filteredResults} bind:value={order} />
+						<DragDrop session={data.session} streamedResults={filteredResults} bind:value={order} />
 					{/key}
 				</div>
 			</div>
@@ -1063,8 +1067,8 @@
 								></svg
 							>
 
-							{#if data.streamed?.session.timestamp}
-								{CalculateDateAgo(data.streamed.session.timestamp)}
+							{#if data.session?.timestamp}
+								{CalculateDateAgo(data.session.timestamp)}
 							{:else}
 								Oops, something went wrong
 							{/if}
@@ -1081,7 +1085,7 @@
 									stroke-width="2"
 									d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0-8 0M6 21v-2a4 4 0 0 1 4-4h3.5m4.92.61a2.1 2.1 0 0 1 2.97 2.97L18 22h-3v-3z"
 								/></svg
-							><span class="max-w-48 truncate">{data.streamed.session.email}</span>
+							><span class="max-w-48 truncate">{data.session?.email}</span>
 						</div>
 					</li>
 				</ul>
@@ -1118,7 +1122,7 @@
 				>
 			</button>
 		</form>
-		<FileUploadForm session={data.streamed.session} />
+		<FileUploadForm session={data.session} />
 	</div>
 </dialog>
 
@@ -1148,7 +1152,7 @@
 						{/if}
 					{/key}
 				</button>
-				<input type="hidden" name="session-id" value={data.streamed.session.id} />
+				<input type="hidden" name="session-id" value={data.session?.id} />
 			</form>
 		</div>
 	</div>

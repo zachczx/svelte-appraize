@@ -67,6 +67,9 @@ export const actions = {
 				.values({ title: form.data.session, slug: slugTitle, owner: ownerIdToInsert })
 				.returning();
 			console.log('inserted session');
+			if (!res) {
+				return fail(500, { message: 'Error with session!' });
+			}
 		}
 
 		const nextPage = '/session/' + form.data.session;
