@@ -22,12 +22,12 @@
 </svelte:head>
 
 <ClerkProvider>
-	<div class="relative grid min-h-dvh grid-cols-[auto_1fr] bg-base-200">
+	<div class="relative grid min-h-dvh grid-cols-[auto_1fr] bg-purple-200">
 		<nav
-			class="sticky top-0 z-[1] grid h-dvh w-20 grid-rows-[1fr_auto] border-2 border-black/10 bg-base-300 py-4 text-base-content/70"
+			class="sticky top-0 z-[1] grid h-dvh w-16 grid-rows-[1fr_auto] border-2 border-black/10 bg-base-300 py-4 text-base-content/70"
 		>
 			<div class="grid content-start justify-items-center gap-2">
-				<h1 class="mb-4 px-2 py-1 text-6xl font-black text-primary">
+				<h1 class="mb-4 p-1 text-5xl font-black text-primary">
 					<a href="/">A</a>
 				</h1>
 				<a

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ErrorNaughtyDog from '$lib/svg/error-naughty-dog.svg?dataurl';
 	import { useClerkContext } from 'svelte-clerk';
 	import { CalculateDateAgo } from '$lib/utils';
 	const ctx = useClerkContext();
@@ -10,6 +11,12 @@
 <main class="grid content-center justify-items-center">
 	<h1 class="pb-8 font-extrabold">Your Sessions</h1>
 	<div class="grid grid-cols-4 content-center justify-items-center gap-8 px-8">
+		{#if data.streamed.result.length === 0}
+			<div class="grid content-center justify-items-center gap-4">
+				<img src={ErrorNaughtyDog} class="w-96 hue-rotate-[350deg]" alt="Under construction" />
+				<h2>Oops, under construction!</h2>
+			</div>
+		{/if}
 		{#each data.streamed.result as session}
 			<a href="/session/{session.slug}" class="card w-full max-w-96 bg-base-100 shadow-xl">
 				<div class="card-body">

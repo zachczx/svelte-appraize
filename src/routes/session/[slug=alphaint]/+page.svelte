@@ -155,9 +155,9 @@
 <svelte:head>
 	<title>Appraize | {data.streamed.session.title}</title>
 </svelte:head>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-9">
-	<div class="col-span-2 grid h-full grid-rows-[1fr_auto]">
-		<div class="grid content-start border-base-300/10 bg-base-200 px-8 pb-4 pt-8 text-2xl lg:border-r-2">
+<div class="grid grid-cols-[auto_1fr_auto]">
+	<div class="grid h-full grid-rows-[1fr_auto]">
+		<div class="grid content-start border-base-300/10 bg-base-200 px-4 pb-4 pt-8 text-2xl lg:border-r-2">
 			<div class="hidden items-center border-b-2 border-b-base-300/10 md:grid">
 				<form method="POST" id="view-top-navbar-input" action="?/redirect" class="pb-8" use:enhance>
 					<label class="input input-bordered flex w-full items-center rounded-full" for="session">
@@ -204,8 +204,8 @@
 			</div>
 
 			<div class="grid content-start">
-				<div class="grid gap-4">
-					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
+				<div class="grid gap-2">
+					<h3 class="flex items-center gap-2 text-lg font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
@@ -225,12 +225,12 @@
 							<path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
 						</svg>Manage Session
 					</h3>
-					<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+					<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
 						<li>
 							<details class="collapse rounded-lg bg-base-200">
 								<summary class=""
 									><div
-										class="flex cursor-pointer items-center gap-4 rounded-lg p-2 text-lg font-medium hover:bg-primary hover:text-primary-content"
+										class="flex cursor-pointer items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -249,7 +249,7 @@
 										>Edit Title
 									</div></summary
 								>
-								<div class="collapse-content ms-1 mt-2 border-l-4 border-l-base-300 p-0 ps-8 text-lg font-medium">
+								<div class="collapse-content ms-1 mt-2 border-l-4 border-l-base-300 p-0 ps-8 text-base font-medium">
 									<form method="POST" action="?/editSessionTitle" class="grid gap-1" use:enhance>
 										<label class="input input-bordered flex items-center rounded-full">
 											<input
@@ -334,7 +334,7 @@
 							<details class="collapse rounded-lg bg-base-200">
 								<summary class=""
 									><div
-										class="flex cursor-pointer items-center gap-4 rounded-lg p-2 text-lg font-medium hover:bg-primary hover:text-primary-content"
+										class="flex cursor-pointer items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -411,8 +411,8 @@
 						</li>
 					</ul>
 				</div>
-				<div class="mt-8 grid gap-4 border-t-2 border-t-base-300 pt-8">
-					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
+				<div class="mt-4 grid gap-2 pt-4">
+					<h3 class="flex items-center gap-4 text-lg font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.2em"
@@ -427,11 +427,11 @@
 								stroke-width="2"
 								d="M12.5 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7.5M3 10h18M10 3v18m6-2h6m-3-3v6"
 							/></svg
-						>Add
+						>Add Many
 					</h3>
 
-					<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
-						<li>
+					<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
+						<!-- <li>
 							<details class="collapse rounded-lg bg-base-200">
 								<summary class=""
 									><div
@@ -451,11 +451,11 @@
 												stroke-width="2"
 												d="M9 12h6m-3-3v6M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
 											/></svg
-										>New Entry
+										>Create
 									</div></summary
 								>
 								<div
-									class="collapse-content ms-1 mt-2 space-y-2 border-l-4 border-l-base-300 p-0 ps-8 text-lg font-medium"
+									class="collapse-content ms-1 mt-2 space-y-2 border-l-4 border-l-base-300 p-0 ps-4 text-lg font-medium"
 								>
 									<form method="POST" id="insert-form" action="?/insert" class="grid gap-1" use:enhance>
 										<label class="input input-bordered flex items-center">
@@ -553,10 +553,10 @@
 									</form>
 								</div>
 							</details>
-						</li>
+						</li> -->
 						<li>
 							<button
-								class="flex w-full items-center gap-4 rounded-lg p-2 text-lg font-medium hover:bg-primary hover:text-primary-content"
+								class="flex w-full items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
 								onclick={() => {
 									uploadModal.showModal();
 								}}
@@ -574,7 +574,7 @@
 										stroke-width="2"
 										d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 9l5-5l5 5m-5-5v12"
 									/></svg
-								>Upload from file (.csv)</button
+								>Upload .csv</button
 							>
 						</li>
 					</ul>
@@ -583,36 +583,22 @@
 					{#if form?.insertGradeMissing}<span class="text-error">Please select a grade:</span>{/if}
 				</div>
 
-				<!-- 
-			/////////////////////////////////////////
-			/
-			/
-			/
-			/
-			/	Upload
-			/
-			/
-			/	
-			/
-			///////////////////////////////////////// 
-			-->
-
-				<div class="mt-8 grid gap-4 border-t-2 border-t-base-300/70 pt-8">
-					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
+				<div class="mt-4 grid gap-2 pt-4">
+					<h3 class="flex items-center gap-2 text-lg font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
 							height="1.3em"
-							class="tabler:settings"
+							class="tabler:progress-check"
 							viewBox="0 0 24 24"
 							><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 								><path
-									d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37c1 .608 2.296.07 2.572-1.065"
-								/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0-6 0" /></g
+									d="M10 20.777a9 9 0 0 1-2.48-.969M14 3.223a9.003 9.003 0 0 1 0 17.554m-9.421-3.684a9 9 0 0 1-1.227-2.592M3.124 10.5c.16-.95.468-1.85.9-2.675l.169-.305m2.714-2.941A9 9 0 0 1 10 3.223"
+								/><path d="m9 12l2 2l4-4" /></g
 							></svg
-						>Settings
+						>Progress
 					</h3>
-					<ul class="ms-1 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+					<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
 						<li>
 							<div class="flex items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content">
 								<label for="auto-save-checkbox" class="flex grow items-center font-medium"
@@ -654,22 +640,9 @@
 						</li>
 					</ul>
 				</div>
-				<!-- 
-			/////////////////////////////////////////
-			/
-			/
-			/
-			/
-			/	Manage Session
-			/
-			/
-			/	
-			/
-			///////////////////////////////////////// 
-			-->
 			</div>
 		</div>
-		<div class="content-end px-8 pb-4 text-sm">
+		<div class="content-end bg-base-200 px-8 pb-4 text-sm">
 			<ul>
 				<li>© 2024 Zixian Chen</li>
 				<li>
@@ -760,22 +733,10 @@
 			</label>
 		</form></GenericModal
 	>
-	<!-- 
-	/////////////////////////////////////////
-	/
-	/
-	/
-	/
-	/	Content 
-	/
-	/
-	/	
-	/
-	///////////////////////////////////////// 
-	-->
-	<div class="col-span-5 min-h-dvh bg-base-100 px-12 pb-4 pt-8 lg:pt-8">
-		<ol class="space-y-4">
-			<div class="px-4 pb-4 md:px-10">
+
+	<div class="min-h-dvh w-full bg-base-100 px-2 pb-4 pt-8 lg:pt-8">
+		<div class="grid justify-items-center space-y-4">
+			<div class="max-w-[800px] px-4 pb-4 md:px-10">
 				<h1>{data.streamed.session.title}</h1>
 				<div class="grid gap-8 pt-12">
 					{#key filteredResults}
@@ -783,15 +744,15 @@
 					{/key}
 				</div>
 			</div>
-		</ol>
+		</div>
 	</div>
 
-	<div class="col-span-2 grid content-start border-l-2 border-l-base-300/10 bg-base-200 px-8 pb-8">
+	<div class="grid content-start overflow-hidden border-l-2 border-l-base-300/10 bg-base-200 px-4 pb-8">
 		<h3 class="justify-self-start pt-8 text-3xl font-extrabold text-base-content/85">Details</h3>
 		<div class="mt-8 grid content-start">
 			<details open>
 				<summary class="flex items-center"
-					><h3 class="flex grow items-center gap-4 justify-self-start font-extrabold text-base-content/70">
+					><h3 class="flex grow items-center gap-2 justify-self-start text-lg font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
@@ -812,7 +773,7 @@
 						xmlns="http://www.w3.org/2000/svg"
 						width="1em"
 						height="1em"
-						class="tabler:chevron-down arrow-down text-2xl"
+						class="tabler:chevron-down arrow-down text-lg"
 						viewBox="0 0 24 24"
 						><path
 							fill="none"
@@ -827,7 +788,7 @@
 						xmlns="http://www.w3.org/2000/svg"
 						width="1em"
 						height="1em"
-						class="tabler:chevron-up arrow-up text-2xl"
+						class="tabler:chevron-up arrow-up text-lg"
 						viewBox="0 0 24 24"
 						><path
 							fill="none"
@@ -839,9 +800,9 @@
 						/></svg
 					></summary
 				>
-				<ul class="ms-1 mt-4 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+				<ul class="ms-2 mt-2 border-l-4 border-l-base-300 ps-8 text-base font-medium text-base-content/70">
 					<li class="py-2">
-						<div class="flex items-center gap-4">
+						<div class="flex items-center gap-2">
 							<label class="input join-item input-bordered flex w-full items-center rounded-full">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -860,7 +821,7 @@
 								>
 								<input
 									bind:value={filterKeyword}
-									class="grow text-lg"
+									class="grow text-base"
 									placeholder="Filter by keyword"
 									autocomplete="off"
 								/>
@@ -868,47 +829,60 @@
 						</div>
 					</li>
 					<li class="py-2">
-						<div class="grid grid-cols-3 gap-2">
-							<label class="col-span-3 flex cursor-pointer items-center gap-4">
-								<input type="checkbox" bind:checked={filterGrade.a} class="checkbox-primary checkbox" />
-								<span class="label-text text-lg">A</span>
+						<div class="grid grid-cols-3 gap-1">
+							<label class="col-span-3 flex cursor-pointer items-center gap-2">
+								<input type="checkbox" bind:checked={filterGrade.a} class="checkbox-primary checkbox checkbox-sm" />
+								<span class="label-text text-base">A</span>
 							</label>
-							<label class="col-span-3 flex cursor-pointer items-center gap-4">
-								<input type="checkbox" bind:checked={filterGrade.b} class="checkbox-primary checkbox" /><span
-									class="label-text text-lg">B</span
-								>
+							<label class="col-span-3 flex cursor-pointer items-center gap-2">
+								<input
+									type="checkbox"
+									bind:checked={filterGrade.b}
+									class="checkbox-primary checkbox checkbox-sm"
+								/><span class="label-text text-base">B</span>
 							</label>
-							<label class="flex cursor-pointer items-center gap-4">
-								<input type="checkbox" bind:checked={filterGrade['c+']} class="checkbox-primary checkbox" /><span
-									class="label-text text-lg">C+</span
-								>
+							<label class="flex cursor-pointer items-center gap-2">
+								<input
+									type="checkbox"
+									bind:checked={filterGrade['c+']}
+									class="checkbox-primary checkbox checkbox-sm"
+								/><span class="label-text text-base">C+</span>
 							</label>
-							<label class="flex cursor-pointer items-center gap-4">
-								<input type="checkbox" bind:checked={filterGrade.c} class="checkbox-primary checkbox" /><span
-									class="label-text text-lg">C</span
-								>
+							<label class="flex cursor-pointer items-center gap-2">
+								<input
+									type="checkbox"
+									bind:checked={filterGrade.c}
+									class="checkbox-primary checkbox checkbox-sm"
+								/><span class="label-text text-base">C</span>
 							</label>
-							<label class="flex cursor-pointer items-center gap-4">
-								<input type="checkbox" bind:checked={filterGrade['c-']} class="checkbox-primary checkbox" /><span
-									class="label-text text-lg">C-</span
-								>
+							<label class="flex cursor-pointer items-center gap-2">
+								<input
+									type="checkbox"
+									bind:checked={filterGrade['c-']}
+									class="checkbox-primary checkbox checkbox-sm"
+								/><span class="label-text text-base">C-</span>
 							</label>
-							<label class="col-span-3 flex cursor-pointer items-center gap-4">
-								<input type="checkbox" bind:checked={filterGrade.d} class="checkbox-primary checkbox" /><span
-									class="label-text text-lg">D</span
-								>
+							<label class="col-span-3 flex cursor-pointer items-center gap-2">
+								<input
+									type="checkbox"
+									bind:checked={filterGrade.d}
+									class="checkbox-primary checkbox checkbox-sm"
+								/><span class="label-text text-base">D</span>
 							</label>
 						</div>
 					</li>
 					<li class="py-2">
-						<div class="grid grid-cols-3 gap-2">
-							<label class="flex cursor-pointer items-center gap-4">
-								<input type="checkbox" bind:checked={filterIsTalent} class="checkbox-primary checkbox" /><span
-									class="label-text text-lg"
+						<div class="grid grid-cols-3 gap-1">
+							<label class="flex cursor-pointer items-center gap-2">
+								<input
+									type="checkbox"
+									bind:checked={filterIsTalent}
+									class="checkbox-primary checkbox checkbox-sm"
+								/><span class="label-text text-base"
 									><svg
 										xmlns="http://www.w3.org/2000/svg"
-										width="1.3em"
-										height="1.3em"
+										width="1.2em"
+										height="1.2em"
 										class="tabler:star-filled text-yellow-400"
 										viewBox="0 0 24 24"
 										><path
@@ -918,13 +892,16 @@
 									></span
 								>
 							</label>
-							<label class="flex cursor-pointer items-center gap-4">
-								<input type="checkbox" bind:checked={filterIsNotTalent} class="checkbox-primary checkbox" /><span
-									class="label-text text-lg"
+							<label class="flex cursor-pointer items-center gap-2">
+								<input
+									type="checkbox"
+									bind:checked={filterIsNotTalent}
+									class="checkbox-primary checkbox checkbox-sm"
+								/><span class="label-text text-base"
 									><svg
 										xmlns="http://www.w3.org/2000/svg"
-										width="1.3em"
-										height="1.3em"
+										width="1.2em"
+										height="1.2em"
 										class="tabler:star text-base-content/50"
 										viewBox="0 0 24 24"
 										><path
@@ -944,10 +921,10 @@
 			</details>
 		</div>
 
-		<div class="mt-8 grid content-start border-t-2 border-t-base-300 pt-8">
+		<div class="mt-4 grid content-start pt-4">
 			<details open>
 				<summary class="flex items-center"
-					><h3 class="flex grow items-center gap-4 font-extrabold text-base-content/70">
+					><h3 class="flex grow items-center gap-2 text-lg font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
@@ -963,7 +940,7 @@
 						xmlns="http://www.w3.org/2000/svg"
 						width="1em"
 						height="1em"
-						class="tabler:chevron-down arrow-down text-2xl"
+						class="tabler:chevron-down arrow-down text-lg"
 						viewBox="0 0 24 24"
 						><path
 							fill="none"
@@ -978,7 +955,7 @@
 						xmlns="http://www.w3.org/2000/svg"
 						width="1em"
 						height="1em"
-						class="tabler:chevron-up arrow-up text-2xl"
+						class="tabler:chevron-up arrow-up text-lg"
 						viewBox="0 0 24 24"
 						><path
 							fill="none"
@@ -993,28 +970,28 @@
 				{#await newCounts}
 					<span class="loading loading-spinner my-8 text-primary"></span>
 				{:then newCounts}
-					<div class="justify-items-around grid w-full grid-cols-4 pt-8">
-						<div class="grid content-center justify-items-center rounded-l-2xl bg-[#F66D44] py-2">
-							<div class="font-medium">A</div>
-							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
+					<div class="justify-items-around grid grid-cols-4 pb-2 pt-4">
+						<div class="grid content-center justify-items-center rounded-l-lg bg-[#F66D44] py-1">
+							<div class="text-sm font-medium">A</div>
+							<div class="flex animate-scale items-center justify-center text-lg font-black text-base-content/80">
 								{newCounts.a}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center bg-[#FEAE65]/60 py-2">
-							<div class="font-medium">B</div>
-							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
+						<div class="grid content-center justify-items-center bg-[#FEAE65]/60">
+							<div class="text-sm font-medium">B</div>
+							<div class="flex animate-scale items-center justify-center text-lg font-black text-base-content/80">
 								{newCounts.b}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center bg-[#E6F69D] py-2">
-							<div class="font-medium">C</div>
-							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
+						<div class="grid content-center justify-items-center bg-[#E6F69D]">
+							<div class="text-sm font-medium">C</div>
+							<div class="flex animate-scale items-center justify-center text-lg font-black text-base-content/80">
 								{newCounts.c}
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center rounded-r-2xl bg-[#AADEA7] py-2">
-							<div class="font-medium">D</div>
-							<div class="flex animate-scale items-center justify-center text-xl font-black text-base-content/80">
+						<div class="grid content-center justify-items-center rounded-r-lg bg-[#AADEA7]">
+							<div class="text-sm font-medium">D</div>
+							<div class="flex animate-scale items-center justify-center text-lg font-black text-base-content/80">
 								{newCounts.d}
 							</div>
 						</div>
@@ -1024,10 +1001,10 @@
 			</details>
 		</div>
 
-		<div class="mt-4 grid content-start gap-y-4 border-t-2 border-t-base-300 pt-8">
+		<div class="mt-4 grid content-start gap-y-2 pt-4">
 			<details>
 				<summary class="flex items-center"
-					><h3 class="flex grow items-center gap-4 justify-self-start font-extrabold text-base-content/70">
+					><h3 class="flex grow items-center gap-2 justify-self-start text-lg font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
@@ -1043,7 +1020,7 @@
 						xmlns="http://www.w3.org/2000/svg"
 						width="1em"
 						height="1em"
-						class="tabler:chevron-down arrow-down text-2xl"
+						class="tabler:chevron-down arrow-down text-lg"
 						viewBox="0 0 24 24"
 						><path
 							fill="none"
@@ -1058,7 +1035,7 @@
 						xmlns="http://www.w3.org/2000/svg"
 						width="1em"
 						height="1em"
-						class="tabler:chevron-up arrow-up text-2xl"
+						class="tabler:chevron-up arrow-up text-lg"
 						viewBox="0 0 24 24"
 						><path
 							fill="none"
@@ -1070,9 +1047,9 @@
 						/></svg
 					></summary
 				>
-				<ul class="ms-1 mt-4 border-l-4 border-l-base-300 ps-8 text-lg font-medium text-base-content/70">
+				<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
 					<li>
-						<div class="flex items-center gap-4 py-2">
+						<div class="ms-1 flex items-center gap-2 py-2">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="1.3em"
@@ -1093,7 +1070,7 @@
 						</div>
 					</li>
 					<li>
-						<div class="flex items-center gap-4 overflow-hidden py-2">
+						<div class="ms-1 flex items-center gap-2 py-2">
 							<svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" viewBox="0 0 24 24"
 								><path
 									fill="none"
