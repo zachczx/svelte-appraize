@@ -14,6 +14,7 @@ export const sessions = pgTable('sessions', {
 	slug: varchar('slug', { length: 500 }).notNull(),
 	timestamp: timestamp('timestamp', { withTimezone: true }).defaultNow(),
 	owner: varchar('owner', { length: 50 }).references(() => users.id, { onDelete: 'cascade' }),
+	locked: boolean('locked').default(false),
 });
 
 export const records = pgTable('records', {

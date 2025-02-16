@@ -94,6 +94,8 @@
 	let deleteSessionModal: HTMLDialogElement;
 	let uploadModal: HTMLDialogElement;
 	let creditModal = $state() as HTMLDialogElement;
+	let lockModal = $state() as HTMLDialogElement;
+	let lockForm: HTMLFormElement;
 
 	let searchInput: string = $state('');
 	let submittedSpinner = $state(false);
@@ -102,7 +104,10 @@
 	let shareCopiedSuccess = $state(false);
 
 	let filterKeyword: string = $state('');
-	let filterGrade = $state({
+	interface FilterGrades {
+		[index: string]: boolean;
+	}
+	let filterGrade: FilterGrades = $state({
 		a: true,
 		b: true,
 		'c+': true,
@@ -155,7 +160,7 @@
 		<div class="grid content-start border-base-300/10 bg-base-200 px-8 pb-4 pt-8 text-2xl lg:border-r-2">
 			<div class="hidden items-center border-b-2 border-b-base-300/10 md:grid">
 				<form method="POST" id="view-top-navbar-input" action="?/redirect" class="pb-8" use:enhance>
-					<label class="view-top-navbar-input input input-bordered flex w-full items-center rounded-full" for="session">
+					<label class="input input-bordered flex w-full items-center rounded-full" for="session">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1em"
@@ -179,7 +184,7 @@
 							}}
 							required
 						/>
-						<button class="view-input-button -me-3 ms-2">
+						<button class="-me-3 ms-2">
 							{#if submittedSpinner && searchInput.length > 0}
 								<span class="loading loading-spinner"></span>
 							{:else}
@@ -199,7 +204,7 @@
 			</div>
 
 			<div class="grid content-start">
-				<div class="view-manage-sidebar grid gap-4">
+				<div class="grid gap-4">
 					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -306,6 +311,26 @@
 							</button>
 						</li>
 						<li>
+							<button
+								class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content"
+								onclick={() => {
+									lockModal.showModal();
+								}}
+								><svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1.3em"
+									height="1.3em"
+									class="tabler:lock"
+									viewBox="0 0 24 24"
+									><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										><path d="M5 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" /><path
+											d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0-2 0m-3-5V7a4 4 0 1 1 8 0v4"
+										/></g
+									></svg
+								>Lock
+							</button>
+						</li>
+						<li>
 							<details class="collapse rounded-lg bg-base-200">
 								<summary class=""
 									><div
@@ -386,7 +411,7 @@
 						</li>
 					</ul>
 				</div>
-				<div class="view-add-sidebar mt-8 grid gap-4 border-t-2 border-t-base-300 pt-8">
+				<div class="mt-8 grid gap-4 border-t-2 border-t-base-300 pt-8">
 					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -572,7 +597,7 @@
 			///////////////////////////////////////// 
 			-->
 
-				<div class="view-upload-sidebar mt-8 grid gap-4 border-t-2 border-t-base-300/70 pt-8">
+				<div class="mt-8 grid gap-4 border-t-2 border-t-base-300/70 pt-8">
 					<h3 class="flex items-center gap-4 font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -668,6 +693,73 @@
 		</ul>
 	</GenericModal>
 
+	<GenericModal title="Lock Session" bind:htmlElement={lockModal}
+		><form
+			bind:this={lockForm}
+			action="?/toggleLock"
+			method="POST"
+			class="grid grid-cols-2 justify-items-center"
+			use:enhance
+		>
+			<label class="label-lock grid w-full cursor-pointer justify-items-center p-8">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1em"
+					height="1em"
+					class="tabler:lock h-36 w-36"
+					viewBox="0 0 24 24"
+					><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+						><path d="M5 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" /><path
+							d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0-2 0m-3-5V7a4 4 0 1 1 8 0v4"
+						/></g
+					></svg
+				>
+				<div class="grid pt-4 text-center">
+					<p class="text-xl font-bold">Locked</p>
+					<p>Only you can see this</p>
+				</div>
+				<input
+					type="radio"
+					name="locked"
+					value="true"
+					class="radio hidden"
+					checked={data.streamed.session.locked ? true : undefined}
+					onchange={() => {
+						lockForm.requestSubmit();
+					}}
+				/>
+			</label>
+
+			<label class="label-lock grid w-full cursor-pointer justify-items-center p-8">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1em"
+					height="1em"
+					class="tabler:lock-open-2 h-36 w-36"
+					viewBox="0 0 24 24"
+					><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+						><path d="M3 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><path
+							d="M9 16a1 1 0 1 0 2 0a1 1 0 0 0-2 0m4-5V7a4 4 0 1 1 8 0v4"
+						/></g
+					></svg
+				>
+				<div class="grid pt-4 text-center">
+					<p class="text-xl font-bold">Unlocked</p>
+					<p>Everyone can see this</p>
+				</div>
+				<input
+					type="radio"
+					name="locked"
+					value="false"
+					class="radio hidden"
+					checked={data.streamed.session.locked === false || null || undefined ? true : undefined}
+					onchange={() => {
+						lockForm.requestSubmit();
+					}}
+				/>
+			</label>
+		</form></GenericModal
+	>
 	<!-- 
 	/////////////////////////////////////////
 	/
@@ -682,8 +774,8 @@
 	///////////////////////////////////////// 
 	-->
 	<div class="col-span-5 min-h-dvh bg-base-100 px-12 pb-4 pt-8 lg:pt-8">
-		<ol class="view-content space-y-4">
-			<div class="view-ranking-title px-4 pb-4 md:px-10">
+		<ol class="space-y-4">
+			<div class="px-4 pb-4 md:px-10">
 				<h1>{data.streamed.session.title}</h1>
 				<div class="grid gap-8 pt-12">
 					{#key filteredResults}
@@ -1032,7 +1124,7 @@
 /
 ///////////////////////////////////////// 
 -->
-<dialog bind:this={uploadModal} class="view-upload-modal modal overflow-y-scroll">
+<dialog bind:this={uploadModal} class="modal overflow-y-scroll">
 	<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
 		<form method="dialog" class="grid justify-items-end p-2">
 			<button aria-label="close">
@@ -1137,6 +1229,31 @@
 		</div>
 	</div>
 {/if}
+{#if form?.editLockedSuccess}
+	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
+		<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="2em"
+				height="2em"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
+			>
+				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+				<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
+				<path d="M9 10h.01" />
+				<path d="M15 10h.01" />
+				<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
+				<path d="M15 19l2 2l4 -4" />
+			</svg>Changed lock status!
+		</div>
+	</div>
+{/if}
 {#if form?.formSaveFail}
 	<div
 		class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out"
@@ -1196,52 +1313,13 @@
 			</svg>Edited successfully!
 		</div>
 	</div>
-{:else if form?.editInsertFailedGrade}
-	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
-		<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">
-			Failed to edit! Grade should be a single alphabet (A, B, C+, C, C-, D)
-		</div>
-	</div>
 {/if}
 
 <style>
-	.view-outline {
-		view-transition-name: view-outline;
-	}
-	.view-home-sidebar {
-		view-transition-name: view-home-sidebar;
-	}
-	.view-home-info {
-		view-transition-name: view-home-info;
-	}
-	.view-summary-sidebar {
-		view-transition-name: view-summary-sidebar;
-	}
-	.view-ranking-title {
-		view-transition-name: view-ranking-title;
-	}
-	.view-add-sidebar {
-		view-transition-name: view-add-sidebar;
-	}
-	.view-upload-sidebar {
-		view-transition-name: view-upload-sidebar;
-	}
-	.view-manage-sidebar {
-		view-transition-name: view-manage-sidebar;
-	}
-	.view-content {
-		view-transition-name: view-content;
-	}
-
 	.delete-session-modal {
 		view-transition-name: delete-session-modal;
 		animation: none;
 	}
-	.view-upload-modal {
-		view-transition-name: view-upload-modal;
-		animation: none;
-	}
-
 	.fade-in {
 		opacity: 1;
 		display: hidden;
@@ -1305,6 +1383,16 @@
 		}
 		&[open] > summary > .arrow-down {
 			display: none;
+		}
+	}
+
+	.label-lock {
+		border: 2px solid transparent;
+		border-radius: 20px;
+
+		&:has(> input:checked) {
+			background-color: #fff6da;
+			border: 2px solid #f4d793;
 		}
 	}
 </style>

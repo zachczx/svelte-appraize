@@ -43,6 +43,7 @@ export const load = (async ({ params }) => {
 			slug: sessions.slug,
 			timestamp: sessions.timestamp,
 			owner: sessions.owner,
+			locked: sessions.locked,
 			username: users.name,
 			email: users.email,
 		})
@@ -351,6 +352,38 @@ export const actions = {
 			return fail(400, { error: true, message: 'Update failed!' });
 		}
 		return { updateTalentSuccess: true };
+	},
+
+	toggleLock: async function ({ request, params, locals }) {
+		const session = await db
+			.select({ owner: sessions.owner })
+			.from(sessions)
+			.where(eq(sessions.slug, String(params.slug)));
+		const { userId } = locals.auth;
+		if (session.length === 0) {
+			return fail(400, { error: true, message: 'Session empty!' });
+		}
+		if (!userId) {
+			return fail(400, { error: true, message: `You're not authenticated!` });
+		}
+		if (userId !== session[0].owner) {
+			return fail(400, { error: true, message: `You don't have permission to do that!` });
+		}
+
+		const formData = await request.formData();
+		const lockStatus = formData.get('locked');
+		const insertLock = lockStatus === 'true' ? true : false;
+		console.log(insertLock, typeof insertLock);
+
+		const res = await db
+			.update(sessions)
+			.set({ locked: insertLock })
+			.where(and(eq(sessions.slug, String(params.slug)), eq(sessions.owner, userId)));
+
+		console.log('Successfully updated lock status');
+		if (res) {
+			return { editLockedSuccess: true };
+		}
 	},
 } satisfies Actions;
 
