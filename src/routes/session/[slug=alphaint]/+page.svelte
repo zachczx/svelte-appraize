@@ -1004,7 +1004,7 @@
 		<div class="mt-4 grid content-start gap-y-2 pt-4">
 			<details>
 				<summary class="flex items-center"
-					><h3 class="flex grow items-center gap-2 justify-self-start text-lg font-extrabold text-base-content/70">
+					><h3 class="mb-1 flex grow items-center gap-2 justify-self-start text-lg font-extrabold text-base-content/70">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
@@ -1049,7 +1049,7 @@
 				>
 				<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
 					<li>
-						<div class="ms-1 flex items-center gap-2 py-2">
+						<div class="ms-1 flex items-center gap-2 p-2">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="1.3em"
@@ -1062,7 +1062,8 @@
 									/><path d="M18 16.496V18l1 1" /></g
 								></svg
 							>
-							{#if data.streamed.session.timestamp}
+
+							{#if data.streamed?.session.timestamp}
 								{CalculateDateAgo(data.streamed.session.timestamp)}
 							{:else}
 								Oops, something went wrong
@@ -1070,7 +1071,7 @@
 						</div>
 					</li>
 					<li>
-						<div class="ms-1 flex items-center gap-2 py-2">
+						<div class="ms-1 flex items-center gap-2 p-2">
 							<svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" viewBox="0 0 24 24"
 								><path
 									fill="none"

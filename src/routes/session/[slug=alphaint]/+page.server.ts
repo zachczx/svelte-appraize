@@ -33,7 +33,7 @@ let delay = (time: number) => {
 	});
 };
 
-export const load = (async ({ params }) => {
+export const load = (async ({ params, locals }) => {
 	console.log('Load triggered');
 	const paramSessionSlug = String(params.slug);
 	const sessionArray = await db
@@ -54,6 +54,17 @@ export const load = (async ({ params }) => {
 	const session = sessionArray[0];
 	if (!session) {
 		error(404, { message: 'Not found' });
+	}
+
+	if (session.locked) {
+		const { userId } = locals.auth;
+		if (!userId) {
+			return error(401, { message: 'You are not authenticated!' });
+		}
+		const hasPermission = checkUserIsSessionOwner(db, userId);
+		if (!hasPermission) {
+			return fail(403, { message: 'You do not have permission to access this!' });
+		}
 	}
 
 	let result;
@@ -446,4 +457,12 @@ async function dbInsertCsvRows(sessionId: string, data: string[][], db: any, dbL
 			});
 		}
 	}
+}
+
+async function checkUserIsSessionOwner(db: any, currentUser: string) {
+	const user = await db.select({ owner: sessions.owner }).from(sessions).where(eq(sessions.owner, currentUser));
+	if (user.length === 0) {
+		return false;
+	}
+	return true;
 }

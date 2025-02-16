@@ -22,7 +22,7 @@
 </svelte:head>
 
 <ClerkProvider>
-	<div class="relative grid min-h-dvh grid-cols-[auto_1fr] bg-purple-200">
+	<div class="relative grid min-h-dvh grid-cols-[auto_1fr] bg-base-200">
 		<nav
 			class="sticky top-0 z-[1] grid h-dvh w-16 grid-rows-[1fr_auto] border-2 border-black/10 bg-base-300 py-4 text-base-content/70"
 		>
