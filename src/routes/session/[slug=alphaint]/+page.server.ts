@@ -95,13 +95,15 @@ export const actions = {
 		const name = String(submittedData.get('name'));
 		const dept = String(submittedData.get('dept'));
 		const grade = String(submittedData.get('grade'));
-		const remarks = String(submittedData.get('remarks'));
+		const rawRemarks = submittedData.get('remarks');
+		let remarks;
+		if (rawRemarks !== null) {
+			remarks = String(rawRemarks);
+		}
 		const sessionId = String(submittedData.get('session-id'));
-		console.log('Session ID: ', sessionId);
 
 		// Set owner
 		const { userId } = locals.auth;
-
 		if (!userId) {
 			redirect(307, '/login');
 		}
