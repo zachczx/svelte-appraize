@@ -939,7 +939,7 @@
 							<div class="flex items-center justify-center gap-1.5">
 								<div class="rounded bg-[#ef9b20] p-0.5 px-1.5 font-bold text-white">C</div>
 								<div class="flex animate-scale items-center justify-center font-black text-base-content">
-									{newCounts.b}
+									{newCounts.cTotal}
 								</div>
 							</div>
 							<div class="flex items-center justify-center gap-1.5">
@@ -949,8 +949,9 @@
 								</div>
 							</div>
 						</div>
-
-						<Chart figures={newCounts} />
+						{#key newCounts}
+							<Chart figures={newCounts} />
+						{/key}
 					{/await}
 				</div>
 			</details>
