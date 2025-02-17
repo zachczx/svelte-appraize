@@ -14,6 +14,9 @@
 			{:else if page.status === 403}
 				<h1>Permission error</h1>
 				<p>{page.error.message}</p>
+			{:else if page.status === 500}
+				<h1>Server error</h1>
+				<p>{page.error.message}</p>
 			{/if}
 		</div>
 	{:else}

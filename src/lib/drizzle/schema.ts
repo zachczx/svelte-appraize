@@ -32,3 +32,11 @@ export const records = pgTable('records', {
 	timestamp: timestamp('timestamp', { withTimezone: true }).defaultNow(),
 	owner: varchar('owner', { length: 50 }).references(() => users.id, { onDelete: 'cascade' }),
 });
+
+export const sessionAuthorization = pgTable('session_authorization', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	session: uuid('session').references(() => sessions.id, { onDelete: 'cascade' }),
+	user: varchar('user', { length: 50 }).references(() => users.id, { onDelete: 'cascade' }),
+	userEmail: varchar('user_email', { length: 50 }).notNull(),
+	permissions: varchar('permissions', { length: 20 }),
+});

@@ -85,6 +85,7 @@ export default {
 					'primary-content': '#fdfdfd',
 					'secondary-content': '#fdfdfd',
 					warning: '#E65C19',
+					//neutral: '#555C66', //'rgba(43, 52, 64)',
 					info: '#889E73',
 					'base-200': '#FFF6DA',
 					'base-300': '#F4D793',

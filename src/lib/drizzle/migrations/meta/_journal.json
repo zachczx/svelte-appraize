@@ -8,6 +8,20 @@
       "when": 1739678072698,
       "tag": "0000_ancient_edwin_jarvis",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1739760272663,
+      "tag": "0001_mysterious_butterfly",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1739767472563,
+      "tag": "0002_sharp_brother_voodoo",
+      "breakpoints": true
     }
   ]
 }

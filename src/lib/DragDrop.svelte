@@ -199,7 +199,7 @@
 					<div class="text-center lg:text-lg">There's nothing here!</div>
 				</div>
 			{:else}
-				{#each results as person, i}
+				{#each result as person, i}
 					<div
 						class="grid grid-cols-12 border-b-2 border-base-content/[0.07] py-2 last:border-0"
 						id={person.id}

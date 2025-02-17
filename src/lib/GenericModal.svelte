@@ -32,16 +32,18 @@
 			</button>
 		</form>
 
-		<h2 class="px-8 pt-4 font-bold">{title}</h2>
-		{#if children}
-			<div class="px-8 py-4">
-				{@render children()}
+		<div class="grid gap-4 px-8 pb-8 pt-2">
+			<h2 class="font-bold">{title}</h2>
+			{#if children}
+				<div class="">
+					{@render children()}
+				</div>
+			{/if}
+			<div class="modal-action flex justify-end">
+				<form method="dialog">
+					<button class="btn btn-neutral btn-sm">Close</button>
+				</form>
 			</div>
-		{/if}
-		<div class="modal-action flex justify-end p-4">
-			<form method="dialog">
-				<button class="btn btn-neutral btn-sm">Close</button>
-			</form>
 		</div>
 	</div>
 </dialog>

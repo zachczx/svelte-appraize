@@ -1,0 +1,1 @@
+ALTER TABLE "session_authorization" ADD COLUMN "user_email" varchar(50) NOT NULL;

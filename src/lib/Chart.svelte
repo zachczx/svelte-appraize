@@ -11,7 +11,7 @@
 			{
 				// label: 'Grades',
 				data: [figures.percentageA, figures.percentageB, figures.percentageC, figures.percentageD],
-				backgroundColor: ['#F66D44', '#FEAE65', '#E6F69D', '#AADEA7'],
+				backgroundColor: ['#87bc45', '#27aeef', '#ef9b20', '#ea5545'],
 				hoverOffset: 4,
 			},
 		],
@@ -52,13 +52,26 @@
 			options: {
 				plugins: {
 					tooltip: {
-						enabled: false,
+						enabled: true,
+						callbacks: {
+							label: (context) => {
+								let label = context.dataset.label || '';
+								if (label) {
+									label += ': ';
+								}
+								if (context.parsed) {
+									label += ' ' + context.parsed.toString() + '%';
+								}
+								return label;
+							},
+						},
 					},
 					datalabels: {
+						display: false,
 						font: {
 							family: 'Nunito Sans Variable',
-							size: 20,
-							weight: 800,
+							size: 16,
+							weight: 700,
 						},
 						color: '#515151',
 						formatter: function (value, context) {

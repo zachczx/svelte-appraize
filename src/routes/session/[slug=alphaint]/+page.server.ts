@@ -1,5 +1,5 @@
 import { db } from '$lib/drizzle/db';
-import { records, sessions, users } from '$lib/drizzle/schema';
+import { records, sessionAuthorization, sessions, users } from '$lib/drizzle/schema';
 import type { Action } from './$types';
 import { desc, asc, eq, and, or, ilike } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
@@ -56,25 +56,40 @@ export const load = (async ({ params, locals }) => {
 		error(404, { message: 'Not found' });
 	}
 
+	const authorizedUsers = await db
+		.select()
+		.from(sessionAuthorization)
+		.where(eq(sessionAuthorization.session, session.id));
+
 	if (session.locked) {
 		const { userId } = locals.auth;
-
 		if (!userId) {
 			return error(401, { message: 'You are not authenticated!' });
 		}
-		const hasPermission = checkUserIsSessionOwner(db, userId);
-		if (!hasPermission) {
-			return fail(403, { message: 'You do not have permission to access this!' });
+		const hasPermission = await checkUserIsSessionOwner(db, userId);
+		const user = await clerkClient.users.getUser(userId);
+
+		const checkUserExists = await db
+			.select({ userEmail: sessionAuthorization.userEmail })
+			.from(sessionAuthorization)
+			.where(
+				and(
+					eq(sessionAuthorization.userEmail, user.emailAddresses[0].emailAddress),
+					eq(sessionAuthorization.session, session.id),
+				),
+			);
+		let userAuthorized = false;
+		if (checkUserExists.length > 0) {
+			userAuthorized = true;
+		}
+		if (!hasPermission && !userAuthorized) {
+			return error(403, { message: 'You do not have permission to access this!' });
 		}
 	}
-	let result = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
-	let sequence = getInitSequence(result);
 
-	return {
-		session,
-		result,
-		sequence,
-	};
+	let results = await db.select().from(records).where(eq(records.session, session.id)).orderBy(asc(records.sequence));
+
+	return { session, results, authorizedUsers };
 }) satisfies PageServerLoad;
 
 export const actions = {
@@ -398,22 +413,52 @@ export const actions = {
 			return { editLockedSuccess: true };
 		}
 	},
-} satisfies Actions;
 
-function getInitSequence(result: object[]) {
-	let sequence = '';
-	let sequenceCutLastChar = sequence.length - 1;
-
-	for (let i = 0; i < result.length; i++) {
-		if (i === 0) {
-			sequence = String(result[i].id);
-		} else {
-			sequence = sequence + ',' + result[i].id;
+	addAuthorizedUser: async function ({ request, locals }) {
+		const { userId } = locals.auth;
+		const formData = await request.formData();
+		const sessionId = String(formData.get('session-id'));
+		const addedUser = String(formData.get('user-email'));
+		const userExists = await db
+			.select({ userEmail: sessionAuthorization.userEmail })
+			.from(sessionAuthorization)
+			.where(and(eq(sessionAuthorization.userEmail, addedUser), eq(sessionAuthorization.session, sessionId)));
+		console.log(userExists);
+		if (userExists.length > 0) {
+			console.log('already exists');
+			return { addAuthorizedUserAlreadyExists: true };
 		}
-	}
-	sequence.slice(sequenceCutLastChar);
-	return sequence;
-}
+		console.log('doesnt exist');
+		const res = await db.insert(sessionAuthorization).values({ session: sessionId, userEmail: addedUser });
+		console.log(res);
+		if (!res) {
+			return fail(500, { message: 'Error!' });
+		}
+		return { addAuthorizedUserSuccess: true };
+	},
+
+	deleteAuthorizedUser: async function ({ request, locals }) {
+		const { userId } = locals.auth;
+		if (!userId) {
+			return error(401, { message: 'You are not authenticated!' });
+		}
+		const hasPermission = checkUserIsSessionOwner(db, userId);
+		if (!hasPermission) {
+			return error(403, { message: 'You do not have permission to access this!' });
+		}
+
+		const formData = await request.formData();
+		const sessionId = String(formData.get('session-id'));
+		const authorizedUserId = String(formData.get('authorized-user-id'));
+		const res = await db
+			.delete(sessionAuthorization)
+			.where(and(eq(sessionAuthorization.id, authorizedUserId), eq(sessionAuthorization.session, sessionId)));
+		if (!res) {
+			return error(500, { message: 'Error deleting authorized user!' });
+		}
+		return { deleteAuthorizedUserSuccess: true };
+	},
+} satisfies Actions;
 
 function validateFileUpload(data: string[]) {
 	const grades = ['A', 'B', 'C+', 'C', 'C-', 'D'];
@@ -462,8 +507,8 @@ async function dbInsertCsvRows(sessionId: string, data: string[][], db: any, dbL
 }
 
 async function checkUserIsSessionOwner(db: any, currentUser: string) {
-	const user = await db.select({ owner: sessions.owner }).from(sessions).where(eq(sessions.owner, currentUser));
-	if (user.length === 0) {
+	const isOwner = await db.select({ owner: sessions.owner }).from(sessions).where(eq(sessions.owner, currentUser));
+	if (isOwner.length === 0) {
 		return false;
 	}
 	return true;

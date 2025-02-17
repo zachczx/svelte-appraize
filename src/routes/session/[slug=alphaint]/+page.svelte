@@ -21,9 +21,37 @@
 	let autoSave = $state(true);
 	let deleteSessionButtonClickedSpinner = $state(false);
 
-	let order = $state(data.sequence);
+	let addAuthorizedUserInput: string = $state('');
+	let addAuthorizedUserExists = $derived.by(() => {
+		let addAuthorizedUserExists;
+		if (data.authorizedUsers) {
+			for (const email of data.authorizedUsers) {
+				if (addAuthorizedUserInput.toLowerCase().trim() === email.userEmail) {
+					return true;
+				}
+			}
+		}
+		return false;
+	});
 
-	let newCounts = $derived.by(async () => {
+	let order = $derived.by(() => {
+		let order = '';
+
+		let sequenceCutLastChar = order.length - 1;
+		if (data.results) {
+			for (let i = 0; i < data.results.length; i++) {
+				if (i === 0) {
+					order = String(data.results[i].id);
+				} else {
+					order = order + ',' + data.results[i].id;
+				}
+			}
+			order.slice(sequenceCutLastChar);
+		}
+		return order;
+	});
+
+	let newCounts = $derived.by(() => {
 		let newCounts = {
 			a: 0,
 			b: 0,
@@ -38,7 +66,7 @@
 			percentageC: 0,
 			percentageD: 0,
 		};
-		let tempResult = await data.result;
+		let tempResult = data.results;
 
 		if (tempResult) {
 			for (let i = 0; i < tempResult.length; i++) {
@@ -93,6 +121,7 @@
 	let creditModal = $state() as HTMLDialogElement;
 	let lockModal = $state() as HTMLDialogElement;
 	let lockForm: HTMLFormElement;
+	let shareModal: HTMLDialogElement;
 
 	let searchInput: string = $state('');
 	let submittedSpinner = $state(false);
@@ -117,9 +146,9 @@
 
 	let filteredResults = $derived.by(() => {
 		let filteredResults;
-
-		if (data.result) {
-			filteredResults = data.result.filter((entry) => {
+		const res = data.results;
+		if (res) {
+			filteredResults = res.filter((entry) => {
 				if (filterKeyword.length > 0) {
 					if ((entry.talent && filterIsTalent) || (!entry.talent && filterIsNotTalent)) {
 						if (
@@ -157,7 +186,7 @@
 <div class="grid grid-cols-[auto_1fr_auto]">
 	<div class="grid h-full grid-rows-[1fr_auto]">
 		<div class="grid content-start border-base-300/10 bg-base-200 px-4 pb-4 pt-8 text-2xl lg:border-r-2">
-			<div class="hidden items-center border-b-2 border-b-base-300/10 md:grid">
+			<div class="hidden items-center md:grid">
 				<form method="POST" id="view-top-navbar-input" action="?/redirect" class="pb-8" use:enhance>
 					<label class="input input-bordered flex w-full items-center rounded-full" for="session">
 						<svg
@@ -245,7 +274,7 @@
 												stroke-width="2"
 												d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"
 											/></svg
-										>Edit Title
+										>Title
 									</div></summary
 								>
 								<div class="collapse-content ms-1 mt-2 border-l-4 border-l-base-300 p-0 ps-8 text-base font-medium">
@@ -286,6 +315,52 @@
 								</div>
 							</details>
 						</li>
+
+						<li>
+							<button
+								class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content"
+								onclick={() => {
+									lockModal.showModal();
+								}}
+								><svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1.3em"
+									height="1.3em"
+									class="tabler:lock"
+									viewBox="0 0 24 24"
+									><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										><path d="M5 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" /><path
+											d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0-2 0m-3-5V7a4 4 0 1 1 8 0v4"
+										/></g
+									></svg
+								>Permissions
+							</button>
+						</li>
+						<li>
+							<button
+								class="flex w-full cursor-pointer items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
+								onclick={() => {
+									shareModal.showModal();
+								}}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1.3em"
+									height="1.3em"
+									class="tabler:share"
+									viewBox="0 0 24 24"
+									><path
+										fill="none"
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M3 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0m12-6a3 3 0 1 0 6 0a3 3 0 1 0-6 0m0 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0m-6.3-7.3l6.6-3.4m-6.6 6l6.6 3.4"
+									/></svg
+								>Share
+							</button>
+						</li>
+
 						<li>
 							<button
 								class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-error hover:text-error-content"
@@ -309,105 +384,6 @@
 								>Delete
 							</button>
 						</li>
-						<li>
-							<button
-								class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content"
-								onclick={() => {
-									lockModal.showModal();
-								}}
-								><svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="1.3em"
-									height="1.3em"
-									class="tabler:lock"
-									viewBox="0 0 24 24"
-									><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-										><path d="M5 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" /><path
-											d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0-2 0m-3-5V7a4 4 0 1 1 8 0v4"
-										/></g
-									></svg
-								>Lock
-							</button>
-						</li>
-						<li>
-							<details class="collapse rounded-lg bg-base-200">
-								<summary class=""
-									><div
-										class="flex cursor-pointer items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="1.3em"
-											height="1.3em"
-											class="tabler:share"
-											viewBox="0 0 24 24"
-											><path
-												fill="none"
-												stroke="currentColor"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M3 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0m12-6a3 3 0 1 0 6 0a3 3 0 1 0-6 0m0 12a3 3 0 1 0 6 0a3 3 0 1 0-6 0m-6.3-7.3l6.6-3.4m-6.6 6l6.6 3.4"
-											/></svg
-										>Share
-									</div></summary
-								>
-								<div class="collapse-content ms-1 mt-2 border-l-4 border-l-base-300 p-0 ps-8 text-lg font-medium">
-									<label class="input input-bordered flex items-center rounded-full">
-										<input type="text" name="url" bind:value={currentPageUrl} class="w-full" autocomplete="off" />
-										<button
-											aria-label="edit"
-											class="h-8.5 w-8.5 -me-2 ms-2 flex items-center justify-center rounded-full {shareCopiedSuccess
-												? 'bg-success'
-												: 'bg-primary'} p-1.5 text-primary-content"
-											onclick={() => {
-												navigator.clipboard.writeText(currentPageUrl);
-												shareCopiedSuccess = true;
-												setTimeout(() => {
-													shareCopiedSuccess = false;
-												}, 5000);
-											}}
-										>
-											{#if shareCopiedSuccess}
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width="1.2em"
-													height="1.2em"
-													class="tabler:check h-5 w-5"
-													viewBox="0 0 24 24"
-													><path
-														fill="none"
-														stroke="currentColor"
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="4"
-														d="m5 12l5 5L20 7"
-													/></svg
-												>
-											{:else}
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width="1.2em"
-													height="1.2em"
-													class="tabler:copy h-4.5 w-4.5"
-													viewBox="0 0 24 24"
-													><g
-														fill="none"
-														stroke="currentColor"
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="3"
-														><path
-															d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"
-														/><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1" /></g
-													></svg
-												>
-											{/if}
-										</button>
-									</label>
-								</div>
-							</details>
-						</li>
 					</ul>
 				</div>
 				<div class="mt-4 grid gap-2 pt-4">
@@ -430,129 +406,6 @@
 					</h3>
 
 					<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
-						<!-- <li>
-							<details class="collapse rounded-lg bg-base-200">
-								<summary class=""
-									><div
-										class="flex cursor-pointer items-center gap-4 rounded-lg p-2 text-lg font-medium hover:bg-primary hover:text-primary-content"
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="1.3em"
-											height="1.3em"
-											class="tabler:square-plus"
-											viewBox="0 0 24 24"
-											><path
-												fill="none"
-												stroke="currentColor"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M9 12h6m-3-3v6M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
-											/></svg
-										>Create
-									</div></summary
-								>
-								<div
-									class="collapse-content ms-1 mt-2 space-y-2 border-l-4 border-l-base-300 p-0 ps-4 text-lg font-medium"
-								>
-									<form method="POST" id="insert-form" action="?/insert" class="grid gap-1" use:enhance>
-										<label class="input input-bordered flex items-center">
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="1em"
-												height="1em"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus me-2 hidden flex-none text-base-content/50 xl:flex"
-											>
-												<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-												<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-												<path d="M16 19h6" />
-												<path d="M19 16v6" />
-												<path d="M6 21v-2a4 4 0 0 1 4 -4h4" />
-											</svg>
-											<input
-												type="text"
-												name="name"
-												bind:value={nameData}
-												class="shrink"
-												placeholder="Name"
-												onkeydown={(evt) => {
-													editFormSubmitKeyboardShortcut(evt, 'insert-form');
-												}}
-												autocomplete="off"
-												required
-											/>
-										</label>
-
-										<label class="input input-bordered flex items-center">
-											<Home class="me-2 hidden flex-none stroke-base-content/50 xl:flex" />
-											<input
-												type="text"
-												name="dept"
-												bind:value={deptData}
-												class="grow"
-												placeholder="Dept"
-												onkeydown={(evt) => {
-													editFormSubmitKeyboardShortcut(evt, 'insert-form');
-												}}
-												autocomplete="off"
-												required
-											/>
-										</label>
-
-										<select bind:value={gradeData} name="grade" class="select select-bordered text-base-content/50">
-											<option value="A">A</option>
-											<option value="B">B</option>
-											<option value="C+">C+</option>
-											<option value="C" selected>C</option>
-											<option value="C-">C-</option>
-											<option value="D">D</option>
-										</select>
-
-										<label class="input input-bordered flex w-full items-center border text-base-content/50">
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="1em"
-												height="1em"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 flex-none"
-											>
-												<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-												<path d="M8 9h8" />
-												<path d="M8 13h6" />
-												<path
-													d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
-												/>
-											</svg>
-
-											<input
-												type="text"
-												name="remarks"
-												bind:value={remarksData}
-												class="grow"
-												placeholder="Remarks (Optional)"
-												onkeydown={(evt) => {
-													editFormSubmitKeyboardShortcut(evt, 'insert-form');
-												}}
-											/>
-										</label>
-										<input type="hidden" name="session-id" value={data.session.id} />
-										<button class="btn btn-primary text-lg font-bold text-primary-content" aria-label="Add">Add</button>
-									</form>
-								</div>
-							</details>
-						</li> -->
 						<li>
 							<button
 								class="flex w-full items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
@@ -626,13 +479,13 @@
 										};
 									}}
 								>
-									<input type="hidden" name="order" bind:value={order} />
+									<input type="hidden" name="order" value={order} />
 									<input type="hidden" name="session-id" value={data.session?.id} />
 								</form>
 								<input
 									type="checkbox"
 									id="auto-save-checkbox"
-									class="toggle toggle-primary toggle-sm"
+									class="toggle-neutral toggle toggle-sm border-gray-500 bg-neutral/70"
 									bind:checked={autoSave}
 								/>
 							</div>
@@ -665,6 +518,57 @@
 		</ul>
 	</GenericModal>
 
+	<GenericModal title="Share" bind:htmlElement={shareModal}>
+		<label class="input input-bordered flex items-center rounded-full">
+			<input type="text" name="url" bind:value={currentPageUrl} class="w-full" autocomplete="off" />
+			<button
+				aria-label="edit"
+				class="h-8.5 w-8.5 -me-2 ms-2 flex items-center justify-center rounded-full {shareCopiedSuccess
+					? 'bg-success'
+					: 'bg-primary'} p-1.5 text-primary-content"
+				onclick={() => {
+					navigator.clipboard.writeText(currentPageUrl);
+					shareCopiedSuccess = true;
+					setTimeout(() => {
+						shareCopiedSuccess = false;
+					}, 5000);
+				}}
+			>
+				{#if shareCopiedSuccess}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1.2em"
+						height="1.2em"
+						class="tabler:check h-5 w-5"
+						viewBox="0 0 24 24"
+						><path
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="4"
+							d="m5 12l5 5L20 7"
+						/></svg
+					>
+				{:else}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1.2em"
+						height="1.2em"
+						class="tabler:copy h-4.5 w-4.5"
+						viewBox="0 0 24 24"
+						><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+							><path
+								d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"
+							/><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1" /></g
+						></svg
+					>
+				{/if}
+			</button>
+		</label>
+		<div class="-mb-8 mt-1 text-success {shareCopiedSuccess ? undefined : 'opacity-0'} text-center">Copied!</div>
+	</GenericModal>
+
 	<GenericModal title="Lock Session" bind:htmlElement={lockModal}
 		><form
 			bind:this={lockForm}
@@ -673,12 +577,12 @@
 			class="grid grid-cols-2 justify-items-center"
 			use:enhance
 		>
-			<label class="label-lock grid w-full cursor-pointer justify-items-center p-8">
+			<label class="label-lock grid w-full cursor-pointer justify-items-center p-4">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="1em"
 					height="1em"
-					class="tabler:lock h-36 w-36"
+					class="tabler:lock h-16 w-16"
 					viewBox="0 0 24 24"
 					><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 						><path d="M5 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" /><path
@@ -687,7 +591,7 @@
 					></svg
 				>
 				<div class="grid pt-4 text-center">
-					<p class="text-xl font-bold">Locked</p>
+					<p class="text-lg font-bold">Locked</p>
 					<p>Only you can see this</p>
 				</div>
 				<input
@@ -702,12 +606,12 @@
 				/>
 			</label>
 
-			<label class="label-lock grid w-full cursor-pointer justify-items-center p-8">
+			<label class="label-lock grid w-full cursor-pointer justify-items-center p-4">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="1em"
 					height="1em"
-					class="tabler:lock-open-2 h-36 w-36"
+					class="tabler:lock-open-2 h-16 w-16"
 					viewBox="0 0 24 24"
 					><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 						><path d="M3 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><path
@@ -716,7 +620,7 @@
 					></svg
 				>
 				<div class="grid pt-4 text-center">
-					<p class="text-xl font-bold">Unlocked</p>
+					<p class="text-lg font-bold">Unlocked</p>
 					<p>Everyone can see this</p>
 				</div>
 				<input
@@ -730,8 +634,86 @@
 					}}
 				/>
 			</label>
-		</form></GenericModal
-	>
+		</form>
+		{#if data.session?.locked}
+			<div class="mt-12 grid gap-4">
+				<h3 class="text-lg">Current Users With Access</h3>
+				<form method="post" action="?/addAuthorizedUser" use:enhance>
+					<label
+						class="input input-bordered {addAuthorizedUserExists
+							? 'border-error text-error focus-within:border-error focus-within:outline-error'
+							: undefined} flex items-center gap-4 rounded-full"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="1em"
+							height="1em"
+							class="tabler:plus text-base-content/50"
+							viewBox="0 0 24 24"
+							><path
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M12 5v14m-7-7h14"
+							/></svg
+						>
+						<input
+							type="text"
+							name="user-email"
+							class="grow"
+							placeholder="Add user"
+							bind:value={addAuthorizedUserInput}
+							autocomplete="off"
+							required
+						/>
+						<button
+							class="-me-2.5 ms-2 flex h-9 w-9 items-center justify-center rounded-full bg-neutral text-3xl font-black text-primary-content disabled:bg-primary/30"
+							aria-label="Add"
+							disabled={addAuthorizedUserExists ? true : undefined}>+</button
+						>
+					</label>
+					<input type="hidden" name="session-id" value={data.session?.id} />
+				</form>
+
+				{#if addAuthorizedUserExists}<div class="text-error">User was already added!</div>{/if}
+
+				<ol class="max-h-32 list-decimal overflow-y-auto pe-8">
+					{#if data.authorizedUsers.length > 0}
+						{#each data.authorizedUsers as user}
+							<div class="flex w-full items-center border-b-2 border-b-neutral/5 py-1 ps-4 last:border-b-transparent">
+								<li class="grow"><span class="ps-2">{user.userEmail}</span></li>
+								<form method="post" action="?/deleteAuthorizedUser" use:enhance>
+									<button class="flex items-center justify-center text-error" aria-label="delete">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="1em"
+											height="1em"
+											class="tabler:trash"
+											viewBox="0 0 24 24"
+											><path
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M4 7h16m-10 4v6m4-6v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"
+											/></svg
+										>
+									</button>
+									<input type="hidden" name="session-id" value={data.session?.id} />
+									<input type="hidden" name="authorized-user-id" value={user.id} />
+								</form>
+							</div>
+						{/each}
+					{:else}
+						No users authorized!
+					{/if}
+				</ol>
+			</div>
+		{/if}
+	</GenericModal>
 
 	<div class="min-h-dvh w-full bg-base-100 px-2 pb-4 pt-8 lg:pt-8">
 		<div class="grid justify-items-center space-y-4">
@@ -739,7 +721,11 @@
 				<h1>{data.session?.title}</h1>
 				<div class="grid gap-8 pt-12">
 					{#key filteredResults}
-						<DragDrop session={data.session} results={filteredResults} bind:value={order} />
+						{#await filteredResults}
+							Loading........
+						{:then filteredResults}
+							<DragDrop session={data.session} results={filteredResults} value={order} />
+						{/await}
 					{/key}
 				</div>
 			</div>
@@ -827,92 +813,59 @@
 							</label>
 						</div>
 					</li>
-					<li class="py-2">
-						<div class="grid grid-cols-3 gap-1">
-							<label class="col-span-3 flex cursor-pointer items-center gap-2">
-								<input type="checkbox" bind:checked={filterGrade.a} class="checkbox-primary checkbox checkbox-sm" />
-								<span class="label-text text-base">A</span>
+					<li class="grid w-full justify-items-start py-2">
+						<h3 class="text-base">Grade</h3>
+						<div class="custom-checkbox">
+							<label>
+								<span>A</span><input type="checkbox" bind:checked={filterGrade.a} />
 							</label>
-							<label class="col-span-3 flex cursor-pointer items-center gap-2">
-								<input
-									type="checkbox"
-									bind:checked={filterGrade.b}
-									class="checkbox-primary checkbox checkbox-sm"
-								/><span class="label-text text-base">B</span>
+							<label>
+								<span>B</span><input type="checkbox" bind:checked={filterGrade.b} />
 							</label>
-							<label class="flex cursor-pointer items-center gap-2">
-								<input
-									type="checkbox"
-									bind:checked={filterGrade['c+']}
-									class="checkbox-primary checkbox checkbox-sm"
-								/><span class="label-text text-base">C+</span>
+							<label>
+								<span>C+</span><input type="checkbox" bind:checked={filterGrade['c+']} />
 							</label>
-							<label class="flex cursor-pointer items-center gap-2">
-								<input
-									type="checkbox"
-									bind:checked={filterGrade.c}
-									class="checkbox-primary checkbox checkbox-sm"
-								/><span class="label-text text-base">C</span>
+							<label>
+								<span>C</span><input type="checkbox" bind:checked={filterGrade.c} />
 							</label>
-							<label class="flex cursor-pointer items-center gap-2">
-								<input
-									type="checkbox"
-									bind:checked={filterGrade['c-']}
-									class="checkbox-primary checkbox checkbox-sm"
-								/><span class="label-text text-base">C-</span>
+							<label>
+								<span>C-</span><input type="checkbox" bind:checked={filterGrade['c-']} />
 							</label>
-							<label class="col-span-3 flex cursor-pointer items-center gap-2">
-								<input
-									type="checkbox"
-									bind:checked={filterGrade.d}
-									class="checkbox-primary checkbox checkbox-sm"
-								/><span class="label-text text-base">D</span>
+							<label>
+								<span>D</span><input type="checkbox" bind:checked={filterGrade.d} />
 							</label>
 						</div>
-					</li>
-					<li class="py-2">
-						<div class="grid grid-cols-3 gap-1">
-							<label class="flex cursor-pointer items-center gap-2">
-								<input
-									type="checkbox"
-									bind:checked={filterIsTalent}
-									class="checkbox-primary checkbox checkbox-sm"
-								/><span class="label-text text-base"
-									><svg
+						<h3 class="mt-4 text-base">Star</h3>
+						<div class="custom-checkbox">
+							<label>
+								<span>
+									<svg
 										xmlns="http://www.w3.org/2000/svg"
-										width="1.2em"
-										height="1.2em"
+										width="1em"
+										height="1em"
 										class="tabler:star-filled text-yellow-400"
 										viewBox="0 0 24 24"
 										><path
 											fill="currentColor"
 											d="m8.243 7.34l-6.38.925l-.113.023a1 1 0 0 0-.44 1.684l4.622 4.499l-1.09 6.355l-.013.11a1 1 0 0 0 1.464.944l5.706-3l5.693 3l.1.046a1 1 0 0 0 1.352-1.1l-1.091-6.355l4.624-4.5l.078-.085a1 1 0 0 0-.633-1.62l-6.38-.926l-2.852-5.78a1 1 0 0 0-1.794 0z"
 										/></svg
-									></span
-								>
+									>
+								</span><input type="checkbox" bind:checked={filterIsTalent} />
 							</label>
-							<label class="flex cursor-pointer items-center gap-2">
-								<input
-									type="checkbox"
-									bind:checked={filterIsNotTalent}
-									class="checkbox-primary checkbox checkbox-sm"
-								/><span class="label-text text-base"
+							<label>
+								<span
 									><svg
 										xmlns="http://www.w3.org/2000/svg"
-										width="1.2em"
-										height="1.2em"
-										class="tabler:star text-base-content/50"
+										width="1em"
+										height="1em"
+										class="tabler:star-filled text-primary-content"
 										viewBox="0 0 24 24"
 										><path
-											fill="none"
-											stroke="currentColor"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="m12 17.75l-6.172 3.245l1.179-6.873l-5-4.867l6.9-1l3.086-6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"
+											fill="currentColor"
+											d="m8.243 7.34l-6.38.925l-.113.023a1 1 0 0 0-.44 1.684l4.622 4.499l-1.09 6.355l-.013.11a1 1 0 0 0 1.464.944l5.706-3l5.693 3l.1.046a1 1 0 0 0 1.352-1.1l-1.091-6.355l4.624-4.5l.078-.085a1 1 0 0 0-.633-1.62l-6.38-.926l-2.852-5.78a1 1 0 0 0-1.794 0z"
 										/></svg
 									></span
-								>
+								><input type="checkbox" bind:checked={filterIsNotTalent} />
 							</label>
 						</div>
 					</li>
@@ -966,37 +919,40 @@
 						/></svg
 					></summary
 				>
-				{#await newCounts}
-					<span class="loading loading-spinner my-8 text-primary"></span>
-				{:then newCounts}
-					<div class="justify-items-around grid grid-cols-4 pb-2 pt-4">
-						<div class="grid content-center justify-items-center rounded-l-lg bg-[#F66D44] py-1">
-							<div class="text-sm font-medium">A</div>
-							<div class="flex animate-scale items-center justify-center text-lg font-black text-base-content/80">
-								{newCounts.a}
+				<div class="ms-2 mt-2 border-l-4 border-l-base-300 ps-2 text-base font-medium text-base-content/70">
+					{#await newCounts}
+						<span class="loading loading-spinner my-8 text-primary"></span>
+					{:then newCounts}
+						<div class="justify-items-between grid grid-cols-4 pb-2 ps-4 pt-4">
+							<div class="flex items-center justify-center gap-1.5">
+								<div class="rounded bg-[#87bc45] p-0.5 px-1.5 font-bold text-white">A</div>
+								<div class="flex animate-scale items-center justify-center font-black text-base-content">
+									{newCounts.a}
+								</div>
+							</div>
+							<div class="flex items-center justify-center gap-1.5">
+								<div class="rounded bg-[#27aeef] p-0.5 px-1.5 font-bold text-white">B</div>
+								<div class="flex animate-scale items-center justify-center font-black text-base-content">
+									{newCounts.b}
+								</div>
+							</div>
+							<div class="flex items-center justify-center gap-1.5">
+								<div class="rounded bg-[#ef9b20] p-0.5 px-1.5 font-bold text-white">C</div>
+								<div class="flex animate-scale items-center justify-center font-black text-base-content">
+									{newCounts.b}
+								</div>
+							</div>
+							<div class="flex items-center justify-center gap-1.5">
+								<div class="rounded bg-[#ea5545] p-0.5 px-1.5 font-bold text-white">D</div>
+								<div class="flex animate-scale items-center justify-center font-black text-base-content">
+									{newCounts.d}
+								</div>
 							</div>
 						</div>
-						<div class="grid content-center justify-items-center bg-[#FEAE65]/60">
-							<div class="text-sm font-medium">B</div>
-							<div class="flex animate-scale items-center justify-center text-lg font-black text-base-content/80">
-								{newCounts.b}
-							</div>
-						</div>
-						<div class="grid content-center justify-items-center bg-[#E6F69D]">
-							<div class="text-sm font-medium">C</div>
-							<div class="flex animate-scale items-center justify-center text-lg font-black text-base-content/80">
-								{newCounts.c}
-							</div>
-						</div>
-						<div class="grid content-center justify-items-center rounded-r-lg bg-[#AADEA7]">
-							<div class="text-sm font-medium">D</div>
-							<div class="flex animate-scale items-center justify-center text-lg font-black text-base-content/80">
-								{newCounts.d}
-							</div>
-						</div>
-					</div>
-					<Chart figures={newCounts} />
-				{/await}
+
+						<Chart figures={newCounts} />
+					{/await}
+				</div>
 			</details>
 		</div>
 
@@ -1331,25 +1287,6 @@
 		}
 	}
 
-	/* 	.a-icon::before {
-		content: 'A';
-		font-size: 1em;
-		font-weight: 800;
-		color: #223b58;
-		position: absolute;
-		left: 35%;
-		top: 15%;
-		z-index: 5;
-	}
-	.a-icon {
-		height: 2em;
-		width: 2em;
-		position: relative;
-		background-color: #cddaea;
-		border-radius: 50%;
-		display: inline-block;
-	} */
-
 	details {
 		cursor: pointer;
 		summary > .arrow-up {
@@ -1370,6 +1307,55 @@
 		&:has(> input:checked) {
 			background-color: #fff6da;
 			border: 2px solid #f4d793;
+		}
+
+		&:not(:has(> input:checked)) {
+			opacity: 50%;
+		}
+	}
+
+	.custom-checkbox {
+		display: flex;
+		justify-content: flex-start;
+		width: 100%;
+		column-gap: 0.75rem;
+		row-gap: 0.5rem;
+		flex-wrap: wrap;
+
+		& > label {
+			cursor: pointer;
+			width: 100%;
+			max-width: 2rem;
+			max-height: 2rem;
+			height: auto;
+
+			& > span {
+				width: 100%;
+				height: 100%;
+
+				display: inline-block;
+				text-align: center;
+				/* padding: 0.25rem 0.75rem 0.25rem 0.75rem; */
+				border-radius: 10px;
+				border: 2px solid transparent;
+				&:has(+ input:checked) {
+					background-color: rgba(169, 74, 74);
+					color: #fdfdfd;
+					font-weight: 700;
+				}
+				&:not(:has(+ input:checked)) {
+					background-color: transparent;
+					border: 2px solid rgba(169, 74, 74);
+					color: rgba(169, 74, 74);
+				}
+				& > svg {
+					display: inline;
+				}
+			}
+
+			& > input[type='checkbox'] {
+				display: none;
+			}
 		}
 	}
 </style>
