@@ -39,18 +39,19 @@
 
 	let sortableEl: HTMLDivElement;
 
-	let initOrder = '';
-	let initOrderWantedlength = initOrder.length - 1;
-	for (let i = 0; i < results.length; i++) {
-		if (i === 0) {
-			initOrder = String(results[i].id);
-		} else {
-			initOrder = initOrder + ',' + results[i].id;
-		}
-	}
+	// let initOrder = '';
+	// let initOrderWantedlength = initOrder.length - 1;
+	// for (let i = 0; i < results.length; i++) {
+	// 	if (i === 0) {
+	// 		initOrder = String(results[i].id);
+	// 	} else {
+	// 		initOrder = initOrder + ',' + results[i].id;
+	// 	}
+	// }
 
-	initOrder.slice(initOrderWantedlength);
-	let order = $state(initOrder);
+	// initOrder.slice(initOrderWantedlength);
+	// let order = $state(initOrder);
+	let order = $state(getOrder(results));
 
 	let nothingFound = $state(false);
 
@@ -99,6 +100,88 @@
 	});
 
 	const isVisible: boolean[] = $state([]);
+
+	interface Results {
+		[index: string]: {
+			id: string;
+			name: string;
+			dept: string;
+			grade: string;
+			session: string;
+			sequence: number;
+			previous: boolean;
+			remarks: string;
+			timestamp: Date;
+			talent: boolean;
+			owner: string;
+		}[];
+	}
+
+	let autosort = $derived.by(() => {
+		let autosort = [];
+		let splitResults: Results = {
+			a: [],
+			b: [],
+			'c+': [],
+			c: [],
+			'c-': [],
+			d: [],
+		};
+
+		/**
+		 * Almost certainly, I won't need  additional sorting, since it's already sorted by sequence.
+		 * Just need to separate them, then recombine them in the specific grade order.
+		 * Alternatively I could do this:
+		 * 			let sortedC = Object.fromEntries(Object.entries(cVar).sort(([, a], [, b]) => b.sequence - a.sequence));
+		 */
+		results.forEach((item) => {
+			switch (item.grade) {
+				case 'A':
+					splitResults['a'].push(item);
+					break;
+				case 'B':
+					splitResults['b'].push(item);
+					break;
+				case 'C+':
+					splitResults['c+'].push(item);
+					break;
+				case 'C':
+					splitResults['c'].push(item);
+					break;
+				case 'C-':
+					splitResults['c-'].push(item);
+					break;
+				case 'D':
+					splitResults['d'].push(item);
+					break;
+			}
+		});
+
+		for (const grade in splitResults) {
+			for (const entry of splitResults[grade]) {
+				autosort.push(entry);
+			}
+		}
+
+		// Loop through to reset the sequence, which was jumbled up.
+		for (let i = 0; i < autosort.length; i++) {
+			autosort[i].sequence = i + 1;
+		}
+
+		return autosort;
+	});
+
+	function getOrder(results) {
+		let order: string = '';
+		for (let i = 0; i < results.length; i++) {
+			if (i === 0) {
+				order = String(results[i].id);
+			} else {
+				order = order + ',' + results[i].id;
+			}
+		}
+		return order;
+	}
 </script>
 
 <div class="relative grid w-full">
@@ -206,7 +289,7 @@
 						data-sortable-id={person.id}
 					>
 						<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
-							<div class="flex h-full grow items-center p-2 text-base-content lg:grow-0">
+							<div class="flex h-full grow items-center py-2 text-base-content lg:grow-0">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="1em"
@@ -631,12 +714,45 @@
 	</div>
 
 	{#if !nothingFound}
-		<div class="ignore-from-sorting mt-10 grid content-center justify-self-center lg:justify-self-start">
+		<div
+			class="ignore-from-sorting mt-10 grid w-full grid-cols-2 content-center justify-self-center lg:justify-self-start"
+		>
 			<form method="POST" action="?/save" class="content-center" use:enhance>
 				<input type="hidden" name="order" bind:value={order} />
 				<input type="hidden" name="session-id" value={session.id} />
-				<button class="btn btn-primary flex items-center gap-2 text-lg font-bold lg:min-w-24">Save Changes</button>
+				<button class="btn btn-primary flex items-center gap-2 rounded-full text-lg font-bold lg:min-w-24"
+					><svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1.3em"
+						height="1.3em"
+						class="material-symbols:save-outline"
+						viewBox="0 0 24 24"
+						><path
+							fill="currentColor"
+							d="M21 7v12q0 .825-.587 1.413T19 21H5q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h12zm-2 .85L16.15 5H5v14h14zM12 18q1.25 0 2.125-.875T15 15t-.875-2.125T12 12t-2.125.875T9 15t.875 2.125T12 18m-6-8h9V6H6zM5 7.85V19V5z"
+						/></svg
+					>Save Changes</button
+				>
 			</form>
+			<div class="justify-self-end">
+				<button
+					class="btn btn-outline btn-secondary flex items-center gap-2 rounded-full text-lg font-bold lg:min-w-24"
+					onclick={() => {
+						results = autosort;
+						order = getOrder(results);
+					}}
+					><svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" class="tabler:wand" viewBox="0 0 24 24"
+						><path
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 21L21 6l-3-3L3 18zm9-15l3 3M9 3a2 2 0 0 0 2 2a2 2 0 0 0-2 2a2 2 0 0 0-2-2a2 2 0 0 0 2-2m10 10a2 2 0 0 0 2 2a2 2 0 0 0-2 2a2 2 0 0 0-2-2a2 2 0 0 0 2-2"
+						/></svg
+					>Sort</button
+				>
+			</div>
 		</div>
 	{/if}
 </main>
