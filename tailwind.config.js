@@ -81,7 +81,7 @@ export default {
 
 					//https://colorhunt.co/palette/a94a4af4d793fff6da889e73
 					primary: '#A94A4A',
-					secondary: '#B51B75',
+					secondary: '#4AA9A9',
 					'primary-content': '#fdfdfd',
 					'secondary-content': '#fdfdfd',
 					warning: '#E65C19',

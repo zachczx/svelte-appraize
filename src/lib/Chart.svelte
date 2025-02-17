@@ -9,7 +9,7 @@
 		labels: ['A', 'B', 'C', 'D'],
 		datasets: [
 			{
-				// label: 'Grades',
+				//https://www.heavy.ai/blog/12-color-palettes-for-telling-better-stories-with-your-data
 				data: [figures.percentageA, figures.percentageB, figures.percentageC, figures.percentageD],
 				backgroundColor: ['#87bc45', '#27aeef', '#ef9b20', '#ea5545'],
 				hoverOffset: 4,
