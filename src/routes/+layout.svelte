@@ -3,6 +3,7 @@
 	import { onNavigate } from '$app/navigation';
 	import type { Snippet } from '@svelte';
 	import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
+	import Toaster from '$lib/Toaster.svelte';
 
 	const { children }: { children: Snippet } = $props();
 
@@ -179,6 +180,7 @@
 			</div>
 		</nav>
 		{@render children()}
+		<Toaster />
 	</div>
 </ClerkProvider>
 

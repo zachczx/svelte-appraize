@@ -2,6 +2,7 @@
 	import type { PageProps } from './$types';
 	import { CalculateDateAgo } from '$lib/utils';
 	import { enhance } from '$app/forms';
+	import { addToast, getToast } from '$lib/ToastBox.svelte';
 
 	import { slide } from 'svelte/transition';
 	import { circOut } from 'svelte/easing';
@@ -121,7 +122,7 @@
 	let creditModal = $state() as HTMLDialogElement;
 	let lockModal = $state() as HTMLDialogElement;
 	let lockForm: HTMLFormElement;
-	let shareModal: HTMLDialogElement;
+	let shareModal = $state() as HTMLDialogElement;
 
 	let searchInput: string = $state('');
 	let submittedSpinner = $state(false);
