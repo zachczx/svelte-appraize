@@ -14,8 +14,15 @@
 	import Chart from '$lib/Chart.svelte';
 	import FileUploadForm from '$lib/FileUploadForm.svelte';
 	import GenericModal from '$lib/GenericModal.svelte';
+	import Toaster from '$lib/Toaster.svelte';
+	import SingleToastBox from '$lib/SingleToastBox.svelte';
+	import { goto } from '$app/navigation';
 
 	let { data, form }: PageProps = $props();
+
+	let reactiveResults = $state(data.results);
+
+	let saveButtonSuccess = $state(false);
 
 	let formAutoSaveSession: HTMLFormElement; //= $state();
 	let formSaveSuccessLoading = $state(false);
@@ -39,19 +46,19 @@
 		let order = '';
 
 		let sequenceCutLastChar = order.length - 1;
-		if (data.results) {
-			for (let i = 0; i < data.results.length; i++) {
+		if (reactiveResults) {
+			for (let i = 0; i < reactiveResults.length; i++) {
 				if (i === 0) {
-					order = String(data.results[i].id);
+					order = String(reactiveResults[i].id);
 				} else {
-					order = order + ',' + data.results[i].id;
+					order = order + ',' + reactiveResults[i].id;
 				}
 			}
 			order.slice(sequenceCutLastChar);
 		}
 		return order;
 	});
-
+	$inspect(order);
 	let newCounts = $derived.by(() => {
 		let newCounts = {
 			a: 0,
@@ -110,12 +117,15 @@
 					}, 2000);
 				}
 			}
-		}, 20000);
+		}, 40000);
 
 		if (form?.uploadSuccess) {
 			uploadModal.close();
 		}
 	});
+	let saveOrder = $derived(order);
+	let titleModal: HTMLDialogElement;
+	let editTitleButtonSuccess = $state(false);
 
 	let deleteSessionModal: HTMLDialogElement;
 	let uploadModal: HTMLDialogElement;
@@ -147,9 +157,9 @@
 
 	let filteredResults = $derived.by(() => {
 		let filteredResults;
-		const res = data.results;
-		if (res) {
-			filteredResults = res.filter((entry) => {
+
+		if (reactiveResults) {
+			filteredResults = reactiveResults.filter((entry) => {
 				if (filterKeyword.length > 0) {
 					if ((entry.talent && filterIsTalent) || (!entry.talent && filterIsNotTalent)) {
 						if (
@@ -179,6 +189,58 @@
 		}
 		return filteredResults;
 	});
+
+	let autosort = () => {
+		let splitResults: RecordResults = {
+			a: [],
+			b: [],
+			'c+': [],
+			c: [],
+			'c-': [],
+			d: [],
+		};
+
+		/**
+		 * Almost certainly, I won't need  additional sorting, since it's already sorted by sequence.
+		 * Just need to separate them, then recombine them in the specific grade order.
+		 * Alternatively I could do this:
+		 * 			let sortedC = Object.fromEntries(Object.entries(cVar).sort(([, a], [, b]) => b.sequence - a.sequence));
+		 */
+		reactiveResults.forEach((item) => {
+			switch (item.grade) {
+				case 'A':
+					splitResults['a'].push(item);
+					break;
+				case 'B':
+					splitResults['b'].push(item);
+					break;
+				case 'C+':
+					splitResults['c+'].push(item);
+					break;
+				case 'C':
+					splitResults['c'].push(item);
+					break;
+				case 'C-':
+					splitResults['c-'].push(item);
+					break;
+				case 'D':
+					splitResults['d'].push(item);
+					break;
+			}
+		});
+		reactiveResults = [];
+
+		for (const grade in splitResults) {
+			for (const entry of splitResults[grade]) {
+				reactiveResults.push(entry);
+			}
+		}
+
+		// Loop through to reset the sequence, which was jumbled up.
+		for (let i = 0; i < autosort.length; i++) {
+			reactiveResults[i].sequence = i + 1;
+		}
+	};
 </script>
 
 <svelte:head>
@@ -186,7 +248,7 @@
 </svelte:head>
 <div class="grid grid-cols-[auto_1fr_auto]">
 	<div class="grid h-full grid-rows-[1fr_auto]">
-		<div class="grid content-start border-base-300/10 bg-base-200 px-4 pb-4 pt-8 text-2xl lg:border-r-2">
+		<div class="grid content-start border-base-300/10 bg-base-200 px-4 pb-4 pt-4 text-2xl lg:border-r-2">
 			<div class="hidden items-center md:grid">
 				<form method="POST" id="view-top-navbar-input" action="?/redirect" class="pb-8" use:enhance>
 					<label class="input input-bordered flex w-full items-center rounded-full" for="session">
@@ -205,7 +267,7 @@
 							type="text"
 							name="session"
 							bind:value={searchInput}
-							placeholder="Jump to another session"
+							placeholder="Go to session"
 							class="grow"
 							autocomplete="off"
 							onkeydown={(evt) => {
@@ -256,73 +318,32 @@
 					</h3>
 					<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
 						<li>
-							<details class="collapse rounded-lg bg-base-200">
-								<summary class=""
-									><div
-										class="flex cursor-pointer items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="1.3em"
-											height="1.3em"
-											class="tabler:pencil"
-											viewBox="0 0 24 24"
-											><path
-												fill="none"
-												stroke="currentColor"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"
-											/></svg
-										>Title
-									</div></summary
-								>
-								<div class="collapse-content ms-1 mt-2 border-l-4 border-l-base-300 p-0 ps-8 text-base font-medium">
-									<form method="POST" action="?/editSessionTitle" class="grid gap-1" use:enhance>
-										<label class="input input-bordered flex items-center rounded-full">
-											<input
-												type="text"
-												name="title"
-												value={data.session?.title}
-												class="w-full"
-												placeholder="Edit Title"
-												autocomplete="off"
-												required
-											/>
-											<button
-												aria-label="edit"
-												class="h-8.5 w-8.5 -me-2 ms-2 flex items-center justify-center rounded-full bg-primary p-1.5 text-primary-content"
-											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width="1.5em"
-													height="1.5em"
-													class="tabler:pencil h-6 w-6"
-													viewBox="0 0 24 24"
-													><path
-														fill="none"
-														stroke="currentColor"
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="3"
-														d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"
-													/></svg
-												>
-											</button>
-										</label>
-										<input type="hidden" name="session-id" value={data.session?.id} />
-									</form>
-								</div>
-							</details>
+							<button
+								class="flex w-full cursor-pointer items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
+								onclick={() => titleModal.showModal()}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="1.3em"
+									height="1.3em"
+									class="tabler:pencil"
+									viewBox="0 0 24 24"
+									><path
+										fill="none"
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M4 20h4L18.5 9.5a2.828 2.828 0 1 0-4-4L4 16zm9.5-13.5l4 4"
+									/></svg
+								>Title
+							</button>
 						</li>
 
 						<li>
 							<button
 								class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content"
-								onclick={() => {
-									lockModal.showModal();
-								}}
+								onclick={() => lockModal.showModal()}
 								><svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="1.3em"
@@ -570,7 +591,59 @@
 		<div class="-mb-8 mt-1 text-success {shareCopiedSuccess ? undefined : 'opacity-0'} text-center">Copied!</div>
 	</GenericModal>
 
-	<GenericModal title="Lock Session" bind:htmlElement={lockModal}
+	<GenericModal title="Edit Title" bind:htmlElement={titleModal}>
+		<form
+			method="POST"
+			id="edit-title-modal"
+			action="?/editSessionTitle"
+			class="grid"
+			use:enhance={() => {
+				return async ({ result }) => {
+					// I need this to suppress the urge to trigger load function.
+					// 301 Redirect is triggered in form action if the edit is successful.
+					if (result.type === 'redirect') {
+						editTitleButtonSuccess = true;
+						setTimeout(() => {
+							editTitleButtonSuccess = false;
+						}, 3000);
+						goto(result.location);
+					}
+				};
+			}}
+		>
+			<input
+				type="text"
+				name="title"
+				value={data.session?.title}
+				class="input input-bordered rounded-full"
+				placeholder="Edit Title"
+				autocomplete="off"
+				required
+			/>
+			<input type="hidden" name="session-id" value={data.session?.id} />
+		</form>
+		{#snippet actionButton()}
+			<button
+				form="edit-title-modal"
+				class="btn {editTitleButtonSuccess
+					? 'btn-success'
+					: 'btn-primary'} flex min-w-24 items-center gap-2 rounded-full text-base"
+				>{#if editTitleButtonSuccess}<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="1.7em"
+						height="1.7em"
+						class="tabler:circle-check-filled"
+						viewBox="0 0 24 24"
+						><path
+							fill="currentColor"
+							d="M17 3.34a10 10 0 1 1-14.995 8.984L2 12l.005-.324A10 10 0 0 1 17 3.34m-1.293 5.953a1 1 0 0 0-1.32-.083l-.094.083L11 12.585l-1.293-1.292l-.094-.083a1 1 0 0 0-1.403 1.403l.083.094l2 2l.094.083a1 1 0 0 0 1.226 0l.094-.083l4-4l.083-.094a1 1 0 0 0-.083-1.32"
+						/></svg
+					>Edited{:else}Edit{/if}</button
+			>
+		{/snippet}
+	</GenericModal>
+
+	<GenericModal title="Permissions" bind:htmlElement={lockModal}
 		><form
 			bind:this={lockForm}
 			action="?/toggleLock"
@@ -725,16 +798,91 @@
 						{#await filteredResults}
 							Loading........
 						{:then filteredResults}
-							<DragDrop session={data.session} results={filteredResults} value={order} />
+							<DragDrop session={data.session} results={filteredResults} value={saveOrder} />
 						{/await}
 					{/key}
+					{#if filteredResults}
+						{#if filteredResults.length > 0}
+							<div class="mt-10 grid w-full grid-cols-2 content-center justify-self-center lg:justify-self-start">
+								<form
+									method="POST"
+									action="?/save"
+									class="content-center"
+									use:enhance={() => {
+										return async ({ result }) => {
+											//I need this to suppress the urge to trigger load function
+											if (result.type === 'success') {
+												if (result.data?.formSaveSuccess) {
+													saveButtonSuccess = true;
+													setTimeout(() => {
+														saveButtonSuccess = false;
+													}, 3000);
+												}
+											}
+										};
+									}}
+								>
+									<input type="hidden" name="order" value={saveOrder} />
+									<input type="hidden" name="session-id" value={data.session.id} />
+									<button
+										class="btn {saveButtonSuccess
+											? 'btn-success'
+											: 'btn-primary'} flex items-center gap-2 rounded-full text-base font-bold lg:min-w-48"
+										>{#if saveButtonSuccess}<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="1.7em"
+												height="1.7em"
+												class="tabler:circle-check-filled"
+												viewBox="0 0 24 24"
+												><path
+													fill="currentColor"
+													d="M17 3.34a10 10 0 1 1-14.995 8.984L2 12l.005-.324A10 10 0 0 1 17 3.34m-1.293 5.953a1 1 0 0 0-1.32-.083l-.094.083L11 12.585l-1.293-1.292l-.094-.083a1 1 0 0 0-1.403 1.403l.083.094l2 2l.094.083a1 1 0 0 0 1.226 0l.094-.083l4-4l.083-.094a1 1 0 0 0-.083-1.32"
+												/></svg
+											>{:else}<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="1.7em"
+												height="1.7em"
+												class="material-symbols:save-outline"
+												viewBox="0 0 24 24"
+												><path
+													fill="currentColor"
+													d="M21 7v12q0 .825-.587 1.413T19 21H5q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h12zm-2 .85L16.15 5H5v14h14zM12 18q1.25 0 2.125-.875T15 15t-.875-2.125T12 12t-2.125.875T9 15t.875 2.125T12 18m-6-8h9V6H6zM5 7.85V19V5z"
+												/></svg
+											>{/if}{saveButtonSuccess ? 'Saved!' : 'Save Changes'}</button
+									>
+								</form>
+
+								<div class="justify-self-end">
+									<button
+										class="btn btn-secondary flex items-center gap-2 rounded-full text-base font-bold lg:min-w-24"
+										onclick={() => autosort()}
+										><svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="1.7em"
+											height="1.7em"
+											class="tabler:wand"
+											viewBox="0 0 24 24"
+											><path
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M6 21L21 6l-3-3L3 18zm9-15l3 3M9 3a2 2 0 0 0 2 2a2 2 0 0 0-2 2a2 2 0 0 0-2-2a2 2 0 0 0 2-2m10 10a2 2 0 0 0 2 2a2 2 0 0 0-2 2a2 2 0 0 0-2-2a2 2 0 0 0 2-2"
+											/></svg
+										>Sort</button
+									>
+								</div>
+							</div>
+						{/if}
+					{/if}
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<div class="grid content-start overflow-hidden border-l-2 border-l-base-300/10 bg-base-200 px-4 pb-8">
-		<h3 class="justify-self-start pt-8 text-3xl font-extrabold text-base-content/85">Details</h3>
+		<h3 class="justify-self-start pt-4 text-3xl font-extrabold text-base-content/85">Details</h3>
 		<div class="mt-8 grid content-start">
 			<details open>
 				<summary class="flex items-center"
@@ -1079,175 +1227,72 @@
 	</div>
 </dialog>
 
-<dialog bind:this={deleteSessionModal} class="delete-session-modal">
-	<div class="rounded-lg bg-base-100">
-		<h2 class="rounded-t-lg bg-error p-5 font-bold text-base-100">Delete session</h2>
-		<p class="px-4 py-4">
-			Are you sure you want to <b>delete this session and all data</b>? You cannot undo this action.
-		</p>
-		<div class="modal-action flex justify-end p-4">
-			<form method="dialog">
-				<button class="btn btn-outline text-lg">Close</button>
-			</form>
-			<form method="POST" action="?/deleteSession" use:enhance>
-				<button
-					id="confirm-delete-session-button-clicked"
-					class="btn btn-error min-w-40 text-lg text-base-100"
-					onclick={() => {
-						deleteSessionButtonClickedSpinner = true;
-					}}
-					>{#key deleteSessionButtonClickedSpinner}
-						{#if deleteSessionButtonClickedSpinner}
-							<span class="left-50 loading loading-spinner absolute"></span>
-							<span class="invisible">Delete Session</span>
-						{:else}
-							<span>Delete Session</span>
-						{/if}
-					{/key}
-				</button>
-				<input type="hidden" name="session-id" value={data.session?.id} />
-			</form>
-		</div>
-	</div>
-</dialog>
+<GenericModal bind:htmlElement={deleteSessionModal} title="Delete session">
+	<p>Are you sure you want to delete these? You cannot undo this action.</p>
+	<ul class="mt-4 grid justify-items-center text-center font-bold text-error">
+		<li class="flex items-center gap-2">
+			<svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" class="tabler:circle-x" viewBox="0 0 24 24"
+				><path
+					fill="none"
+					stroke="currentColor"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m7-2l4 4m0-4l-4 4"
+				/></svg
+			>Session data
+		</li>
+		<li class="flex items-center gap-2">
+			<svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" class="tabler:circle-x" viewBox="0 0 24 24"
+				><path
+					fill="none"
+					stroke="currentColor"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0m7-2l4 4m0-4l-4 4"
+				/></svg
+			>Records data
+		</li>
+	</ul>
+	{#snippet actionButton()}
+		<form method="POST" action="?/deleteSession" use:enhance>
+			<button
+				id="confirm-delete-session-button-clicked"
+				class="btn btn-error min-w-24 rounded-full text-base text-base-100"
+				onclick={() => {
+					deleteSessionButtonClickedSpinner = true;
+				}}
+				>{#key deleteSessionButtonClickedSpinner}
+					{#if deleteSessionButtonClickedSpinner}
+						<span class="left-50 loading loading-spinner absolute"></span>
+						<span class="invisible">Delete Session</span>
+					{:else}
+						<span>Delete Session</span>
+					{/if}
+				{/key}
+			</button>
+			<input type="hidden" name="session-id" value={data.session?.id} />
+		</form>
+	{/snippet}
+</GenericModal>
 
 {#key form}
 	{#if form?.formRedirectFailed}
-		<div
-			class="fade-in fade-out toast toast-end transition duration-75 ease-out"
-			in:slide={{ duration: 150, axis: 'x', easing: circOut }}
-			out:slide={{ duration: 300, axis: 'x', easing: circOut }}
-		>
-			<div class="alert flex justify-center bg-error font-bold text-base-100">
-				No special characters, symbols, spaces!
-			</div>
-		</div>
+		<SingleToastBox status="error" message="No special characters, symbols, spaces!" />
 	{/if}
 {/key}
-
-<!-- 
-	/////////////////////////////////////////
-	/
-	/
-	/
-	/
-	/	Toasts
-	/
-	/
-	/	
-	/
-	///////////////////////////////////////// 
-	-->
-
-{#if form?.formSaveSuccess}
-	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
-		<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="2em"
-				height="2em"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
-			>
-				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-				<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
-				<path d="M9 10h.01" />
-				<path d="M15 10h.01" />
-				<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
-				<path d="M15 19l2 2l4 -4" />
-			</svg>Saved successfully!
-		</div>
-	</div>
-{/if}
 {#if form?.editLockedSuccess}
-	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
-		<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="2em"
-				height="2em"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
-			>
-				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-				<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
-				<path d="M9 10h.01" />
-				<path d="M15 10h.01" />
-				<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
-				<path d="M15 19l2 2l4 -4" />
-			</svg>Changed lock status!
-		</div>
-	</div>
+	<SingleToastBox status="success" message="Changed lock status!" />
 {/if}
 {#if form?.formSaveFail}
-	<div
-		class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out"
-		in:slide={{ duration: 150, axis: 'x', easing: circOut }}
-		out:slide={{ duration: 300, axis: 'x', easing: circOut }}
-	>
-		<div class="alert flex justify-center bg-error text-lg font-bold text-base-100">Error saving!</div>
-	</div>
+	<SingleToastBox status="error" message="Error saving!" />
 {/if}
 {#if form?.uploadSuccess}
-	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
-		<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="2em"
-				height="2em"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
-			>
-				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-				<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
-				<path d="M9 10h.01" />
-				<path d="M15 10h.01" />
-				<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
-				<path d="M15 19l2 2l4 -4" />
-			</svg>Uploaded successfully!
-		</div>
-	</div>
+	<SingleToastBox status="success" message="Uploaded successfully!" />
 {/if}
-
 {#if form?.editInsertSuccess}
-	<div class="fade-in fade-out toast toast-end z-10 transition duration-75 ease-out">
-		<div class="alert flex justify-center bg-lime-500 text-lg font-bold text-base-100">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="2em"
-				height="2em"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="icon icon-tabler icons-tabler-outline icon-tabler-mood-check inline stroke-base-100"
-			>
-				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-				<path d="M20.925 13.163a8.998 8.998 0 0 0 -8.925 -10.163a9 9 0 0 0 0 18" />
-				<path d="M9 10h.01" />
-				<path d="M15 10h.01" />
-				<path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
-				<path d="M15 19l2 2l4 -4" />
-			</svg>Edited successfully!
-		</div>
-	</div>
+	<SingleToastBox status="success" message="Edited successfully!" />
 {/if}
 
 <style>

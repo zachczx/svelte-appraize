@@ -25,16 +25,16 @@
 <ClerkProvider>
 	<div class="relative grid min-h-dvh grid-cols-[auto_1fr] bg-base-200">
 		<nav
-			class="sticky top-0 z-[1] grid h-dvh w-16 grid-rows-[1fr_auto] border-2 border-black/10 bg-base-300 py-4 text-base-content/70"
+			class="sticky top-0 z-[1] grid h-dvh w-16 grid-rows-[1fr_auto] border-2 border-black/10 bg-base-300 pb-4 text-base-content/70"
 		>
 			<div class="grid content-start justify-items-center gap-2">
-				<h1 class="mb-4 p-1 text-5xl font-black text-primary">
+				<h1 class="mt-4 text-5xl font-black text-primary">
 					<a href="/">A</a>
 				</h1>
 				<a
 					href="/"
 					aria-label="Home"
-					class="dropdown dropdown-right dropdown-hover flex items-center justify-center rounded-xl p-3 text-3xl hover:bg-primary hover:text-primary-content"
+					class="dropdown dropdown-right dropdown-hover mt-4 flex items-center justify-center rounded-xl p-3 text-3xl hover:bg-primary hover:text-primary-content"
 				>
 					<div tabindex="-1" role="button" class="">
 						<svg
@@ -180,7 +180,6 @@
 			</div>
 		</nav>
 		{@render children()}
-		<Toaster />
 	</div>
 </ClerkProvider>
 

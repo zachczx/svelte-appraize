@@ -10,9 +10,10 @@
 		title: string;
 		children?: Snippet;
 		className?: string;
+		actionButton?: Snippet;
 	}
 
-	let { htmlElement = $bindable(), title, children, className }: ModalProps = $props();
+	let { htmlElement = $bindable(), title, children, className, actionButton }: ModalProps = $props();
 </script>
 
 <dialog bind:this={htmlElement} class="view-upload-modal modal overflow-y-scroll {className}">
@@ -39,10 +40,15 @@
 					{@render children()}
 				</div>
 			{/if}
-			<div class="modal-action flex justify-end">
-				<form method="dialog">
-					<button class="btn btn-neutral btn-sm">Close</button>
-				</form>
+			<div class="flex items-center justify-end">
+				<div class="modal-action flex items-center justify-end">
+					<form method="dialog">
+						<button class="btn btn-neutral min-w-24 rounded-full text-base">Close</button>
+					</form>
+					{#if actionButton}
+						{@render actionButton()}
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>
