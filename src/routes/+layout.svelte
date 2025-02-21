@@ -94,8 +94,8 @@
 				</a>
 
 				<a
-					href="/help"
-					aria-label="Help"
+					href="/about"
+					aria-label="About"
 					class="dropdown dropdown-right dropdown-hover flex items-center justify-center rounded-xl p-3 text-3xl hover:bg-primary hover:text-primary-content"
 				>
 					<div tabindex="-1" role="button" class=""></div>
@@ -103,7 +103,7 @@
 						tabindex="-1"
 						class="menu dropdown-content z-[1] ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
 					>
-						<li>Help</li>
+						<li>About</li>
 					</ul>
 					<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" class="tabler:help" viewBox="0 0 24 24"
 						><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
