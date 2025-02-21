@@ -67,7 +67,7 @@
 		"papaparse": "^5.5.2",
 		"postgres": "^3.4.5",
 		"sortablejs": "^1.15.6",
-		"svelte-clerk": "^0.8.3",
+		"svelte-clerk": "^0.8.4",
 		"tailwind-merge": "^2.6.0"
 	}
 }

@@ -48,8 +48,8 @@ importers:
         specifier: ^1.15.6
         version: 1.15.6
       svelte-clerk:
-        specifier: ^0.8.3
-        version: 0.8.3(react@19.0.0)(svelte@5.20.2)
+        specifier: ^0.8.4
+        version: 0.8.4(react@19.0.0)(svelte@5.20.2)
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.0
@@ -2694,6 +2694,7 @@ packages:
 
   libsql@0.4.7:
     resolution: {integrity: sha512-T9eIRCs6b0J1SHKYIvD8+KCJMcWZ900iZyxdnSCdqxN12Z1ijzT+jY5nrk72Jw4B0HGzms2NgpryArlJqvc3Lw==}
+    cpu: [x64, arm64, wasm32]
     os: [darwin, linux, win32]
 
   lilconfig@2.1.0:
@@ -3265,8 +3266,8 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
-  strnum@1.1.0:
-    resolution: {integrity: sha512-a4NGarQIHRhvr+k8VXaHg6TMU6f3YEmi5CAb6RYgX2gwbGDBNMbr6coC6g0wmif5dLjHtmHUVD/qOxPq7D0tnQ==}
+  strnum@1.1.1:
+    resolution: {integrity: sha512-O7aCHfYCamLCctjAiaucmE+fHf2DYHkus2OKCn4Wv03sykfFtgeECn505X6K4mPl8CRNd/qurC9guq+ynoN4pw==}
 
   style-value-types@5.1.2:
     resolution: {integrity: sha512-Vs9fNreYF9j6W2VvuDTP7kepALi7sk0xtk2Tu8Yxi9UoajJdEVpNpCov0HsLTqXvNGKX+Uv09pkozVITi1jf3Q==}
@@ -3296,8 +3297,8 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: '>=5.0.0'
 
-  svelte-clerk@0.8.3:
-    resolution: {integrity: sha512-7aFhSFAQ0kVPwZA1r2RBKORAZ+a8YG2qo8RnAN2CJK4EGIoOmgIxeTPA1W+FJ4Sogfkw+KVdG4Rdm8qRH1m9og==}
+  svelte-clerk@0.8.4:
+    resolution: {integrity: sha512-SajXappczvoesOdS8cc91qRTJCfttEE4HPLgsQfQXtef/Pbrp1lwWoddgq95EKpz34BpUSZh0hVZS+nKYOUBlQ==}
     peerDependencies:
       svelte: ^5.0.0
 
@@ -3590,8 +3591,8 @@ packages:
   zimmerframe@1.1.2:
     resolution: {integrity: sha512-rAbqEGa8ovJy4pyBxZM70hg4pE6gDgaQ0Sl9M3enG3I0d6H4XSAM3GeNGLKnsBpuijUow064sf7ww1nutC5/3w==}
 
-  zod-to-json-schema@3.24.1:
-    resolution: {integrity: sha512-3h08nf3Vw3Wl3PK+q3ow/lIil81IT2Oa7YpQyUUDsEWbXveMesdfK1xBd2RhCkynwZndAxixji/7SYJJowr62w==}
+  zod-to-json-schema@3.24.2:
+    resolution: {integrity: sha512-pNUqrcSxuuB3/+jBbU8qKUbTbDqYUaG1vf5cXFjbhGgoUuA1amO/y4Q8lzfOhHU8HNPK6VFJ18lBDKj3OHyDsg==}
     peerDependencies:
       zod: ^3.24.1
 
@@ -6023,7 +6024,7 @@ snapshots:
 
   fast-xml-parser@4.4.1:
     dependencies:
-      strnum: 1.1.0
+      strnum: 1.1.1
 
   fastparse@1.1.2: {}
 
@@ -6736,7 +6737,7 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  strnum@1.1.0: {}
+  strnum@1.1.1: {}
 
   style-value-types@5.1.2:
     dependencies:
@@ -6774,7 +6775,7 @@ snapshots:
     transitivePeerDependencies:
       - picomatch
 
-  svelte-clerk@0.8.3(react@19.0.0)(svelte@5.20.2):
+  svelte-clerk@0.8.4(react@19.0.0)(svelte@5.20.2):
     dependencies:
       '@clerk/backend': 1.24.2(react@19.0.0)
       '@clerk/shared': 2.22.0(react@19.0.0)
@@ -6847,7 +6848,7 @@ snapshots:
       valibot: 1.0.0-beta.11(typescript@5.7.3)
       yup: 1.6.1
       zod: 3.24.2
-      zod-to-json-schema: 3.24.1(zod@3.24.2)
+      zod-to-json-schema: 3.24.2(zod@3.24.2)
     transitivePeerDependencies:
       - '@types/json-schema'
       - typescript
@@ -7098,7 +7099,7 @@ snapshots:
 
   zimmerframe@1.1.2: {}
 
-  zod-to-json-schema@3.24.1(zod@3.24.2):
+  zod-to-json-schema@3.24.2(zod@3.24.2):
     dependencies:
       zod: 3.24.2
     optional: true
