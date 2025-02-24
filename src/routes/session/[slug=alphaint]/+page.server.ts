@@ -154,6 +154,8 @@ export const actions = {
 			remarks: remarks,
 			owner: userId,
 		});
+
+		return { insertSuccess: true };
 	},
 
 	edit: async ({ request }) => {
@@ -228,6 +230,25 @@ export const actions = {
 			console.log(error);
 			return fail(400, { formSaveFail: true });
 		}
+	},
+
+	sort: async function ({ request }) {
+		const formData = await request.formData();
+		const sessionId: string = String(formData.get('session-id'));
+
+		let results = await db.select().from(records).where(eq(records.session, sessionId)).orderBy(asc(records.sequence));
+		const sorted = await autosort(results);
+
+		for (let i = 0; i < sorted.length; i++) {
+			let individualOrder = i + 1;
+			console.log(individualOrder, sorted[i]);
+			await db
+				.update(records)
+				.set({ sequence: individualOrder })
+				.where(and(eq(records.session, sessionId), eq(records.id, sorted[i].id)));
+		}
+		console.log('Sorted successfully');
+		return { formSortSuccess: true };
 	},
 
 	deleteSession: async function ({ request }) {
@@ -513,3 +534,56 @@ async function checkUserIsSessionOwner(db: any, currentUser: string) {
 	}
 	return true;
 }
+
+const autosort = async (results) => {
+	let splitResults: RecordResults = {
+		a: [],
+		b: [],
+		'c+': [],
+		c: [],
+		'c-': [],
+		d: [],
+	};
+
+	/**
+	 * Almost certainly, I won't need  additional sorting, since it's already sorted by sequence.
+	 * Just need to separate them, then recombine them in the specific grade order.
+	 * Alternatively I could do this:
+	 * 			let sortedC = Object.fromEntries(Object.entries(cVar).sort(([, a], [, b]) => b.sequence - a.sequence));
+	 */
+	results.forEach((item) => {
+		switch (item.grade) {
+			case 'A':
+				splitResults['a'].push(item);
+				break;
+			case 'B':
+				splitResults['b'].push(item);
+				break;
+			case 'C+':
+				splitResults['c+'].push(item);
+				break;
+			case 'C':
+				splitResults['c'].push(item);
+				break;
+			case 'C-':
+				splitResults['c-'].push(item);
+				break;
+			case 'D':
+				splitResults['d'].push(item);
+				break;
+		}
+	});
+	const newResults = [];
+	for (const grade in splitResults) {
+		for (const entry of splitResults[grade]) {
+			newResults.push(entry);
+		}
+	}
+
+	// Loop through to reset the sequence, which was jumbled up.
+	for (let i = 0; i < autosort.length; i++) {
+		newResults[i].sequence = i + 1;
+	}
+
+	return newResults;
+};

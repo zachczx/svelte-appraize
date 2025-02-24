@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import { CalculateDateAgo } from '$lib/utils';
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import { addToast, getToast } from '$lib/ToastBox.svelte';
 
 	import { slide } from 'svelte/transition';
@@ -19,9 +19,7 @@
 	import { goto } from '$app/navigation';
 
 	let { data, form }: PageProps = $props();
-
-	let reactiveResults = $state(data.results);
-
+	let reactiveResults = $derived(data.results);
 	let saveButtonSuccess = $state(false);
 
 	let formAutoSaveSession: HTMLFormElement; //= $state();
@@ -58,7 +56,7 @@
 		}
 		return order;
 	});
-	$inspect(order);
+
 	let newCounts = $derived.by(() => {
 		let newCounts = {
 			a: 0,
@@ -124,10 +122,10 @@
 		}
 	});
 	let saveOrder = $derived(order);
-	let titleModal: HTMLDialogElement;
+	let titleModal = $state() as HTMLDialogElement;
 	let editTitleButtonSuccess = $state(false);
 
-	let deleteSessionModal: HTMLDialogElement;
+	let deleteSessionModal = $state() as HTMLDialogElement;
 	let uploadModal: HTMLDialogElement;
 	let creditModal = $state() as HTMLDialogElement;
 	let lockModal = $state() as HTMLDialogElement;
@@ -189,58 +187,6 @@
 		}
 		return filteredResults;
 	});
-
-	let autosort = () => {
-		let splitResults: RecordResults = {
-			a: [],
-			b: [],
-			'c+': [],
-			c: [],
-			'c-': [],
-			d: [],
-		};
-
-		/**
-		 * Almost certainly, I won't need  additional sorting, since it's already sorted by sequence.
-		 * Just need to separate them, then recombine them in the specific grade order.
-		 * Alternatively I could do this:
-		 * 			let sortedC = Object.fromEntries(Object.entries(cVar).sort(([, a], [, b]) => b.sequence - a.sequence));
-		 */
-		reactiveResults.forEach((item) => {
-			switch (item.grade) {
-				case 'A':
-					splitResults['a'].push(item);
-					break;
-				case 'B':
-					splitResults['b'].push(item);
-					break;
-				case 'C+':
-					splitResults['c+'].push(item);
-					break;
-				case 'C':
-					splitResults['c'].push(item);
-					break;
-				case 'C-':
-					splitResults['c-'].push(item);
-					break;
-				case 'D':
-					splitResults['d'].push(item);
-					break;
-			}
-		});
-		reactiveResults = [];
-
-		for (const grade in splitResults) {
-			for (const entry of splitResults[grade]) {
-				reactiveResults.push(entry);
-			}
-		}
-
-		// Loop through to reset the sequence, which was jumbled up.
-		for (let i = 0; i < autosort.length; i++) {
-			reactiveResults[i].sequence = i + 1;
-		}
-	};
 </script>
 
 <svelte:head>
@@ -852,10 +798,9 @@
 									>
 								</form>
 
-								<div class="justify-self-end">
-									<button
-										class="btn btn-secondary flex items-center gap-2 rounded-full text-base font-bold lg:min-w-24"
-										onclick={() => autosort()}
+								<form method="post" action="?/sort" class="justify-self-end" use:enhance>
+									<input type="hidden" name="session-id" value={data.session.id} />
+									<button class="btn btn-secondary flex items-center gap-2 rounded-full text-base font-bold lg:min-w-24"
 										><svg
 											xmlns="http://www.w3.org/2000/svg"
 											width="1.7em"
@@ -872,7 +817,7 @@
 											/></svg
 										>Sort</button
 									>
-								</div>
+								</form>
 							</div>
 						{/if}
 					{/if}
