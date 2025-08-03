@@ -194,7 +194,7 @@
 </svelte:head>
 <div class="grid grid-cols-[auto_1fr_auto]">
 	<div class="grid h-full grid-rows-[1fr_auto]">
-		<div class="grid content-start border-base-300/10 bg-base-200 px-4 pb-4 pt-4 text-2xl lg:border-r-2">
+		<div class="border-base-300/10 bg-base-200 grid content-start px-4 pt-4 pb-4 text-2xl lg:border-r-2">
 			<div class="hidden items-center md:grid">
 				<form method="POST" id="view-top-navbar-input" action="?/redirect" class="pb-8" use:enhance>
 					<label class="input input-bordered flex w-full items-center rounded-full" for="session">
@@ -202,7 +202,7 @@
 							xmlns="http://www.w3.org/2000/svg"
 							width="1em"
 							height="1em"
-							class="tabler:player-track-next-filled me-4 text-base-content/30"
+							class="tabler:player-track-next-filled text-base-content/30 me-4"
 							viewBox="0 0 24 24"
 							><path
 								fill="currentColor"
@@ -221,7 +221,7 @@
 							}}
 							required
 						/>
-						<button class="-me-3 ms-2">
+						<button class="ms-2 -me-3">
 							{#if submittedSpinner && searchInput.length > 0}
 								<span class="loading loading-spinner"></span>
 							{:else}
@@ -230,7 +230,7 @@
 									width="2.5em"
 									height="2.5em"
 									viewBox="0 0 24 24"
-									class="icon icon-tabler icons-tabler-filled icon-tabler-circle-arrow-right inline fill-primary group-hover:saturate-50"
+									class="icon icon-tabler icons-tabler-filled icon-tabler-circle-arrow-right fill-primary inline group-hover:saturate-50"
 									><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
 										d="M12 2l.324 .005a10 10 0 1 1 -.648 0l.324 -.005zm.613 5.21a1 1 0 0 0 -1.32 1.497l2.291 2.293h-5.584l-.117 .007a1 1 0 0 0 .117 1.993h5.584l-2.291 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l4 -4l.073 -.082l.064 -.089l.062 -.113l.044 -.11l.03 -.112l.017 -.126l.003 -.075l-.007 -.118l-.029 -.148l-.035 -.105l-.054 -.113l-.071 -.111a1.008 1.008 0 0 0 -.097 -.112l-4 -4z"
 									/></svg
@@ -242,7 +242,7 @@
 
 			<div class="grid content-start">
 				<div class="grid gap-2">
-					<h3 class="flex items-center gap-2 text-lg font-extrabold text-base-content/70">
+					<h3 class="text-base-content/70 flex items-center gap-2 text-lg font-extrabold">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
@@ -262,10 +262,10 @@
 							<path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
 						</svg>Manage Session
 					</h3>
-					<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
+					<ul class="border-l-base-300 text-base-content/70 ms-2 border-l-4 ps-4 text-base font-medium">
 						<li>
 							<button
-								class="flex w-full cursor-pointer items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
+								class="hover:bg-primary hover:text-primary-content flex w-full cursor-pointer cursor-pointer items-center gap-4 rounded-lg p-2 font-medium"
 								onclick={() => titleModal.showModal()}
 							>
 								<svg
@@ -288,7 +288,7 @@
 
 						<li>
 							<button
-								class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content"
+								class="hover:bg-primary hover:text-primary-content flex w-full cursor-pointer items-center gap-4 rounded-lg p-2"
 								onclick={() => lockModal.showModal()}
 								><svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -306,7 +306,7 @@
 						</li>
 						<li>
 							<button
-								class="flex w-full cursor-pointer items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
+								class="hover:bg-primary hover:text-primary-content flex w-full cursor-pointer items-center gap-4 rounded-lg p-2 font-medium"
 								onclick={() => {
 									shareModal.showModal();
 								}}
@@ -331,7 +331,7 @@
 
 						<li>
 							<button
-								class="flex w-full items-center gap-4 rounded-lg p-2 hover:bg-error hover:text-error-content"
+								class="hover:bg-error hover:text-error-content flex w-full cursor-pointer items-center gap-4 rounded-lg p-2"
 								onclick={() => {
 									deleteSessionModal.showModal();
 								}}
@@ -355,7 +355,7 @@
 					</ul>
 				</div>
 				<div class="mt-4 grid gap-2 pt-4">
-					<h3 class="flex items-center gap-4 text-lg font-extrabold text-base-content/70">
+					<h3 class="text-base-content/70 flex items-center gap-4 text-lg font-extrabold">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.2em"
@@ -373,10 +373,10 @@
 						>Add Many
 					</h3>
 
-					<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
+					<ul class="border-l-base-300 text-base-content/70 ms-2 border-l-4 ps-4 text-base font-medium">
 						<li>
 							<button
-								class="flex w-full items-center gap-4 rounded-lg p-2 font-medium hover:bg-primary hover:text-primary-content"
+								class="hover:bg-primary hover:text-primary-content flex w-full cursor-pointer items-center gap-4 rounded-lg p-2 font-medium"
 								onclick={() => {
 									uploadModal.showModal();
 								}}
@@ -404,7 +404,7 @@
 				</div>
 
 				<div class="mt-4 grid gap-2 pt-4">
-					<h3 class="flex items-center gap-2 text-lg font-extrabold text-base-content/70">
+					<h3 class="text-base-content/70 flex items-center gap-2 text-lg font-extrabold">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
@@ -418,9 +418,11 @@
 							></svg
 						>Progress
 					</h3>
-					<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
+					<ul class="border-l-base-300 text-base-content/70 ms-2 border-l-4 ps-4 text-base font-medium">
 						<li>
-							<div class="flex items-center gap-4 rounded-lg p-2 hover:bg-primary hover:text-primary-content">
+							<div
+								class="hover:bg-primary hover:text-primary-content flex cursor-pointer items-center gap-4 rounded-lg p-2"
+							>
 								<label for="auto-save-checkbox" class="flex grow items-center font-medium"
 									><svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -433,7 +435,7 @@
 											d="M5 19V5v5.075V10zm0 2q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h11.175q.4 0 .763.15t.637.425l2.85 2.85q.275.275.425.638t.15.762v1.55q0 .425-.288.713t-.712.287t-.712-.288T19 9.376V7.85L16.15 5H5v14h5.8q.425 0 .713.288T11.8 20t-.288.713T10.8 21zm13 1q-2.075 0-3.537-1.463T13 17t1.463-3.537T18 12t3.538 1.463T23 17t-1.463 3.538T18 22m.5-5.2v-2.3q0-.2-.15-.35T18 14t-.35.15t-.15.35v2.275q0 .2.075.388t.225.337l1.525 1.525q.15.15.35.15t.35-.15t.15-.35t-.15-.35zM7 10h7q.425 0 .713-.288T15 9V7q0-.425-.288-.712T14 6H7q-.425 0-.712.288T6 7v2q0 .425.288.713T7 10m4.05 7.85q-.025-.225-.038-.437T11 16.975q0-1.35.5-2.6t1.45-2.225q-.225-.075-.462-.112T12 12q-1.25 0-2.125.875T9 15q0 .975.563 1.763t1.487 1.087"
 										/></svg
 									>Auto save {#if formSaveSuccessLoading}
-										<span class="loading loading-spinner loading-sm ms-4 text-primary"></span>
+										<span class="loading loading-spinner loading-sm text-primary ms-4"></span>
 									{/if}</label
 								>
 
@@ -450,19 +452,14 @@
 									<input type="hidden" name="order" value={order} />
 									<input type="hidden" name="session-id" value={data.session?.id} />
 								</form>
-								<input
-									type="checkbox"
-									id="auto-save-checkbox"
-									class="toggle-neutral toggle toggle-sm border-gray-500 bg-neutral/70"
-									bind:checked={autoSave}
-								/>
+								<input type="checkbox" id="auto-save-checkbox" class="toggle toggle-sm" bind:checked={autoSave} />
 							</div>
 						</li>
 					</ul>
 				</div>
 			</div>
 		</div>
-		<div class="content-end bg-base-200 px-8 pb-4 text-sm">
+		<div class="bg-base-200 content-end px-8 pb-4 text-sm">
 			<ul>
 				<li>© 2024 Zixian Chen</li>
 				<li>
@@ -491,9 +488,9 @@
 			<input type="text" name="url" bind:value={currentPageUrl} class="w-full" autocomplete="off" />
 			<button
 				aria-label="edit"
-				class="h-8.5 w-8.5 -me-2 ms-2 flex items-center justify-center rounded-full {shareCopiedSuccess
+				class="ms-2 -me-2 flex h-8.5 w-8.5 items-center justify-center rounded-full {shareCopiedSuccess
 					? 'bg-success'
-					: 'bg-primary'} p-1.5 text-primary-content"
+					: 'bg-primary'} text-primary-content p-1.5"
 				onclick={() => {
 					navigator.clipboard.writeText(currentPageUrl);
 					shareCopiedSuccess = true;
@@ -534,7 +531,7 @@
 				{/if}
 			</button>
 		</label>
-		<div class="-mb-8 mt-1 text-success {shareCopiedSuccess ? undefined : 'opacity-0'} text-center">Copied!</div>
+		<div class="text-success mt-1 -mb-8 {shareCopiedSuccess ? undefined : 'opacity-0'} text-center">Copied!</div>
 	</GenericModal>
 
 	<GenericModal title="Edit Title" bind:htmlElement={titleModal}>
@@ -689,7 +686,7 @@
 							required
 						/>
 						<button
-							class="-me-2.5 ms-2 flex h-9 w-9 items-center justify-center rounded-full bg-neutral text-3xl font-black text-primary-content disabled:bg-primary/30"
+							class="bg-neutral text-primary-content disabled:bg-primary/30 ms-2 -me-2.5 flex h-9 w-9 items-center justify-center rounded-full text-3xl font-black"
 							aria-label="Add"
 							disabled={addAuthorizedUserExists ? true : undefined}>+</button
 						>
@@ -702,10 +699,10 @@
 				<ol class="max-h-32 list-decimal overflow-y-auto pe-8">
 					{#if data.authorizedUsers.length > 0}
 						{#each data.authorizedUsers as user}
-							<div class="flex w-full items-center border-b-2 border-b-neutral/5 py-1 ps-4 last:border-b-transparent">
+							<div class="border-b-neutral/5 flex w-full items-center border-b-2 py-1 ps-4 last:border-b-transparent">
 								<li class="grow"><span class="ps-2">{user.userEmail}</span></li>
 								<form method="post" action="?/deleteAuthorizedUser" use:enhance>
-									<button class="flex items-center justify-center text-error" aria-label="delete">
+									<button class="text-error flex items-center justify-center" aria-label="delete">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											width="1em"
@@ -735,7 +732,7 @@
 		{/if}
 	</GenericModal>
 
-	<div class="min-h-dvh w-full bg-base-100 px-2 pb-4 pt-8 lg:pt-8">
+	<div class="bg-base-100 min-h-dvh w-full px-2 pt-8 pb-4 lg:pt-8">
 		<div class="grid justify-items-center space-y-4">
 			<div class="w-full max-w-[800px] px-4 pb-4 md:px-10">
 				<h1>{data.session?.title}</h1>
@@ -826,12 +823,12 @@
 		</div>
 	</div>
 
-	<div class="grid content-start overflow-hidden border-l-2 border-l-base-300/10 bg-base-200 px-4 pb-8">
-		<h3 class="justify-self-start pt-4 text-3xl font-extrabold text-base-content/85">Details</h3>
+	<div class="border-l-base-300/10 bg-base-200 grid content-start overflow-hidden border-l-2 px-4 pb-8">
+		<h3 class="text-base-content/85 justify-self-start pt-4 text-3xl font-extrabold">Details</h3>
 		<div class="mt-8 grid content-start">
 			<details open>
 				<summary class="flex items-center"
-					><h3 class="flex grow items-center gap-2 justify-self-start text-lg font-extrabold text-base-content/70">
+					><h3 class="text-base-content/70 flex grow items-center gap-2 justify-self-start text-lg font-extrabold">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
@@ -879,7 +876,7 @@
 						/></svg
 					></summary
 				>
-				<ul class="ms-2 mt-2 border-l-4 border-l-base-300 ps-8 text-base font-medium text-base-content/70">
+				<ul class="border-l-base-300 text-base-content/70 ms-2 mt-2 border-l-4 ps-8 text-base font-medium">
 					<li class="py-2">
 						<div class="flex items-center gap-2">
 							<label class="input join-item input-bordered flex w-full items-center rounded-full">
@@ -887,7 +884,7 @@
 									xmlns="http://www.w3.org/2000/svg"
 									width="1.3em"
 									height="1.3em"
-									class="tabler:filter me-4 text-base-content/50"
+									class="tabler:filter text-base-content/50 me-4"
 									viewBox="0 0 24 24"
 									><path
 										fill="none"
@@ -970,7 +967,7 @@
 		<div class="mt-4 grid content-start pt-4">
 			<details open>
 				<summary class="flex items-center"
-					><h3 class="flex grow items-center gap-2 text-lg font-extrabold text-base-content/70">
+					><h3 class="text-base-content/70 flex grow items-center gap-2 text-lg font-extrabold">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
@@ -1013,32 +1010,32 @@
 						/></svg
 					></summary
 				>
-				<div class="ms-2 mt-2 border-l-4 border-l-base-300 ps-2 text-base font-medium text-base-content/70">
+				<div class="border-l-base-300 text-base-content/70 ms-2 mt-2 border-l-4 ps-2 text-base font-medium">
 					{#await newCounts}
-						<span class="loading loading-spinner my-8 text-primary"></span>
+						<span class="loading loading-spinner text-primary my-8"></span>
 					{:then newCounts}
-						<div class="justify-items-between grid grid-cols-4 pb-2 ps-4 pt-4">
+						<div class="justify-items-between grid grid-cols-4 ps-4 pt-4 pb-2">
 							<div class="flex items-center justify-center gap-1.5">
 								<div class="rounded bg-[#87bc45] p-0.5 px-1.5 font-bold text-white">A</div>
-								<div class="flex animate-scale items-center justify-center font-black text-base-content">
+								<div class="animate-scale text-base-content flex items-center justify-center font-black">
 									{newCounts.a}
 								</div>
 							</div>
 							<div class="flex items-center justify-center gap-1.5">
 								<div class="rounded bg-[#27aeef] p-0.5 px-1.5 font-bold text-white">B</div>
-								<div class="flex animate-scale items-center justify-center font-black text-base-content">
+								<div class="animate-scale text-base-content flex items-center justify-center font-black">
 									{newCounts.b}
 								</div>
 							</div>
 							<div class="flex items-center justify-center gap-1.5">
 								<div class="rounded bg-[#ef9b20] p-0.5 px-1.5 font-bold text-white">C</div>
-								<div class="flex animate-scale items-center justify-center font-black text-base-content">
+								<div class="animate-scale text-base-content flex items-center justify-center font-black">
 									{newCounts.cTotal}
 								</div>
 							</div>
 							<div class="flex items-center justify-center gap-1.5">
 								<div class="rounded bg-[#ea5545] p-0.5 px-1.5 font-bold text-white">D</div>
-								<div class="flex animate-scale items-center justify-center font-black text-base-content">
+								<div class="animate-scale text-base-content flex items-center justify-center font-black">
 									{newCounts.d}
 								</div>
 							</div>
@@ -1054,7 +1051,7 @@
 		<div class="mt-4 grid content-start gap-y-2 pt-4">
 			<details>
 				<summary class="flex items-center"
-					><h3 class="mb-1 flex grow items-center gap-2 justify-self-start text-lg font-extrabold text-base-content/70">
+					><h3 class="text-base-content/70 mb-1 flex grow items-center gap-2 justify-self-start text-lg font-extrabold">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="1.3em"
@@ -1097,7 +1094,7 @@
 						/></svg
 					></summary
 				>
-				<ul class="ms-2 border-l-4 border-l-base-300 ps-4 text-base font-medium text-base-content/70">
+				<ul class="border-l-base-300 text-base-content/70 ms-2 border-l-4 ps-4 text-base font-medium">
 					<li>
 						<div class="ms-1 flex items-center gap-2 p-2">
 							<svg
@@ -1153,7 +1150,7 @@
 ///////////////////////////////////////// 
 -->
 <dialog bind:this={uploadModal} class="modal overflow-y-scroll">
-	<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
+	<div class="bg-base-100 w-120 rounded-lg lg:w-160">
 		<form method="dialog" class="grid justify-items-end p-2">
 			<button aria-label="close">
 				<svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" class="tabler:x" viewBox="0 0 24 24"
@@ -1174,7 +1171,7 @@
 
 <GenericModal bind:htmlElement={deleteSessionModal} title="Delete session">
 	<p>Are you sure you want to delete these? You cannot undo this action.</p>
-	<ul class="mt-4 grid justify-items-center text-center font-bold text-error">
+	<ul class="text-error mt-4 grid justify-items-center text-center font-bold">
 		<li class="flex items-center gap-2">
 			<svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" class="tabler:circle-x" viewBox="0 0 24 24"
 				><path
@@ -1204,13 +1201,13 @@
 		<form method="POST" action="?/deleteSession" use:enhance>
 			<button
 				id="confirm-delete-session-button-clicked"
-				class="btn btn-error min-w-24 rounded-full text-base text-base-100"
+				class="btn btn-error text-base-100 min-w-24 rounded-full text-base"
 				onclick={() => {
 					deleteSessionButtonClickedSpinner = true;
 				}}
 				>{#key deleteSessionButtonClickedSpinner}
 					{#if deleteSessionButtonClickedSpinner}
-						<span class="left-50 loading loading-spinner absolute"></span>
+						<span class="loading loading-spinner absolute left-50"></span>
 						<span class="invisible">Delete Session</span>
 					{:else}
 						<span>Delete Session</span>

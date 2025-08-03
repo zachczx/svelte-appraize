@@ -25,7 +25,7 @@
 <ClerkProvider>
 	<div class="relative grid min-h-dvh grid-cols-[auto_1fr] bg-base-200">
 		<nav
-			class="sticky top-0 z-[1] grid h-dvh w-16 grid-rows-[1fr_auto] border-2 border-black/10 bg-base-300 pb-4 text-base-content/70"
+			class="sticky top-0 z-1 grid h-dvh w-16 grid-rows-[1fr_auto] border-2 border-black/10 bg-base-300 pb-4 text-base-content/70"
 		>
 			<div class="grid content-start justify-items-center gap-2">
 				<h1 class="mt-4 text-5xl font-black text-primary">
@@ -57,7 +57,7 @@
 					</div>
 					<ul
 						tabindex="-1"
-						class="menu dropdown-content z-[1] ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+						class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
 					>
 						<li>Home</li>
 					</ul>
@@ -87,7 +87,7 @@
 					</div>
 					<ul
 						tabindex="-1"
-						class="menu dropdown-content z-[1] ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+						class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
 					>
 						<li>Dashboard</li>
 					</ul>
@@ -101,7 +101,7 @@
 					<div tabindex="-1" role="button" class=""></div>
 					<ul
 						tabindex="-1"
-						class="menu dropdown-content z-[1] ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+						class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
 					>
 						<li>About</li>
 					</ul>
@@ -129,7 +129,7 @@
 					</div>
 					<ul
 						tabindex="-1"
-						class="menu dropdown-content z-[1] ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+						class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
 					>
 						<li>Contact</li>
 					</ul>
@@ -143,7 +143,7 @@
 						</div>
 						<ul
 							tabindex="-1"
-							class="menu dropdown-content z-[1] ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+							class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
 						>
 							<li>Account</li>
 						</ul>
@@ -171,7 +171,7 @@
 						</div>
 						<ul
 							tabindex="-1"
-							class="menu dropdown-content z-[1] ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+							class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
 						>
 							<li>Login</li>
 						</ul>

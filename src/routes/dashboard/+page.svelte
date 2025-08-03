@@ -14,7 +14,7 @@
 	<div class="grid grid-cols-4 content-center justify-items-center gap-8 px-8">
 		{#if data.result.length === 0}
 			<div class="grid content-center justify-items-center gap-4">
-				<img src={ErrorNaughtyDog} class="w-96 hue-rotate-[350deg]" alt="Nothing here" />
+				<img src={ErrorNaughtyDog} class="w-96 hue-rotate-350" alt="Nothing here" />
 				<h2>Oops, there's nothing here!</h2>
 			</div>
 		{/if}

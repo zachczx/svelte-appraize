@@ -97,11 +97,11 @@
 		method="POST"
 		id="main-insert-form"
 		action="?/insert"
-		class="join grid w-full grid-cols-[1fr_auto_1fr] rounded-full border border-primary/20 text-lg shadow-lg shadow-primary/30"
+		class="join border-primary/20 shadow-primary/30 grid w-full grid-cols-[1fr_auto_1fr] rounded-full border text-lg shadow-lg"
 		use:enhance
 	>
 		<label
-			class="input join-item flex w-full items-center focus-within:border-transparent focus-within:bg-primary/[0.02] focus-within:outline-primary/30"
+			class="input join-item focus-within:bg-primary/[0.02] focus-within:outline-primary/30 flex w-full items-center rounded-l-full border-transparent focus-within:border-transparent"
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +113,7 @@
 				stroke-width="2"
 				stroke-linecap="round"
 				stroke-linejoin="round"
-				class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus me-2 hidden flex-none text-base-content/50 xl:flex"
+				class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus text-base-content/50 me-2 hidden flex-none xl:flex"
 			>
 				<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 				<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
@@ -136,7 +136,7 @@
 
 		<select
 			name="grade"
-			class="join-item select me-1 border-l-2 border-r-2 border-l-primary/20 border-r-primary/20 text-base-content/50 focus-within:border-transparent focus-within:bg-primary/[0.02] focus-within:outline-primary/30"
+			class="join-item select border-l-primary/20 border-r-primary/20 text-base-content/50 focus-within:bg-primary/[0.02] focus-within:outline-primary/30 me-1 border-r-2 border-l-2 border-transparent focus-within:border-transparent"
 		>
 			<option value="A">A</option>
 			<option value="B">B</option>
@@ -147,9 +147,9 @@
 		</select>
 		<input type="hidden" name="session-id" value={session.id} />
 		<label
-			class="input join-item flex items-center focus-within:border-transparent focus-within:bg-primary/[0.02] focus-within:outline-primary/30"
+			class="input join-item focus-within:bg-primary/[0.02] focus-within:outline-primary/30 flex items-center rounded-r-full border-transparent focus-within:border-transparent"
 		>
-			<Home class="me-2 hidden flex-none stroke-base-content/50 xl:flex" />
+			<Home class="stroke-base-content/50 me-2 hidden flex-none xl:flex" />
 			<input
 				type="text"
 				name="dept"
@@ -165,7 +165,7 @@
 	</form>
 	<button
 		form="main-insert-form"
-		class="absolute right-1.5 top-[0.425rem] flex h-9 w-9 items-center justify-center rounded-full bg-primary text-3xl font-black text-primary-content"
+		class="bg-primary text-primary-content absolute top-1.25 right-1.5 flex h-8 w-8 items-center justify-center rounded-full text-3xl font-black"
 		aria-label="Add">+</button
 	>
 </div>
@@ -181,23 +181,23 @@
 	{/if} -->
 
 		{#await results}
-			<span class="ignore-elements loading loading-spinner loading-lg justify-self-center py-5 text-primary md:py-10"
+			<span class="ignore-elements loading loading-spinner loading-lg text-primary justify-self-center py-5 md:py-10"
 			></span>
 		{:then result}
 			{#if nothingFound}
 				<div class="grid min-h-[50dvh] content-center justify-items-center gap-8">
-					<img src={EmptyStateSvg} class="w-[30rem] hue-rotate-[150deg]" alt="" />
+					<img src={EmptyStateSvg} class="w-120 hue-rotate-150" alt="" />
 					<div class="text-center lg:text-lg">There's nothing here!</div>
 				</div>
 			{:else}
 				{#each result as person, i}
 					<div
-						class="grid grid-cols-12 border-b-2 border-base-content/[0.07] py-2 last:border-0"
+						class="border-base-content/[0.07] grid grid-cols-12 border-b-2 py-2 last:border-0"
 						id={person.id}
 						data-sortable-id={person.id}
 					>
 						<div class="sortable-handle col-span-12 flex items-center lg:col-span-1">
-							<div class="flex h-full grow items-center py-2 text-base-content lg:grow-0">
+							<div class="text-base-content flex h-full grow items-center py-2 lg:grow-0">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="1em"
@@ -215,7 +215,7 @@
 								>
 							</div>
 						</div>
-						<div class="sortable-handle col-span-12 flex items-center justify-center lg:col-span-1">
+						<div class="sortable-handle col-span-12 flex items-center justify-center lg:col-span-1 lg:pe-4">
 							<form
 								id="edit-grade-form-{person.id}"
 								method="POST"
@@ -235,7 +235,7 @@
 									value={person.grade}
 									name="grade"
 									id="grade__{person.id}"
-									class="grade-selection select select-primary select-sm border-0 text-2xl font-extrabold"
+									class="select w-auto"
 									onchange={() => {
 										const currentForm = document.getElementById(`edit-grade-form-${person.id}`) as HTMLFormElement;
 										currentForm.requestSubmit ? currentForm.requestSubmit() : currentForm.submit();
@@ -364,7 +364,7 @@
 											stroke-width="2"
 											stroke-linecap="round"
 											stroke-linejoin="round"
-											class="icon icon-tabler icons-tabler-outline icon-tabler-message mb-1 me-2 inline"
+											class="icon icon-tabler icons-tabler-outline icon-tabler-message me-2 mb-1 inline"
 										>
 											<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 											<path d="M8 9h8" />
@@ -410,7 +410,7 @@
 										/></svg
 									>
 								</div>
-								<ul tabindex="-1" class="menu dropdown-content z-[1] m-0 w-52 rounded-lg bg-base-100 p-0 shadow-lg">
+								<ul tabindex="-1" class="menu dropdown-content bg-base-100 z-1 m-0 w-52 rounded-lg p-0 shadow-lg">
 									<li>
 										<button
 											class="flex items-center gap-2"
@@ -493,7 +493,7 @@
 							</div>
 						</div>
 						<dialog bind:this={edit[i].dialogElement} class="view-upload-modal modal overflow-y-scroll">
-							<div class="w-[30rem] rounded-lg bg-base-100 lg:w-[40rem]">
+							<div class="bg-base-100 w-120 rounded-lg lg:w-160">
 								<form method="dialog" class="grid justify-items-end p-2">
 									<button aria-label="close">
 										<svg
@@ -532,7 +532,7 @@
 											stroke-width="2"
 											stroke-linecap="round"
 											stroke-linejoin="round"
-											class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus hidden text-base-content/50 xl:flex"
+											class="icon icon-tabler icons-tabler-outline icon-tabler-user-plus text-base-content/50 hidden xl:flex"
 										>
 											<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 											<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
@@ -556,7 +556,7 @@
 											xmlns="http://www.w3.org/2000/svg"
 											width="1em"
 											height="1em"
-											class="tabler:home hidden text-base-content/50 xl:flex"
+											class="tabler:home text-base-content/50 hidden xl:flex"
 											viewBox="0 0 24 24"
 											><g
 												fill="none"
@@ -614,13 +614,13 @@
 								</form>
 								<div class="grid grid-cols-2 gap-2 px-8 pb-8">
 									<form method="dialog" class="">
-										<button class="btn btn-outline btn-primary w-full text-lg text-primary-content" aria-label="close">
+										<button class="btn btn-outline btn-primary text-primary-content w-full text-lg" aria-label="close">
 											Close
 										</button>
 									</form>
 									<button
 										form="edit-dialog-{person.id}"
-										class="btn btn-primary text-lg font-bold text-primary-content"
+										class="btn btn-primary text-primary-content text-lg font-bold"
 										aria-label="Add">Edit</button
 									>
 								</div>

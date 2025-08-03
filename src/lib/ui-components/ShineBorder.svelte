@@ -16,7 +16,7 @@
         --border-radius: {borderRadius}px;
       "
 	class={cn(
-		'relative grid min-h-[60px] w-fit min-w-[300px] place-items-center rounded-[var(--border-radius)]',
+		'relative grid min-h-[60px] w-fit min-w-[300px] place-items-center rounded-(--border-radius)',
 		className,
 	)}
 >
@@ -30,7 +30,7 @@
 			? color.join(',')
 			: color}, transparent, transparent);
         "
-		class="before:bg-shine-size before:absolute before:inset-0 before:aspect-square before:size-full before:rounded-[var(--border-radius)] before:p-[var(--border-width)] before:will-change-[background-position] before:content-[''] before:![-webkit-mask-composite:xor] before:[background-image:var(--background-radial-gradient)] before:[background-size:300%_300%] before:![mask-composite:exclude] before:[mask:var(--mask-linear-gradient)] motion-safe:before:animate-[shine-pulse_var(--shine-pulse-duration)_infinite_linear]"
+		class="before:bg-shine-size before:absolute before:inset-0 before:aspect-square before:size-full before:rounded-(--border-radius) before:p-(--border-width) before:will-change-[background-position] before:content-[''] before:[-webkit-mask-composite:xor]! before:[background-image:var(--background-radial-gradient)] before:bg-size-[300%_300%] before:mask-exclude! before:[mask:var(--mask-linear-gradient)] motion-safe:before:animate-[shine-pulse_var(--shine-pulse-duration)_infinite_linear]"
 	></div>
 	<!-- This is Default Slot -->
 	<slot>Default</slot>

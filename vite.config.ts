@@ -1,5 +1,6 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
 import { enhancedImages } from '@sveltejs/enhanced-img';
 import { isoImport } from 'vite-plugin-iso-import';
 import svg from '@poppanator/sveltekit-svg';
@@ -12,6 +13,7 @@ export default defineConfig({
 		enhancedImages(),
 		sveltekit(),
 		isoImport(),
+		tailwindcss(),
 		svg({
 			includePaths: ['./static/', './src/lib/assets/svg/'],
 			svgoOptions: {

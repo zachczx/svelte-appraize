@@ -1,22 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@plugin "daisyui";
+@plugin "daisyui/theme" {
+	name: autumn;
+	default: true;
 
-:root {
-	font-family: 'Nunito Sans Variable', sans-serif;
-	font-optical-sizing: auto;
-
-	@view-transition {
-		navigation: auto;
-	}
-
-	.cl-avatarBox {
-		width: 1.9rem !important;
-		height: 1.9rem !important;
-	}
+	--color-error: #a6192e;
+	--color-error-content: white;
+	--color-success: #198754; /* #00c851; #007e33 */
+	--color-success-content: white;
 }
 
 @layer base {
+	:root {
+		font-family: 'Nunito Sans Variable', sans-serif;
+		font-optical-sizing: auto;
+
+		@view-transition {
+			navigation: auto;
+		}
+
+		.cl-avatarBox {
+			width: 1.9rem !important;
+			height: 1.9rem !important;
+		}
+	}
+
 	/* nunito-sans-latin-wght-normal */
 	@font-face {
 		font-family: 'Nunito Sans Variable';
@@ -30,18 +38,18 @@
 	}
 
 	h1 {
-		@apply text-5xl lg:text-5xl;
+		font-size: var(--text-5xl);
 		font-weight: 700;
 	}
 
 	h2 {
-		@apply text-3xl lg:text-3xl;
+		font-size: var(--text-3xl);
 		font-weight: 700;
 		padding-bottom: 0.3rem;
 	}
 
 	h3 {
-		@apply text-2xl lg:text-2xl;
+		font-size: var(--text-2xl);
 		font-weight: 600;
 	}
 }
