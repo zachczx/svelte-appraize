@@ -5,13 +5,7 @@ import { desc, asc, eq, and, or, ilike } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { slugify } from '$lib/utils';
-//superforms
-import { z } from 'zod';
-import { message, superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
-// R2 Bucket imports
-import { PUBLIC_S3_BUCKET_NAME } from '$env/static/public'; //it's a public key, so prefix PUBLIC_ requires fetching from public, not private
-import { Upload } from '@aws-sdk/lib-storage';
+
 //For Buffer/Handling of file
 import Papa from 'papaparse';
 import { error } from '@sveltejs/kit';

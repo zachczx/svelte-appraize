@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	import { CalculateDateAgo } from '$lib/utils';
 	import { applyAction, enhance } from '$app/forms';
 	import { addToast, getToast } from '$lib/ToastBox.svelte';
 
@@ -17,6 +16,9 @@
 	import Toaster from '$lib/Toaster.svelte';
 	import SingleToastBox from '$lib/SingleToastBox.svelte';
 	import { goto } from '$app/navigation';
+	import dayjs from 'dayjs';
+	import relativeTime from 'dayjs/plugin/relativeTime';
+	dayjs.extend(relativeTime);
 
 	let { data, form }: PageProps = $props();
 	let reactiveResults = $derived(data.results);
@@ -1111,7 +1113,7 @@
 							>
 
 							{#if data.session?.timestamp}
-								{CalculateDateAgo(data.session.timestamp)}
+								{dayjs(data.session.timestamp).fromNow()}
 							{:else}
 								Oops, something went wrong
 							{/if}

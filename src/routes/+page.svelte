@@ -27,7 +27,7 @@
 			<div class="view-header text-primary text-7xl font-black">
 				<a href="/">Appraize</a>
 			</div>
-			<p class="text-lg">Ranking sessions made easier.</p>
+			<p class="mt-2 text-lg">Ranking sessions made easier.</p>
 		</div>
 		<div>
 			<form method="POST" id="landing-input" use:enhance>

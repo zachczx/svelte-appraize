@@ -24,8 +24,8 @@
 		edit.push(entry);
 	}
 
-	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary'];
-	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'shadow-md', 'shadow-neutral'];
+	const dragShadowClassesStart = ['ring', 'ring-1', 'ring-primary', 'rounded-xl'];
+	const dragShadowClassesMoving = ['ring', 'ring-1', 'ring-primary', 'rounded-xl', 'shadow-md', 'shadow-neutral'];
 
 	let sortableEl: HTMLDivElement;
 
@@ -258,6 +258,7 @@
 									{person.name}
 									{#if person.remarks}
 										<button
+											class="cursor-pointer"
 											aria-label="remarks"
 											onclick={() => {
 												console.log(i);
@@ -393,7 +394,7 @@
                     -->
 						<div class="col-span-12 flex items-center justify-end p-2 lg:col-span-1">
 							<div class="dropdown dropdown-end">
-								<div tabindex="0" role="button" class="hover:text-primary">
+								<div tabindex="0" role="button" class="hover:text-primary cursor-pointer">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										width="1em"
@@ -410,7 +411,10 @@
 										/></svg
 									>
 								</div>
-								<ul tabindex="-1" class="menu dropdown-content bg-base-100 z-1 m-0 w-52 rounded-lg p-0 shadow-lg">
+								<ul
+									tabindex="-1"
+									class="menu dropdown-content bg-base-100 border-base-content/20 z-1 m-0 w-52 rounded-lg border p-2 shadow-lg"
+								>
 									<li>
 										<button
 											class="flex items-center gap-2"
@@ -467,10 +471,11 @@
 											Add Remarks
 										</button>
 									</li>
-									<li>
-										<form method="POST" class="" action="?/delete" use:enhance>
-											<input type="hidden" name="delete-target" value={person.id} />
-											<button class="flex items-center gap-2"
+
+									<form method="POST" class="" action="?/delete" use:enhance>
+										<input type="hidden" name="delete-target" value={person.id} />
+										<li>
+											<button class="flex w-full grow cursor-pointer items-center gap-2"
 												><svg
 													xmlns="http://www.w3.org/2000/svg"
 													width="1.3em"
@@ -487,8 +492,8 @@
 													/></svg
 												>Delete
 											</button>
-										</form>
-									</li>
+										</li>
+									</form>
 								</ul>
 							</div>
 						</div>

@@ -2,7 +2,10 @@
 	import ErrorNaughtyDog from '$lib/svg/error-naughty-dog.svg?dataurl';
 	import type { PageProps } from './$types';
 	import { useClerkContext } from 'svelte-clerk';
-	import { CalculateDateAgo } from '$lib/utils';
+	import dayjs from 'dayjs';
+	import relativeTime from 'dayjs/plugin/relativeTime';
+	dayjs.extend(relativeTime);
+
 	const ctx = useClerkContext();
 	const userId = $derived(ctx.auth.userId);
 	const user = $derived(ctx.user);
@@ -20,12 +23,12 @@
 		{/if}
 
 		{#each data.result as session}
-			<a href="/session/{session.slug}" class="card w-full max-w-96 bg-base-100 shadow-xl">
+			<a href="/session/{session.slug}" class="card bg-base-100 w-full max-w-96 shadow-xl">
 				<div class="card-body">
 					<h2>{session.title}</h2>
 					<div class="text-base-content/70">
 						{#if session.timestamp}
-							<span>{CalculateDateAgo(session.timestamp)}</span>
+							<span>{dayjs(session.timestamp).fromNow()}</span>
 						{/if}
 						{#if session.count}
 							<span class="flex gap-2">

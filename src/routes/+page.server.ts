@@ -4,8 +4,8 @@ import { redirect } from '@sveltejs/kit';
 import { db } from '$lib/drizzle/db';
 import { records, sessions, users } from '$lib/drizzle/schema';
 import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
-import { z } from 'zod';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { z } from 'zod/v4';
 import { message } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
@@ -23,14 +23,14 @@ const schema = z.object({
 });
 
 export const load = async () => {
-	const form = await superValidate(zod(schema));
+	const form = await superValidate(zod4(schema));
 	return { form };
 };
 
 const defaultUser: string = 'guest@guest.com';
 export const actions = {
 	default: async ({ request, locals }) => {
-		const form = await superValidate(request, zod(schema));
+		const form = await superValidate(request, zod4(schema));
 
 		if (!form.valid) {
 			return fail(400, { form });
