@@ -5,7 +5,7 @@ import { eq, count } from 'drizzle-orm';
 import { clerkClient } from 'svelte-clerk/server';
 
 export const load = async ({ locals }) => {
-	const { userId } = locals.auth;
+	const { userId } = locals.auth();
 
 	if (!userId) {
 		return redirect(307, '/login');

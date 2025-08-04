@@ -17,9 +17,9 @@
 </script>
 
 <dialog bind:this={htmlElement} class="view-upload-modal modal overflow-y-scroll {className}">
-	<div class="w-120 rounded-lg bg-base-100 lg:w-160" id="dialog-el">
+	<div class="bg-base-100 w-120 rounded-lg lg:w-160" id="dialog-el">
 		<form method="dialog" class="grid justify-items-end p-2">
-			<button aria-label="close">
+			<button aria-label="close" class="btn btn-ghost">
 				<svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" class="tabler:x" viewBox="0 0 24 24"
 					><path
 						fill="none"
@@ -33,7 +33,7 @@
 			</button>
 		</form>
 
-		<div class="grid gap-4 px-8 pb-8 pt-2">
+		<div class="grid gap-4 px-8 pt-2 pb-8">
 			<h2 class="font-bold">{title}</h2>
 			{#if children}
 				<div class="">

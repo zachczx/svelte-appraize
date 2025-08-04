@@ -5,20 +5,22 @@
 	// Do not destructure context or you'll lose reactivity!
 	const ctx = useClerkContext();
 	const userId = $derived(ctx.auth.userId);
-
 	let timer: number = $state(3);
 
-	setInterval(() => {
+	const interval = setInterval(() => {
 		timer -= 1;
-	}, 1000);
+	}, 900);
 
-	if (userId) {
-		if (browser) {
-			setTimeout(() => {
-				window.location.href = '/';
-			}, 3000);
+	$effect(() => {
+		if (userId) {
+			if (browser) {
+				setTimeout(() => {
+					window.location.href = '/';
+					clearInterval(interval);
+				}, 3000);
+			}
 		}
-	}
+	});
 </script>
 
 <div class="grid content-center justify-items-center">

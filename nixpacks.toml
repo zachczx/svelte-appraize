@@ -1,5 +1,0 @@
-providers = ["node"]
-
-# https://github.com/railwayapp/nixpacks/issues/1091
-[phases.install]
-cmds = ["npm install -g corepack", "corepack enable", "corepack prepare pnpm@latest --activate", "pnpm install"]

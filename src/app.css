@@ -4,6 +4,16 @@
 	name: autumn;
 	default: true;
 
+	--color-primary: '#A94A4A';
+	--color-secondary: '#4AA9A9';
+	--color-primary-content: '#fdfdfd';
+	--color-secondary-content: '#fdfdfd';
+	--color-warning: '#E65C19';
+	--color-info: '#889E73';
+	--color-base-100: oklch(100% 0 0);
+	--color-base-200: '#FFF6DA';
+	--color-base-300: '#F4D793';
+
 	--color-error: #a6192e;
 	--color-error-content: white;
 	--color-success: #198754; /* #00c851; #007e33 */

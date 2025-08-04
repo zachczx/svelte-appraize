@@ -1,6 +1,5 @@
 <script lang="ts">
 	import AboutSegment from '$lib/AboutSegment.svelte';
-	import ErrorNaughtyDog from '$lib/svg/error-naughty-dog.svg?dataurl';
 </script>
 
 <main class="grid content-center justify-items-center py-8">

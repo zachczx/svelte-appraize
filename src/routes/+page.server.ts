@@ -37,7 +37,7 @@ export const actions = {
 		}
 		/////////////////////////
 
-		const { userId } = locals.auth;
+		const { userId } = locals.auth();
 		let ownerIdToInsert: string;
 		if (!userId) {
 			let resultDefaultUser = await db.select().from(users).where(eq(users.email, defaultUser));

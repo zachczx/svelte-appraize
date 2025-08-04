@@ -1,9 +1,9 @@
 <script lang="ts">
 	import '../app.css';
 	import { onNavigate } from '$app/navigation';
-	import type { Snippet } from '@svelte';
-	import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
+	import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton, UserProfile } from 'svelte-clerk';
 	import Toaster from '$lib/Toaster.svelte';
+	import type { Snippet } from 'svelte';
 
 	const { children }: { children: Snippet } = $props();
 
@@ -23,18 +23,18 @@
 </svelte:head>
 
 <ClerkProvider>
-	<div class="relative grid min-h-dvh grid-cols-[auto_1fr] bg-base-200">
+	<div class="bg-base-200 relative grid min-h-dvh grid-cols-[auto_1fr]">
 		<nav
-			class="sticky top-0 z-1 grid h-dvh w-16 grid-rows-[1fr_auto] border-2 border-black/10 bg-base-300 pb-4 text-base-content/70"
+			class="bg-base-300 text-base-content/70 sticky top-0 z-1 grid h-dvh w-16 grid-rows-[1fr_auto] border-2 border-black/10 pb-4"
 		>
 			<div class="grid content-start justify-items-center gap-2">
-				<h1 class="mt-4 text-5xl font-black text-primary">
+				<h1 class="text-primary mt-4 text-5xl font-black">
 					<a href="/">A</a>
 				</h1>
 				<a
 					href="/"
 					aria-label="Home"
-					class="dropdown dropdown-right dropdown-hover mt-4 flex items-center justify-center rounded-xl p-3 text-3xl hover:bg-primary hover:text-primary-content"
+					class="dropdown dropdown-right dropdown-hover hover:bg-primary hover:text-primary-content mt-4 flex items-center justify-center rounded-xl p-3 text-3xl"
 				>
 					<div tabindex="-1" role="button" class="">
 						<svg
@@ -57,7 +57,7 @@
 					</div>
 					<ul
 						tabindex="-1"
-						class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+						class="menu dropdown-content rounded-box bg-neutral text-neutral-content z-1 ms-1 mt-1 p-2 px-4 shadow"
 					>
 						<li>Home</li>
 					</ul>
@@ -66,7 +66,7 @@
 				<a
 					href="/dashboard"
 					aria-label="Dashboard"
-					class="dropdown dropdown-right dropdown-hover flex items-center justify-center rounded-xl p-3 text-3xl hover:bg-primary hover:text-primary-content"
+					class="dropdown dropdown-right dropdown-hover hover:bg-primary hover:text-primary-content flex items-center justify-center rounded-xl p-3 text-3xl"
 				>
 					<div tabindex="-1" role="button" class="">
 						<svg
@@ -87,7 +87,7 @@
 					</div>
 					<ul
 						tabindex="-1"
-						class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+						class="menu dropdown-content rounded-box bg-neutral text-neutral-content z-1 ms-1 mt-1 p-2 px-4 shadow"
 					>
 						<li>Dashboard</li>
 					</ul>
@@ -96,12 +96,12 @@
 				<a
 					href="/about"
 					aria-label="About"
-					class="dropdown dropdown-right dropdown-hover flex items-center justify-center rounded-xl p-3 text-3xl hover:bg-primary hover:text-primary-content"
+					class="dropdown dropdown-right dropdown-hover hover:bg-primary hover:text-primary-content flex items-center justify-center rounded-xl p-3 text-3xl"
 				>
 					<div tabindex="-1" role="button" class=""></div>
 					<ul
 						tabindex="-1"
-						class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+						class="menu dropdown-content rounded-box bg-neutral text-neutral-content z-1 ms-1 mt-1 p-2 px-4 shadow"
 					>
 						<li>About</li>
 					</ul>
@@ -116,7 +116,7 @@
 				<a
 					href="https://zixianchen.com/contact"
 					aria-label="Contact"
-					class="dropdown dropdown-right dropdown-hover flex items-center justify-center rounded-xl p-3 text-3xl hover:bg-primary hover:text-primary-content"
+					class="dropdown dropdown-right dropdown-hover hover:bg-primary hover:text-primary-content flex items-center justify-center rounded-xl p-3 text-3xl"
 				>
 					<div tabindex="-1" role="button" class="">
 						<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" class="tabler:mail" viewBox="0 0 24 24"
@@ -129,30 +129,20 @@
 					</div>
 					<ul
 						tabindex="-1"
-						class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+						class="menu dropdown-content rounded-box bg-neutral text-neutral-content z-1 ms-1 mt-1 p-2 px-4 shadow"
 					>
 						<li>Contact</li>
 					</ul>
 				</a>
 			</div>
 			<div class="grid content-start justify-items-center">
-				<SignedIn
-					><div class="dropdown dropdown-right dropdown-hover">
-						<div tabindex="-1" role="button" class="">
-							<UserButton userProfileMode="modal" />
-						</div>
-						<ul
-							tabindex="-1"
-							class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
-						>
-							<li>Account</li>
-						</ul>
-					</div>
+				<SignedIn>
+					<UserButton />
 				</SignedIn>
 				<SignedOut>
 					<a
 						href="/login"
-						class="dropdown dropdown-right dropdown-hover flex items-center justify-center rounded-xl p-3 text-3xl hover:bg-primary hover:text-primary-content"
+						class="dropdown dropdown-right dropdown-hover hover:bg-primary hover:text-primary-content flex items-center justify-center rounded-xl p-3 text-3xl"
 						aria-label="login"
 					>
 						<div tabindex="-1" role="button" class="">
@@ -171,7 +161,7 @@
 						</div>
 						<ul
 							tabindex="-1"
-							class="menu dropdown-content z-1 ms-1 mt-1 rounded-box bg-neutral p-2 px-4 text-neutral-content shadow"
+							class="menu dropdown-content rounded-box bg-neutral text-neutral-content z-1 ms-1 mt-1 p-2 px-4 shadow"
 						>
 							<li>Login</li>
 						</ul>

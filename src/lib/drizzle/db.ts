@@ -2,10 +2,12 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 import * as schema from './schema';
-import { CONNECTION_STRING } from '$env/static/private';
+import { DB_USER, DB_HOST, DB_PASSWORD, DB_PORT, DB_NAME } from '$env/static/private';
 
-const client = postgres(CONNECTION_STRING);
-const migrationsClient = postgres(CONNECTION_STRING, {
+const connectionString = `postgresql://${DB_USER as string}:${DB_PASSWORD as string}@${DB_HOST as string}:${Number(DB_PORT)}/${DB_NAME as string}`;
+
+const client = postgres(connectionString);
+const migrationsClient = postgres(connectionString, {
 	max: 1,
 });
 

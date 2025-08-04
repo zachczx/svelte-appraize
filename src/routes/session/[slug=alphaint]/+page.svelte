@@ -265,7 +265,7 @@
 					<ul class="border-l-base-300 text-base-content/70 ms-2 border-l-4 ps-4 text-base font-medium">
 						<li>
 							<button
-								class="hover:bg-primary hover:text-primary-content flex w-full cursor-pointer cursor-pointer items-center gap-4 rounded-lg p-2 font-medium"
+								class="hover:bg-primary hover:text-primary-content flex w-full cursor-pointer items-center gap-4 rounded-lg p-2 font-medium"
 								onclick={() => titleModal.showModal()}
 							>
 								<svg
@@ -370,7 +370,7 @@
 								stroke-width="2"
 								d="M12.5 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7.5M3 10h18M10 3v18m6-2h6m-3-3v6"
 							/></svg
-						>Add Many
+						>Import
 					</h3>
 
 					<ul class="border-l-base-300 text-base-content/70 ms-2 border-l-4 ps-4 text-base font-medium">
@@ -394,7 +394,7 @@
 										stroke-width="2"
 										d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 9l5-5l5 5m-5-5v12"
 									/></svg
-								>Upload .csv</button
+								>Import from .csv</button
 							>
 						</li>
 					</ul>

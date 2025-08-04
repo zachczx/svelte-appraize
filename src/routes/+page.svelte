@@ -3,15 +3,9 @@
 	import ChevronRight from '$lib/svg/ChevronRight.svelte';
 	import UndrawDecide from '$lib/svg/UndrawDecide.svelte';
 	import { goto } from '$app/navigation';
-
 	import { editFormSubmitKeyboardShortcut } from '$lib/FormSubmitKeyboardShortcut';
-
-	//superforms imports
 	import { superForm } from 'sveltekit-superforms';
-	import MagicCard from '$lib/ui-components/MagicCard.svelte';
-	import ShineBorder from '$lib/ui-components/ShineBorder.svelte';
-	import BorderBeam from '$lib/ui-components/BorderBeam.svelte';
-	//import SuperDebug from 'sveltekit-superforms';
+
 	let { data } = $props();
 
 	// superforms Client API:
@@ -39,7 +33,7 @@
 			<form method="POST" id="landing-input" use:enhance>
 				<div class="flex w-full justify-center">
 					<label
-						class="input input-lg shadow-primary/30 focus-within:shadow-primary/30 focus-within:outline-primary/30 relative flex w-full max-w-160 self-center rounded-full border-2 text-lg shadow-lg focus-within:border-transparent focus-within:shadow-lg"
+						class="input input-xl shadow-primary/30 focus-within:shadow-primary/30 focus-within:outline-primary/30 relative flex w-full max-w-160 self-center rounded-full border-2 ps-6 text-lg shadow-lg focus-within:border-transparent focus-within:shadow-lg"
 						for="session"
 					>
 						<input
@@ -79,10 +73,10 @@
 							{:else}
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
-									width="2.5em"
-									height="2.5em"
+									width="1em"
+									height="1em"
 									viewBox="0 0 24 24"
-									class="icon icon-tabler icons-tabler-filled icon-tabler-circle-arrow-right fill-primary inline group-hover:brightness-[0.7]"
+									class="icon icon-tabler icons-tabler-filled icon-tabler-circle-arrow-right fill-primary inline size-13 group-hover:brightness-[0.7]"
 									><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
 										d="M12 2l.324 .005a10 10 0 1 1 -.648 0l.324 -.005zm.613 5.21a1 1 0 0 0 -1.32 1.497l2.291 2.293h-5.584l-.117 .007a1 1 0 0 0 .117 1.993h5.584l-2.291 2.293l-.083 .094a1 1 0 0 0 1.497 1.32l4 -4l.073 -.082l.064 -.089l.062 -.113l.044 -.11l.03 -.112l.017 -.126l.003 -.075l-.007 -.118l-.029 -.148l-.035 -.105l-.054 -.113l-.071 -.111a1.008 1.008 0 0 0 -.097 -.112l-4 -4z"
 									/></svg
